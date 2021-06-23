@@ -1,6 +1,5 @@
 import {
   ChainCommon,
-  EthArgs,
   LockAndMintParams,
   LockAndMintTransaction,
   LockChain,
@@ -9,14 +8,13 @@ import {
 } from "@renproject/interfaces";
 import RenJS from "@renproject/ren";
 import { LockAndMintDeposit } from "@renproject/ren/build/main/lockAndMint";
-import { Ox, parseV1Selector } from "@renproject/utils";
+import { Ox } from "@renproject/utils";
 import BigNumber from "bignumber.js";
-import { AbiCoder } from "web3-eth-abi";
 import { RenVMTransaction, TransactionSummary } from "./searchResult";
 import { queryMintOrBurn } from "./searchTactics/searchRenVMHash";
 import { RenVMProvider } from "@renproject/rpc/build/main/v2";
 import { NETWORK } from "../environmentVariables";
-import { getEvmABI } from "./getABI";
+import { getMintChainParams } from "./chains/chains";
 
 export const searchTransaction = async (
   transaction: RenVMTransaction,
@@ -53,70 +51,46 @@ export const getTransactionDepositInstance = async (
     txindex: string;
   };
 
-  if (summary.fromChain && summary.toChain) {
-    const abiFull = await getEvmABI(summary.toChain, inputs.to);
-    if (!Array.isArray(abiFull)) {
-      throw new Error(abiFull);
-    }
-
-    const abi = abiFull.filter(
-      (abi) =>
-        abi.inputs &&
-        abi.inputs.length >= 3 &&
-        (abi.inputs[abi.inputs?.length - 3].type === "uint256" ||
-          abi.inputs[abi.inputs?.length - 3].type === "uint") &&
-        abi.inputs[abi.inputs?.length - 2].type === "bytes32" &&
-        abi.inputs[abi.inputs?.length - 1].type === "bytes"
-    )[0];
-
-    const abiValues = new AbiCoder().decodeParameters(
-      (abi.inputs?.slice(0, -3) || []).map((x) => x.type),
-      inputs.payload
+  if (!summary.fromChain) {
+    throw new Error(
+      `Fetching transaction details not supported yet for ${summary.from}.`
     );
-
-    const parameters: EthArgs = (abi.inputs?.slice(0, -3) || []).map(
-      (abiItem, i) => ({
-        name: abiItem.name,
-        type: abiItem.type,
-        value: abiValues[i],
-      })
-    );
-
-    const params: LockAndMintParams = {
-      asset: summary.asset,
-      from: summary.fromChain as LockChain,
-      to: summary.toChain as MintChain,
-
-      contractCalls: [
-        {
-          sendTo: Ox(inputs.to.toString()),
-          contractFn: abi.name || "",
-          contractParams: parameters,
-        },
-      ],
-      nonce: Ox(inputs.nonce),
-    };
-
-    const provider = new RenVMProvider(NETWORK);
-    const lockAndMint = await new RenJS(provider).lockAndMint(params, {
-      transactionVersion: searchDetails.version,
-      gPubKey: (searchDetails.in as any).gpubkey,
-    });
-
-    const deposit = await lockAndMint.processDeposit({
-      transaction: await summary.fromChain.transactionFromRPCFormat(
-        inputs.txid,
-        inputs.txindex.toString(),
-        true
-      ),
-      amount: inputs.amount.toFixed(),
-    });
-    (deposit as any).gatewayAddress = lockAndMint.gatewayAddress;
-
-    return deposit;
   }
 
-  return null;
+  if (!summary.toChain) {
+    throw new Error(
+      `Fetching transaction details not supported yet for ${summary.to}.`
+    );
+  }
+
+  const params: LockAndMintParams = {
+    asset: summary.asset,
+    from: summary.fromChain as LockChain,
+    to: await getMintChainParams(
+      summary.toChain as MintChain,
+      inputs.to,
+      inputs.payload
+    ),
+    nonce: Ox(inputs.nonce),
+  };
+
+  const provider = new RenVMProvider(NETWORK);
+  const lockAndMint = await new RenJS(provider).lockAndMint(params, {
+    transactionVersion: searchDetails.version,
+    gPubKey: (searchDetails.in as any).gpubkey,
+  });
+
+  const deposit = await lockAndMint.processDeposit({
+    transaction: await summary.fromChain.transactionFromRPCFormat(
+      inputs.txid,
+      inputs.txindex.toString(),
+      true
+    ),
+    amount: inputs.amount.toFixed(),
+  });
+  (deposit as any).gatewayAddress = lockAndMint.gatewayAddress;
+
+  return deposit;
 };
 
 export const continueMint = async (deposit: LockAndMintDeposit) => {

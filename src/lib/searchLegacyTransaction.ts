@@ -13,7 +13,7 @@ import { LegacyRenVMTransaction, TransactionSummary } from "./searchResult";
 import { queryMintOrBurn } from "./searchTactics/searchLegacyRenVMTransaction";
 import { RenVMProvider } from "@renproject/rpc/build/main/v1";
 import { NETWORK } from "../environmentVariables";
-import { getEvmABI } from "./getABI";
+import { getEvmABI } from "./chains/getABI";
 import { Ox } from "@renproject/utils";
 
 export const searchLegacyTransaction = async (
@@ -121,8 +121,6 @@ export const getLegacyTransactionDepositInstance = async (
         ],
         nonce: searchDetails.in.n,
       };
-
-      console.log("params", params);
 
       const lockAndMint = await new RenJS(network).lockAndMint(params);
 

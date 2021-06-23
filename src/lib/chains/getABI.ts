@@ -2,9 +2,9 @@ import { Fantom, Polygon } from "@renproject/chains";
 import { BinanceSmartChain, Ethereum } from "@renproject/chains-ethereum";
 import { AbiItem, ChainCommon, RenNetwork } from "@renproject/interfaces";
 import { Ox } from "@renproject/utils";
-import { NETWORK } from "../environmentVariables";
+import { NETWORK } from "../../environmentVariables";
 import Axios from "axios";
-import { TaggedError } from "./taggedError";
+import { TaggedError } from "../taggedError";
 
 export enum ABIError {
   ContractNotVerified = "Contract not verified.",

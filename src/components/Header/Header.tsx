@@ -11,6 +11,8 @@ import {
 import { LinkContainer } from "react-router-bootstrap";
 import { UIContainer } from "../../containers/UIContainer";
 import { useCallback, useRef } from "react";
+import { NETWORK } from "../../environmentVariables";
+import { RenNetwork } from "@renproject/interfaces";
 
 export const Header = () => {
   const { handleSearchForm } = UIContainer.useContainer();
@@ -37,9 +39,19 @@ export const Header = () => {
         <LinkContainer to="/">
           <Navbar.Brand>
             <HeaderLogo>
-              <Logo />
+              <Logo
+                style={{
+                  fill: NETWORK === RenNetwork.Mainnet ? "#001732" : "#265A99",
+                }}
+              />
             </HeaderLogo>
-            Ren Dev Tools
+            {NETWORK === RenNetwork.Mainnet ? (
+              <>Ren Dev Tools</>
+            ) : (
+              <span style={{ color: "#265A99" }}>
+                Ren {NETWORK.toUpperCase()}
+              </span>
+            )}
           </Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />

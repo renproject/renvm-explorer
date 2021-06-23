@@ -13,7 +13,7 @@ interface Props {
 }
 
 export const GatewayAddressRow: React.FC<Props> = ({ deposit }) => {
-  return deposit ? (
+  return deposit && (deposit as any).gatewayAddress ? (
     <tr>
       <td>Gateway address</td>
       <td>

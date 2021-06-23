@@ -66,7 +66,7 @@ export const TransactionPage = () => {
                     error={queryTx}
                   />
                 ) : (
-                  <Card.Text>
+                  <>
                     <TransactionDiagram queryTx={queryTx} />
 
                     <Table>
@@ -104,7 +104,7 @@ export const TransactionPage = () => {
                       deposit={deposit}
                       setDeposit={setDeposit}
                     />
-                  </Card.Text>
+                  </>
                 )
               ) : (
                 <TransactionSpinner>

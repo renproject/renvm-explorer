@@ -21,3 +21,6 @@ BTC/toBSC: QtYO3qfQN7LIHeXj3pWTSf0odF2LEcGtcNmLfYpLqik
 BTC/toEthereum: nIV6rdbtu_W_g4l1r9b9Ev3hpFrWh9NY6rl4Xs1WMvU
 
 BTC0Eth2Btc: BRfTtN9n3I5fXHrr7bRTuPCLtL3JqjrFsR3ohjji+b4=
+
+Testnet:
+LUNA/toSolana: pn4r0Xe0LLBxvwynq2IEp2PZr0RJxMVoOovW6bD8T-E

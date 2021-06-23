@@ -1,5 +1,5 @@
 import { searchLegacyRenVMTransaction } from "./searchLegacyRenVMTransaction";
-import { searchLockTransaction } from "./searchLockTransaction";
+import { searchChainTransaction } from "./searchChainTransaction";
 import { searchRenVMHash } from "./searchRenVMHash";
 import { SearchTactic } from "./searchTactic";
 
@@ -10,7 +10,7 @@ export const searchTactics: SearchTactic[] = [
   // Search for v0.2 RenVM transactions.
   searchLegacyRenVMTransaction,
 
-  // Search for hex-formatted lock transactions (e.g. BTC transactions)
-  // (no 0x prefix)
-  searchLockTransaction,
+  // Search for a lock-chain transaction for mints, or for a burn-chain
+  // transaction for burns.
+  searchChainTransaction,
 ];

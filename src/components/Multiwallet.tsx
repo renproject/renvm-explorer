@@ -2,7 +2,7 @@ import { RenNetwork } from "@renproject/interfaces";
 import { WalletPickerModal } from "@renproject/multiwallet-ui";
 import React from "react";
 
-import { multiwalletOptions } from "../lib/multiwalletConfig";
+import { multiwalletOptions } from "../lib/chains/multiwalletConfig";
 
 interface Props {
   chain: string | null;

@@ -11,7 +11,7 @@ import {
 import { searchTransaction } from "../lib/searchTransaction";
 import { OrderedMap } from "immutable";
 import { ChainCommon } from "@renproject/interfaces";
-import { ChainMapper } from "../lib/chains";
+import { ChainMapper } from "../lib/chains/chains";
 import { NETWORK } from "../environmentVariables";
 import { searchLegacyTransaction } from "../lib/searchLegacyTransaction";
 
@@ -53,7 +53,7 @@ function useUIContainer() {
 
       setSearchString(searchInput);
 
-      search(searchInput, () => {}, getChain).then((result) => {
+      search(searchInput, console.log, getChain).then((result) => {
         if (result && Array.isArray(result) && result.length === 1) {
           result = result[0];
         }

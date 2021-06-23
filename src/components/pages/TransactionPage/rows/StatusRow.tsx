@@ -82,20 +82,21 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
 
   return (
     <>
-      <div className="connect-wallets">
-        <ConnectWallet
-          chain={multiwalletChain}
-          close={closeMultiwallet}
-          network={
-            getRenNetworkDetails(NETWORK).isTestnet
-              ? RenNetwork.Testnet
-              : RenNetwork.Mainnet
-          }
-        />
-      </div>
       <tr>
         <td>Status</td>
         <td>
+          <div className="connect-wallets">
+            <ConnectWallet
+              chain={multiwalletChain}
+              close={closeMultiwallet}
+              network={
+                getRenNetworkDetails(NETWORK).isTestnet
+                  ? RenNetwork.Testnet
+                  : RenNetwork.Mainnet
+              }
+            />
+          </div>
+
           {deposit && !(deposit instanceof Error) ? (
             <>
               <RenderDepositStatus status={deposit.status} />

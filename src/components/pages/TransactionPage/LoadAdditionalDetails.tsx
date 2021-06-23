@@ -61,13 +61,16 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
       }
     }
     setFetchingDeposit(false);
-  }, [queryTx, setDeposit]);
+  }, [queryTx, setDeposit, legacy]);
 
   return (
     <>
       {deposit && deposit instanceof Error ? (
         <>
-          Error fetching additional transaction details{" "}
+          <p>Error fetching additional transaction details</p>
+          {deposit.message ? (
+            <p style={{ color: "red" }}>{deposit.message}</p>
+          ) : null}
           <Button
             disabled={fetchingDeposit}
             variant="outline-success"
@@ -75,10 +78,6 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
           >
             Retry
           </Button>
-          <details>
-            <summary>Show error details</summary>
-            {deposit.message}
-          </details>
         </>
       ) : deposit === null ? (
         <>Unable to fetch additional transaction details</>

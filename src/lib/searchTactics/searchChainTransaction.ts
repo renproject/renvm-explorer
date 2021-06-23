@@ -15,12 +15,13 @@ import {
 } from "@renproject/rpc/build/main/v2";
 import { NETWORK } from "../../environmentVariables";
 import { RenVMTransaction, TransactionSummary } from "../searchResult";
-import { toURLBase64 } from "@renproject/utils";
+import { doesntError, toURLBase64 } from "@renproject/utils";
 import { summarizeTransaction } from "./searchRenVMHash";
+import { ChainArray } from "../chains/chains";
 
 export const queryTxsByTxid = async (
   provider: RenVMProvider,
-  txid: string,
+  txid: Buffer,
   getChain: (chainName: string) => ChainCommon | null
 ): Promise<
   Array<
@@ -39,7 +40,7 @@ export const queryTxsByTxid = async (
   const response: { txs: Array<RenVMResponses[RPCMethod.QueryTx]["tx"]> } =
     await provider.sendMessage(
       "ren_queryTxByTxid" as any,
-      { txid: toURLBase64(Buffer.from(txid, "hex").reverse()) },
+      { txid: toURLBase64(txid) },
       1
     );
 
@@ -76,22 +77,48 @@ export const queryTxsByTxid = async (
   );
 };
 
-export const searchLockTransaction: SearchTactic<RenVMTransaction> = {
-  match: (searchString: string) =>
-    isHex(searchString, {
-      length: 32,
-    }),
+const OR = (left: boolean, right: boolean) => left || right;
 
+export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
+  match: (searchString: string) =>
+    ChainArray.map((chain) =>
+      doesntError(() => chain.utils.transactionIsValid(searchString))()
+    ).reduce(OR, false),
   search: async (
     searchString: string,
     updateStatus: (status: string) => void,
     getChain: (chainName: string) => ChainCommon | null
   ): Promise<RenVMTransaction[]> => {
-    updateStatus("Looking up RenVM hash...");
+    updateStatus("Looking up chain transaction...");
+
+    const formats = Array.from(
+      // Remove duplicates.
+      new Set(
+        ChainArray.map((chain) => getChain(chain.chain))
+          .map((chain) =>
+            chain && chain.utils.transactionIsValid(searchString)
+              ? chain.transactionRPCTxidFromID(searchString, true)
+              : null
+          )
+          .filter((txid) => txid !== null)
+      )
+    );
 
     const provider = new RenVMProvider(NETWORK);
 
-    let queryTxs = await queryTxsByTxid(provider, searchString, getChain);
+    let queryTxs;
+    for (const format of formats) {
+      try {
+        queryTxs = await queryTxsByTxid(provider, format!, getChain);
+        break;
+      } catch (error) {
+        continue;
+      }
+    }
+
+    if (!queryTxs) {
+      throw new Error(`No result found.`);
+    }
 
     return queryTxs.map((queryTx) => RenVMTransaction(queryTx.result.hash));
   },

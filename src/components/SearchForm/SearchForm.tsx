@@ -33,7 +33,7 @@ export const SearchForm = () => {
         <SearchFormInner>
           <SearchTitle>Search RenVM</SearchTitle>
           <SearchSubtitle>
-            Enter a deposit transaction, a gateway address or a RenVM hash.
+            Enter a deposit transaction or a RenVM hash.
           </SearchSubtitle>
 
           <Form onSubmit={searchFormSubmitCallback}>

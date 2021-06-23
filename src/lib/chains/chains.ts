@@ -10,22 +10,25 @@ import {
   BinanceSmartChain,
   Fantom,
   Polygon,
+  EthereumClass,
+  Avalanche,
 } from "@renproject/chains";
+import { ChainCommon, MintChain, RenNetwork } from "@renproject/interfaces";
 import {
-  BscConfigMap,
-  FantomConfigMap,
-  PolygonConfigMap,
-} from "@renproject/chains";
-import { ChainCommon, RenNetwork } from "@renproject/interfaces";
-import Web3 from "web3";
-import { provider } from "web3-providers";
-import { INFURA_KEY } from "../environmentVariables";
+  getAvalancheProvider,
+  getBSCProvider,
+  getEthereumMintParams,
+  getEthereumProvider,
+  getFantomProvider,
+  getPolygonProvider,
+} from "./ethereum";
 
 export enum Chain {
   Ethereum = "Ethereum",
   BSC = "BinanceSmartChain",
   Fantom = "Fantom",
   Polygon = "Polygon",
+  Avalanche = "Avalanche",
 }
 
 export const Chains = new Map<Chain, { symbol: Chain; name: string }>()
@@ -80,60 +83,6 @@ export let Assets = new Map<Asset, { symbol: Asset; name: string }>()
 
 export const defaultAsset = Asset.FIL;
 
-const getEthereumProvider = (network: RenNetwork): provider => {
-  return new Web3(
-    `https://${
-      network === RenNetwork.Mainnet ? "mainnet" : "kovan"
-    }.infura.io/v3/${INFURA_KEY}`
-  ).currentProvider;
-};
-
-const getBSCProvider = (network: RenNetwork): provider => {
-  if (network === RenNetwork.Localnet) {
-    throw new Error("Localnet not supported.");
-  }
-  return new Web3(
-    BscConfigMap[
-      network === RenNetwork.Mainnet
-        ? RenNetwork.MainnetVDot3
-        : network === RenNetwork.Testnet
-        ? RenNetwork.TestnetVDot3
-        : network
-    ].infura
-  ).currentProvider;
-};
-
-const getPolygonProvider = (network: RenNetwork): provider => {
-  if (network === RenNetwork.DevnetVDot3 || network === RenNetwork.Localnet) {
-    throw new Error(`Unsupported network ${network}`);
-  }
-  return new Web3(
-    PolygonConfigMap[
-      network === RenNetwork.Mainnet
-        ? RenNetwork.MainnetVDot3
-        : network === RenNetwork.Testnet
-        ? RenNetwork.TestnetVDot3
-        : network
-    ].infura
-  ).currentProvider;
-};
-
-const getFantomProvider = (network: RenNetwork): provider => {
-  if (network === RenNetwork.Localnet) {
-    throw new Error("Localnet not supported.");
-  }
-
-  return new Web3(
-    FantomConfigMap[
-      network === RenNetwork.Mainnet
-        ? RenNetwork.MainnetVDot3
-        : network === RenNetwork.Testnet
-        ? RenNetwork.TestnetVDot3
-        : network
-    ].infura
-  ).currentProvider;
-};
-
 export const ChainMapper = (
   chain: string,
   network: RenNetwork
@@ -170,6 +119,37 @@ export const ChainMapper = (
       return Fantom(getFantomProvider(network), network);
     case "polygon":
       return Polygon(getPolygonProvider(network), network);
+    case "avalanche":
+      return Avalanche(getAvalancheProvider(network), network);
   }
   return null;
+};
+
+export const ChainArray = [
+  Bitcoin,
+  Zcash,
+  BitcoinCash,
+  Dogecoin,
+  Filecoin,
+  DigiByte,
+  Terra,
+  Ethereum,
+  BinanceSmartChain,
+  Fantom,
+  Polygon,
+];
+
+export const getMintChainParams = async (
+  mintChain: MintChain,
+  to: string,
+  payload: string
+): Promise<MintChain> => {
+  switch (mintChain.name) {
+    case Ethereum.chain:
+      return getEthereumMintParams(mintChain as EthereumClass, to, payload);
+    default:
+      throw new Error(
+        `Reconstructing mint parameters for ${mintChain.name} is not supported yet.`
+      );
+  }
 };

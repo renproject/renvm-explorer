@@ -14,9 +14,7 @@ import {
   RPCMethod,
 } from "@renproject/rpc/build/main/v2";
 import { NETWORK } from "../../environmentVariables";
-import { RenVMTransaction, TransactionSummary } from "../searchResult";
-import BigNumber from "bignumber.js";
-import { toReadable, toURLBase64 } from "@renproject/utils";
+import { RenVMGateway, TransactionSummary } from "../searchResult";
 import { summarizeTransaction } from "./searchRenVMHash";
 
 export const queryGateway = async (
@@ -77,7 +75,7 @@ export const queryGateway = async (
   );
 };
 
-export const searchLockTransaction: SearchTactic<RenVMTransaction> = {
+export const searchGateway: SearchTactic<RenVMGateway> = {
   match: (searchString: string) =>
     isHex(searchString, {
       length: 32,
@@ -87,13 +85,13 @@ export const searchLockTransaction: SearchTactic<RenVMTransaction> = {
     searchString: string,
     updateStatus: (status: string) => void,
     getChain: (chainName: string) => ChainCommon | null
-  ): Promise<RenVMTransaction[]> => {
-    updateStatus("Looking up RenVM hash...");
+  ): Promise<RenVMGateway[]> => {
+    updateStatus("Looking up Gateway...");
 
     const provider = new RenVMProvider(NETWORK);
 
     let queryTxs = await queryGateway(provider, searchString, getChain);
 
-    return queryTxs.map((queryTx) => RenVMTransaction(queryTx.result.hash));
+    return queryTxs.map((queryTx) => RenVMGateway(queryTx.result.hash));
   },
 };
