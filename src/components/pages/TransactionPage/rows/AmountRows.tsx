@@ -23,21 +23,23 @@ interface Props {
 export const AmountRows: React.FC<Props> = ({ queryTx }) => {
   return (
     <>
-      <tr>
-        <td>Amount</td>
-        <td>
-          {queryTx.summary.amountIn ? (
-            <>
-              {queryTx.summary.amountIn.toFixed()} {queryTx.summary.asset}
-            </>
-          ) : (
-            <span style={{ opacity: 0.3 }}>
-              {queryTx.summary.amountInRaw.toFixed()}
-            </span>
-          )}
-        </td>
-      </tr>
-      {queryTx.summary.amountOutRaw ? (
+      {queryTx.summary.amountInRaw ? (
+        <tr>
+          <td>Amount</td>
+          <td>
+            {queryTx.summary.amountIn ? (
+              <>
+                {queryTx.summary.amountIn.toFixed()} {queryTx.summary.asset}
+              </>
+            ) : (
+              <span style={{ opacity: 0.3 }}>
+                {queryTx.summary.amountInRaw.toFixed()}
+              </span>
+            )}
+          </td>
+        </tr>
+      ) : null}
+      {queryTx.summary.amountInRaw && queryTx.summary.amountOutRaw ? (
         <>
           <tr>
             <td>{queryTx.summary.asset} Fee</td>

@@ -10,9 +10,10 @@ import {
 } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { UIContainer } from "../../containers/UIContainer";
-import { useCallback, useRef } from "react";
+import React, { useCallback, useRef } from "react";
 import { NETWORK } from "../../environmentVariables";
 import { RenNetwork } from "@renproject/interfaces";
+import { ExternalLink } from "../common/ExternalLink";
 
 export const Header = () => {
   const { handleSearchForm } = UIContainer.useContainer();
@@ -69,28 +70,28 @@ export const Header = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                renproject.io
+                <ExternalLink noUnderline>renproject.io</ExternalLink>
               </NavDropdown.Item>
               <NavDropdown.Item
                 href="https://bridge.renproject.io"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Bridge
+                <ExternalLink noUnderline>Bridge</ExternalLink>
               </NavDropdown.Item>
               <NavDropdown.Item
                 href="https://mainnet.renproject.io"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Command Center
+                <ExternalLink noUnderline>Command Center</ExternalLink>
               </NavDropdown.Item>
               <NavDropdown.Item
                 href="https://renprotocol.typeform.com/to/YdmFyB"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Report bug or issue
+                <ExternalLink noUnderline>Report bug or issue</ExternalLink>
               </NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item
@@ -98,21 +99,21 @@ export const Header = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                RenVM Docs
+                <ExternalLink noUnderline>RenVM Docs</ExternalLink>
               </NavDropdown.Item>
               <NavDropdown.Item
                 href="https://renproject.github.io/ren-client-docs"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                RenJS Docs
+                <ExternalLink noUnderline>RenJS Docs</ExternalLink>
               </NavDropdown.Item>
               <NavDropdown.Item
                 href="https://renproject.github.io/ren-client-docs/contracts/deployments/"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Contract Addresses
+                <ExternalLink noUnderline>Contract Addresses</ExternalLink>
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>

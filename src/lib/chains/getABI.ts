@@ -6,6 +6,16 @@ import { NETWORK } from "../../environmentVariables";
 import Axios from "axios";
 import { TaggedError } from "../taggedError";
 
+import BasicAdapter from "./ABIs/BasicAdapter.json";
+
+const hardcodedABIs = (chain: ChainCommon, to: string): AbiItem[] | null => {
+  if (to === "0xd087b0540e172553c12deeecdef3dfd21ec02066") {
+    return BasicAdapter as AbiItem[];
+  }
+
+  return null;
+};
+
 export enum ABIError {
   ContractNotVerified = "Contract not verified.",
   ChainNotSupported = "Fetching ABI not supported on host-chain.",
@@ -35,7 +45,7 @@ export const etherscanAPIMap: {
 };
 
 const getProxy = (address: string): string => {
-  if (address.toLowerCase() === "0xb6ea1d3fb9100a2cf166febe11f24367b5fcd24a") {
+  if (address === "0xb6ea1d3fb9100a2cf166febe11f24367b5fcd24a") {
     return "0x1362e51c1aa40fd180824d4a7fc4f27e2bb3efe5";
   }
   return address;
@@ -47,9 +57,7 @@ const getABIFromEtherscan: ABITactic = async (
 ): Promise<AbiItem[]> => {
   if (etherscanAPIMap[chain.name] && etherscanAPIMap[chain.name][NETWORK]) {
     const api = etherscanAPIMap[chain.name][NETWORK];
-    const url = `${api}?module=contract&action=getabi&address=${getProxy(
-      Ox(to.toString())
-    )}`;
+    const url = `${api}?module=contract&action=getabi&address=${getProxy(to)}`;
     const response = await Axios.get<{
       status: "0" | "1";
       message: string;
@@ -75,7 +83,10 @@ const getABIFromEtherscan: ABITactic = async (
       return JSON.parse(result);
     }
   }
-  throw new TaggedError(ABIError.ChainNotSupported);
+  throw new TaggedError(
+    `Fetching ABI not supported on ${chain.name}.`,
+    ABIError.ChainNotSupported
+  );
 };
 
 /**
@@ -91,8 +102,15 @@ const getABIFromEtherscan: ABITactic = async (
  */
 export const getEvmABI = async (
   chain: ChainCommon,
-  to: string
+  to: Buffer | string
 ): Promise<AbiItem[]> => {
+  to = Ox(to.toString()).toLowerCase();
+
+  const hardcodedABI = hardcodedABIs(chain, to);
+  if (hardcodedABI) {
+    return hardcodedABI;
+  }
+
   const tactics: ABITactic[] = [getABIFromEtherscan];
 
   for (const tactic of tactics) {
@@ -106,5 +124,8 @@ export const getEvmABI = async (
     }
   }
 
-  throw new TaggedError(ABIError.ChainNotSupported);
+  throw new TaggedError(
+    `Fetching ABI not supported on ${chain.name}.`,
+    ABIError.ChainNotSupported
+  );
 };

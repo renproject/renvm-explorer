@@ -4,9 +4,10 @@ import { Container, Card, Spinner } from "react-bootstrap";
 import { Monospaced } from "../../common/Monospaced";
 import { useEffect } from "react";
 import { UIContainer } from "../../../containers/UIContainer";
+import { SearchResultType } from "../../../lib/searchResult";
 
 export const SearchingPage = () => {
-  const { searchString, searchResult, handleSearchURL, handleSelectResult } =
+  const { searchResult, handleSearchURL, handleSelectResult } =
     UIContainer.useContainer();
 
   const {
@@ -21,35 +22,90 @@ export const SearchingPage = () => {
   return (
     <SearchingPageOuter>
       <Container>
-        {searchResult && Array.isArray(searchResult) ? (
+        {searchResult && searchResult.type === SearchResultType.Searching ? (
           <>
-            <p>Select one of the following results:</p>
-            {searchResult.map((result) => {
-              const onClick = () => handleSelectResult(result);
-              return (
-                <div style={{ cursor: "pointer" }} onClick={onClick}>
-                  {result.resultPath}
-                </div>
-              );
-            })}
+            {searchResult.multipleResults ? (
+              // Multiple results.
+              <>
+                <p>Select one of the following results:</p>
+                {searchResult.multipleResults.map((result) => {
+                  const onClick = () => handleSelectResult(result);
+                  return (
+                    <div style={{ cursor: "pointer" }} onClick={onClick}>
+                      {result.resultPath}
+                    </div>
+                  );
+                })}
+              </>
+            ) : searchResult.noResult ? (
+              // No results.
+              <Card border="0">
+                <Card.Body>
+                  <Card.Title>
+                    {" "}
+                    <p
+                      style={{
+                        fontSize: 70,
+                        fontWeight: 300,
+                        color: "#001732",
+                      }}
+                    >
+                      404
+                    </p>
+                  </Card.Title>
+                  <Card.Text style={{ marginTop: "2em" }}>
+                    No results for{" "}
+                    <Monospaced>{searchResult.searchString}</Monospaced>.
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            ) : searchResult.errorSearching ? (
+              // Error.
+              <Card border="0">
+                <Card.Body>
+                  <Card.Title>
+                    {" "}
+                    <p
+                      style={{
+                        fontSize: 70,
+                        fontWeight: 300,
+                        color: "#001732",
+                      }}
+                    >
+                      Error
+                    </p>
+                  </Card.Title>
+                  <Card.Text style={{ marginTop: "2em" }}>
+                    Error searching for{" "}
+                    <Monospaced>{searchResult.searchString}</Monospaced>. Error:{" "}
+                    {String(
+                      searchResult.errorSearching.message ||
+                        searchResult.errorSearching
+                    )}
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            ) : (
+              // Searching...
+              <Card border="0">
+                <Card.Body>
+                  <Card.Title>
+                    <Spinner
+                      animation="border"
+                      role="status"
+                      variant="success"
+                      style={{ borderWidth: 1 }}
+                    ></Spinner>
+                  </Card.Title>
+                  <Card.Text style={{ marginTop: "2em" }}>
+                    Searching for{" "}
+                    <Monospaced>{searchResult.searchString}</Monospaced>...
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            )}
           </>
-        ) : (
-          <Card border="0">
-            <Card.Body>
-              <Card.Title>
-                <Spinner
-                  animation="border"
-                  role="status"
-                  variant="success"
-                  style={{ borderWidth: 1 }}
-                ></Spinner>
-              </Card.Title>
-              <Card.Text style={{ marginTop: "2em" }}>
-                Searching for <Monospaced>{searchString}</Monospaced>...
-              </Card.Text>
-            </Card.Body>
-          </Card>
-        )}
+        ) : null}
       </Container>
     </SearchingPageOuter>
   );

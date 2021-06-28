@@ -1,7 +1,12 @@
 import { ChainCommon } from "@renproject/interfaces";
 import { DEBUG } from "../environmentVariables";
-import { NoResult, SearchResult } from "./searchResult";
+import { SearchResult } from "./searchResult";
 import { searchTactics } from "./searchTactics";
+import { TaggedError } from "./taggedError";
+
+export enum SearchErrors {
+  NO_RESULTS = "No results found.",
+}
 
 /**
  * `search` accepts a transaction, address or RenVM hash and returns one of
@@ -34,5 +39,5 @@ export const search = async (
     }
   }
 
-  return NoResult;
+  throw new TaggedError(SearchErrors.NO_RESULTS);
 };

@@ -6,7 +6,10 @@ import {
 import { Card, Spinner, Table } from "react-bootstrap";
 import { UIContainer } from "../../../containers/UIContainer";
 import React, { useEffect, useState } from "react";
-import { LockAndMintDeposit } from "@renproject/ren/build/main/lockAndMint";
+import {
+  LockAndMint,
+  LockAndMintDeposit,
+} from "@renproject/ren/build/main/lockAndMint";
 import { useRouteMatch } from "react-router-dom";
 import { FromTransactionRow } from "./rows/FromTransactionRow";
 import { RecipientRow } from "./rows/RecipientRow";
@@ -45,6 +48,8 @@ export const TransactionPage = () => {
 
   const [deposit, setDeposit] =
     useState<LockAndMintDeposit | Error | null | undefined>(undefined);
+  const [lockAndMint, setLockAndMint] =
+    useState<LockAndMint | Error | null | undefined>(undefined);
 
   return (
     <TransactionPageContainer>
@@ -79,7 +84,10 @@ export const TransactionPage = () => {
                           <td>Selector</td>
                           <td>{queryTx.result.to}</td>
                         </tr> */}
-                        <GatewayAddressRow deposit={deposit} />
+                        <GatewayAddressRow
+                          lockAndMint={lockAndMint}
+                          queryTx={queryTx}
+                        />
                         <FromTransactionRow queryTx={queryTx} />
                         <ToTransactionRow queryTx={queryTx} deposit={deposit} />
                         <AmountRows queryTx={queryTx} />
@@ -100,9 +108,11 @@ export const TransactionPage = () => {
                         transaction.type ===
                         SearchResultType.LegacyRenVMTransaction
                       }
+                      gateway={false}
                       queryTx={queryTx}
                       deposit={deposit}
                       setDeposit={setDeposit}
+                      setLockAndMint={setLockAndMint}
                     />
                   </>
                 )

@@ -21,7 +21,7 @@ export const TaggedText: React.FC<{ tag: string }> = ({ tag, children }) => {
   return (
     <TaggedTextOuter>
       <TaggedTextTag>{tag}</TaggedTextTag>
-      <span style={{ marginRight: 5 }}> {children}</span>
+      <span style={{ marginLeft: 8 }}> {children}</span>
     </TaggedTextOuter>
   );
 };

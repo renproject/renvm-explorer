@@ -122,7 +122,9 @@ export const getLegacyTransactionDepositInstance = async (
         nonce: searchDetails.in.n,
       };
 
-      const lockAndMint = await new RenJS(network).lockAndMint(params);
+      const lockAndMint = await new RenJS(network).lockAndMint(params, {
+        loadCompletedDeposits: true,
+      });
 
       const tx = await summary.fromChain.transactionFromRPCFormat(
         Buffer.from(searchDetails.in.utxo.txHash, "hex"),
@@ -137,9 +139,12 @@ export const getLegacyTransactionDepositInstance = async (
 
       await deposit.signed();
 
-      return deposit;
+      return {
+        lockAndMint,
+        deposit,
+      };
     }
   }
 
-  return null;
+  return { lockAndMint: null, deposit: null };
 };

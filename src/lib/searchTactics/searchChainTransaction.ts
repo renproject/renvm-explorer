@@ -89,8 +89,6 @@ export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
     updateStatus: (status: string) => void,
     getChain: (chainName: string) => ChainCommon | null
   ): Promise<RenVMTransaction[]> => {
-    updateStatus("Looking up chain transaction...");
-
     const formats = Array.from(
       // Remove duplicates.
       new Set(
@@ -101,8 +99,19 @@ export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
               : null
           )
           .filter((txid) => txid !== null)
+          .map((x) => (x !== null ? x.toString() : null))
       )
-    );
+    ).map((x) => (x !== null ? Buffer.from(x) : null));
+
+    if (formats.length) {
+      updateStatus(
+        `Looking up ${formats.length} chain transaction format${
+          formats.length === 1 ? "" : "s"
+        }...`
+      );
+    } else {
+      return [];
+    }
 
     const provider = new RenVMProvider(NETWORK);
 

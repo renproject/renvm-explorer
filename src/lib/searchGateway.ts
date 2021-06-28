@@ -7,33 +7,32 @@ import {
   RenNetwork,
 } from "@renproject/interfaces";
 import RenJS from "@renproject/ren";
-import { LockAndMintDeposit } from "@renproject/ren/build/main/lockAndMint";
 import { Ox } from "@renproject/utils";
 import BigNumber from "bignumber.js";
-import { RenVMTransaction, TransactionSummary } from "./searchResult";
-import { queryMintOrBurn } from "./searchTactics/searchRenVMHash";
+import { RenVMGateway, TransactionSummary } from "./searchResult";
+import { queryGateway } from "./searchTactics/searchGateway";
 import { RenVMProvider } from "@renproject/rpc/build/main/v2";
 import { NETWORK } from "../environmentVariables";
 import { getMintChainParams } from "./chains/chains";
 
-export const searchTransaction = async (
-  transaction: RenVMTransaction,
+export const searchGateway = async (
+  gateway: RenVMGateway,
   getChain: (chainName: string) => ChainCommon | null
-): Promise<RenVMTransaction | null> => {
+): Promise<RenVMGateway | null> => {
   const provider = new RenVMProvider(NETWORK);
 
-  if (!transaction.queryTx) {
-    transaction.queryTx = await queryMintOrBurn(
+  if (!gateway.queryGateway) {
+    gateway.queryGateway = await queryGateway(
       provider,
-      transaction.txHash,
+      gateway.address,
       getChain
     );
   }
 
-  return transaction;
+  return gateway;
 };
 
-export const getTransactionDepositInstance = async (
+export const getGatewayInstance = async (
   searchDetails: LockAndMintTransaction,
   network: RenNetwork,
   summary: TransactionSummary
@@ -81,22 +80,5 @@ export const getTransactionDepositInstance = async (
     loadCompletedDeposits: true,
   });
 
-  const deposit = await lockAndMint.processDeposit({
-    transaction: await summary.fromChain.transactionFromRPCFormat(
-      inputs.txid,
-      inputs.txindex.toString(),
-      true
-    ),
-    amount: inputs.amount.toFixed(),
-  });
-  (deposit as any).gatewayAddress = lockAndMint.gatewayAddress;
-
-  return {
-    lockAndMint,
-    deposit,
-  };
-};
-
-export const continueMint = async (deposit: LockAndMintDeposit) => {
-  return await deposit.mint();
+  return lockAndMint;
 };

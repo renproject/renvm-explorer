@@ -137,6 +137,7 @@ export const ChainArray = [
   BinanceSmartChain,
   Fantom,
   Polygon,
+  Avalanche,
 ];
 
 export const getMintChainParams = async (
@@ -146,6 +147,10 @@ export const getMintChainParams = async (
 ): Promise<MintChain> => {
   switch (mintChain.name) {
     case Ethereum.chain:
+    case BinanceSmartChain.chain:
+    case Fantom.chain:
+    case Polygon.chain:
+    case Avalanche.chain:
       return getEthereumMintParams(mintChain as EthereumClass, to, payload);
     default:
       throw new Error(

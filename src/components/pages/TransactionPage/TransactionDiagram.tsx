@@ -5,6 +5,7 @@ import {
 } from "@renproject/interfaces";
 import { TransactionSummary } from "../../../lib/searchResult";
 import { ChainIcon } from "../../common/ChainIcon";
+import BigNumber from "bignumber.js";
 
 interface Props {
   queryTx:
@@ -64,7 +65,10 @@ export const TransactionDiagram: React.FC<Props> = ({ queryTx }) => {
           flex: "1",
         }}
       >
-        {queryTx.summary.amountIn?.toFixed()} {queryTx.summary.asset}
+        {queryTx.summary.amountIn && !queryTx.summary.amountIn.isNaN()
+          ? queryTx.summary.amountIn.toFixed()
+          : ""}{" "}
+        {queryTx.summary.asset}
       </div>
       <span style={{ margin: "0px 10px" }}>{" → "}</span>
       <div

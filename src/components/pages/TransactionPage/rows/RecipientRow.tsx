@@ -2,11 +2,10 @@ import React from "react";
 import { ExternalLink } from "../../../common/ExternalLink";
 import {
   BurnAndReleaseTransaction,
-  DepositCommon,
   LockAndMintTransaction,
 } from "@renproject/interfaces";
 import { TransactionSummary } from "../../../../lib/searchResult";
-import { LockAndMintDeposit } from "@renproject/ren";
+import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
 import { TaggedText } from "../../../common/TaggedText";
 import { Table } from "react-bootstrap";
 import { Ox } from "@renproject/utils";
@@ -24,11 +23,7 @@ interface Props {
         isMint: false;
         summary: TransactionSummary;
       };
-  deposit:
-    | LockAndMintDeposit<any, DepositCommon<any>, any, any, any>
-    | Error
-    | undefined
-    | null;
+  deposit: LockAndMint | LockAndMintDeposit | Error | undefined | null;
   legacy: boolean;
 }
 
@@ -77,7 +72,7 @@ export const RecipientRow: React.FC<Props> = ({ queryTx, deposit, legacy }) => {
                     deposit.params.contractCalls.length - 1
                   ].contractParams?.map((param, i) => {
                     return (
-                      <tr>
+                      <tr key={i}>
                         <td>Param {i + 1}</td>
                         <td>{param.name}</td>
                         <td>{param.type}</td>

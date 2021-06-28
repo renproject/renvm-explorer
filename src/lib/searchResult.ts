@@ -3,10 +3,12 @@ import {
   BurnAndReleaseTransaction,
   ChainCommon,
 } from "@renproject/interfaces";
+import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
 import BigNumber from "bignumber.js";
+import { v4 as uuid } from "uuid";
 
 export enum SearchResultType {
-  NoResult,
+  Searching,
 
   /**
    * Redirect represents a generic search result that points to a new url. This
@@ -31,36 +33,35 @@ export enum SearchResultType {
 }
 
 export interface SearchResultCommon {
+  uuid: string;
+
   type: SearchResultType;
   resultPath: string;
 }
 
-// NoResult ////////////////////////////////////////////////////////////////////
+// Searching ////////////////////////////////////////////////////////////////////
 
-export interface NoResult extends SearchResultCommon {
-  type: SearchResultType.NoResult;
+export interface Searching extends SearchResultCommon {
+  type: SearchResultType.Searching;
   resultPath: string;
+  searchString: string;
+
+  noResult?: boolean;
+  errorSearching?: Error;
+  multipleResults?: SearchResult[];
 }
 
 /* eslint-disable @typescript-eslint/no-redeclare */
-export const NoResult: NoResult = {
-  type: SearchResultType.NoResult,
-  resultPath: "/404",
-};
-
-// Redirect ////////////////////////////////////////////////////////////////////
-
-export interface Redirect extends SearchResultCommon {
-  type: SearchResultType.Redirect;
-  resultPath: string;
-}
-
-export const Redirect = (resultPath: string): Redirect => {
-  return {
-    type: SearchResultType.Redirect,
-    resultPath,
-  };
-};
+export const Searching = (
+  searchString: string,
+  details?: Partial<Searching>
+): Searching => ({
+  uuid: uuid(),
+  type: SearchResultType.Searching,
+  searchString,
+  resultPath: `/search/${encodeURIComponent(searchString)}`,
+  ...details,
+});
 
 // RenVMTransaction ////////////////////////////////////////////////////////////
 
@@ -78,7 +79,7 @@ export interface TransactionSummary {
   toChain?: ChainCommon;
 
   amountIn?: BigNumber;
-  amountInRaw: BigNumber;
+  amountInRaw?: BigNumber;
 
   amountOut?: BigNumber;
   amountOutRaw?: BigNumber;
@@ -100,6 +101,7 @@ export interface RenVMTransaction extends SearchResultCommon {
         summary: TransactionSummary;
       }
     | Error;
+  deposit?: LockAndMintDeposit;
 }
 
 export const RenVMTransaction = (
@@ -115,13 +117,16 @@ export const RenVMTransaction = (
         isMint: false;
         summary: TransactionSummary;
       }
-    | Error
+    | Error,
+  deposit?: LockAndMintDeposit
 ): RenVMTransaction => {
   return {
+    uuid: uuid(),
     type: SearchResultType.RenVMTransaction,
     resultPath: `/tx/${encodeURIComponent(transactionHash)}`,
     txHash: transactionHash,
     queryTx,
+    deposit,
   };
 };
 
@@ -143,6 +148,7 @@ export interface LegacyRenVMTransaction extends SearchResultCommon {
         summary: TransactionSummary;
       }
     | Error;
+  deposit?: LockAndMintDeposit;
 }
 
 export const LegacyRenVMTransaction = (
@@ -158,13 +164,16 @@ export const LegacyRenVMTransaction = (
         isMint: false;
         summary: TransactionSummary;
       }
-    | Error
+    | Error,
+  deposit?: LockAndMintDeposit
 ): LegacyRenVMTransaction => {
   return {
+    uuid: uuid(),
     type: SearchResultType.LegacyRenVMTransaction,
     resultPath: `/legacy-tx/${encodeURIComponent(transactionHash)}`,
     txHash: transactionHash,
     queryTx,
+    deposit,
   };
 };
 
@@ -174,26 +183,37 @@ export interface RenVMGateway extends SearchResultCommon {
   type: SearchResultType.RenVMGateway;
   resultPath: string;
   address: string;
-  queryGateway?: LockAndMintTransaction;
+  queryGateway?: {
+    result: LockAndMintTransaction;
+    isMint: true;
+    summary: TransactionSummary;
+  };
+  lockAndMint?: LockAndMint;
 }
 
 export const RenVMGateway = (
   address: string,
-  queryGateway?: LockAndMintTransaction
+  queryGateway?: {
+    result: LockAndMintTransaction;
+    isMint: true;
+    summary: TransactionSummary;
+  },
+  lockAndMint?: LockAndMint
 ): RenVMGateway => {
   return {
+    uuid: uuid(),
     type: SearchResultType.RenVMGateway,
-    resultPath: `/address/${encodeURIComponent(address)}`,
+    resultPath: `/gateway/${encodeURIComponent(address)}`,
     address,
     queryGateway,
+    lockAndMint,
   };
 };
 
 ////////////////////////////////////////////////////////////////////////////////
 
 export type SearchResult =
-  | NoResult
-  | Redirect
+  | Searching
   | RenVMTransaction
   | LegacyRenVMTransaction
   | RenVMGateway;

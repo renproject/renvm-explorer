@@ -35,7 +35,7 @@ export const FromTransactionRow: React.FC<Props> = ({ queryTx }) => {
     reversed = false;
   }
 
-  return isDefined(txid) && isDefined(txindex) ? (
+  return isDefined(txid) && isDefined(txindex) && txid.length > 0 ? (
     <tr>
       <td>
         {queryTx.summary.fromChain

@@ -1,6 +1,9 @@
 import { Spinner, Button } from "react-bootstrap";
 import React, { useCallback, useState } from "react";
-import { LockAndMintDeposit } from "@renproject/ren/build/main/lockAndMint";
+import {
+  LockAndMint,
+  LockAndMintDeposit,
+} from "@renproject/ren/build/main/lockAndMint";
 import { NETWORK } from "../../../environmentVariables";
 import { getTransactionDepositInstance } from "../../../lib/searchTransaction";
 import { getLegacyTransactionDepositInstance } from "../../../lib/searchLegacyTransaction";
@@ -9,9 +12,11 @@ import {
   LockAndMintTransaction,
 } from "@renproject/interfaces";
 import { TransactionSummary } from "../../../lib/searchResult";
+import { getGatewayInstance } from "../../../lib/searchGateway";
 
 interface Props {
   legacy: boolean;
+  gateway: boolean;
   queryTx:
     | {
         result: LockAndMintTransaction;
@@ -24,40 +29,61 @@ interface Props {
         summary: TransactionSummary;
       };
 
-  deposit: LockAndMintDeposit | Error | null | undefined;
-  setDeposit(deposit: LockAndMintDeposit | Error | null | undefined): void;
+  deposit: LockAndMint | LockAndMintDeposit | Error | null | undefined;
+  setDeposit?(deposit: LockAndMintDeposit | Error | null | undefined): void;
+  setLockAndMint?(deposit: LockAndMint | Error | null | undefined): void;
 }
 
 export const LoadAdditionalDetails: React.FC<Props> = ({
   legacy,
+  gateway,
   queryTx,
   deposit,
   setDeposit,
+  setLockAndMint,
 }) => {
   const [fetchingDeposit, setFetchingDeposit] = useState(false);
 
   const fetchDepositInstance = useCallback(async () => {
-    setDeposit(undefined);
     setFetchingDeposit(true);
     if (queryTx && !(queryTx instanceof Error) && queryTx.isMint) {
-      try {
-        if (legacy) {
-          const deposit = await getLegacyTransactionDepositInstance(
+      if (gateway && setLockAndMint && !setDeposit) {
+        setLockAndMint(undefined);
+        try {
+          const deposit = await getGatewayInstance(
             queryTx.result,
             NETWORK,
             queryTx.summary
           );
-          setDeposit(deposit);
-        } else {
-          const deposit = await getTransactionDepositInstance(
-            queryTx.result,
-            NETWORK,
-            queryTx.summary
-          );
-          setDeposit(deposit);
+          setLockAndMint(deposit);
+        } catch (error) {
+          setLockAndMint(error instanceof Error ? error : new Error(error));
         }
-      } catch (error) {
-        setDeposit(error instanceof Error ? error : new Error(error));
+      } else if (setDeposit && setLockAndMint) {
+        setDeposit(undefined);
+        try {
+          if (legacy) {
+            const { deposit, lockAndMint } =
+              await getLegacyTransactionDepositInstance(
+                queryTx.result,
+                NETWORK,
+                queryTx.summary
+              );
+            setDeposit(deposit);
+            setLockAndMint(lockAndMint);
+          } else {
+            const { deposit, lockAndMint } =
+              await getTransactionDepositInstance(
+                queryTx.result,
+                NETWORK,
+                queryTx.summary
+              );
+            setDeposit(deposit);
+            setLockAndMint(lockAndMint);
+          }
+        } catch (error) {
+          setDeposit(error instanceof Error ? error : new Error(error));
+        }
       }
     }
     setFetchingDeposit(false);

@@ -1,27 +1,78 @@
-import React from "react";
-import { DepositCommon } from "@renproject/interfaces";
-import { LockAndMintDeposit } from "@renproject/ren";
+import React, { useCallback } from "react";
+import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
 
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import { RenVMGateway } from "../../../../lib/searchResult";
+import { UIContainer } from "../../../../containers/UIContainer";
+import {
+  BurnAndReleaseTransaction,
+  LockAndMintTransaction,
+} from "@renproject/interfaces";
+import { TransactionSummary } from "../../../../lib/searchResult";
 
 interface Props {
-  deposit:
-    | LockAndMintDeposit<any, DepositCommon<any>, any, any, any>
-    | Error
-    | undefined
-    | null;
+  queryTx:
+    | {
+        result: LockAndMintTransaction;
+        isMint: true;
+        summary: TransactionSummary;
+      }
+    | {
+        result: BurnAndReleaseTransaction;
+        isMint: false;
+        summary: TransactionSummary;
+      };
+  lockAndMint: LockAndMint | Error | undefined | null;
 }
 
-export const GatewayAddressRow: React.FC<Props> = ({ deposit }) => {
-  return deposit && (deposit as any).gatewayAddress ? (
+export const GatewayAddressRow: React.FC<Props> = ({
+  queryTx,
+  lockAndMint,
+}) => {
+  const { setSearchResult } = UIContainer.useContainer();
+  const history = useHistory();
+
+  const onClick: React.MouseEventHandler<HTMLAnchorElement> = useCallback(
+    (e) => {
+      e.preventDefault();
+
+      if (!lockAndMint || lockAndMint instanceof Error) {
+        return;
+      }
+
+      const gatewayAddress = lockAndMint.gatewayAddress;
+      if (!gatewayAddress) {
+        return;
+      }
+
+      const result = RenVMGateway(
+        gatewayAddress,
+        {
+          ...queryTx,
+          summary: {
+            ...queryTx.summary,
+            amountIn: undefined,
+            amountInRaw: undefined,
+          },
+        } as any,
+        lockAndMint
+      );
+      setSearchResult(result);
+      history.push(result.resultPath);
+    },
+    [history, setSearchResult, lockAndMint]
+  );
+
+  return lockAndMint && !(lockAndMint instanceof Error) ? (
     <tr>
       <td>Gateway address</td>
       <td>
         <Link
-          to={`/gateway/${(deposit as any).gatewayAddress}`}
+          onClick={onClick}
+          to={`/gateway/${lockAndMint.gatewayAddress}`}
           style={{ textDecoration: "underline" }}
         >
-          {(deposit as any).gatewayAddress}
+          {lockAndMint.gatewayAddress}
         </Link>
         {/* <i>{" "}- click to search for additional deposits</i> */}
       </td>

@@ -1,7 +1,7 @@
 import { ReactComponent as AvalancheIcon } from "./avalanche.svg";
 import { ReactComponent as BinanceSmartChainIcon } from "./binancesmartchain.svg";
 import { ReactComponent as BitcoinIcon } from "./bitcoin.svg";
-import { ReactComponent as BitcoinCashIcon } from "./bitcoin-cash.svg";
+import { ReactComponent as BitcoinCashIcon } from "./bitcoincash.svg";
 import { ReactComponent as DigiByteIcon } from "./digibyte.svg";
 import { ReactComponent as DogecoinIcon } from "./dogecoin.svg";
 import { ReactComponent as EthereumIcon } from "./ethereum.svg";

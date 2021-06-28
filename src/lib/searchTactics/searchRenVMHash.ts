@@ -56,12 +56,19 @@ export const summarizeTransaction = async (
   const fromChain = getChain(from);
   const toChain = getChain(to);
 
-  let amountInRaw: BigNumber = new BigNumber((searchDetails.in as any).amount);
+  let amountInRaw: BigNumber | undefined;
   let amountIn: BigNumber | undefined;
   let amountOutRaw: BigNumber | undefined;
   let amountOut: BigNumber | undefined;
 
-  if (fromChain) {
+  if (
+    (searchDetails.in as any).amount &&
+    !(searchDetails.in as any).amount.isNaN()
+  ) {
+    amountInRaw = new BigNumber((searchDetails.in as any).amount);
+  }
+
+  if (amountInRaw && fromChain) {
     amountIn = toReadable(amountInRaw, await fromChain.assetDecimals(asset));
     if (
       searchDetails.out &&
