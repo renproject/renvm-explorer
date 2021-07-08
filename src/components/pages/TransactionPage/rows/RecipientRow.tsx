@@ -1,6 +1,9 @@
 import React from "react";
 import { ExternalLink } from "../../../common/ExternalLink";
-import { SummarizedTransaction, TransactionType } from "../../../../lib/searchResult";
+import {
+  SummarizedTransaction,
+  TransactionType,
+} from "../../../../lib/searchResult";
 import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
 import { TaggedText } from "../../../common/TaggedText";
 import { Table } from "react-bootstrap";

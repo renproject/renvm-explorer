@@ -7,7 +7,10 @@ import {
 import { NETWORK } from "../../../environmentVariables";
 import { getTransactionDepositInstance } from "../../../lib/searchTransaction";
 import { getLegacyTransactionDepositInstance } from "../../../lib/searchLegacyTransaction";
-import { SummarizedTransaction, TransactionType } from "../../../lib/searchResult";
+import {
+  SummarizedTransaction,
+  TransactionType,
+} from "../../../lib/searchResult";
 import { getGatewayInstance } from "../../../lib/searchGateway";
 
 interface Props {
@@ -32,7 +35,11 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
 
   const fetchDepositInstance = useCallback(async () => {
     setFetchingDeposit(true);
-    if (queryTx && !(queryTx instanceof Error) && queryTx.transactionType === TransactionType.Mint) {
+    if (
+      queryTx &&
+      !(queryTx instanceof Error) &&
+      queryTx.transactionType === TransactionType.Mint
+    ) {
       if (gateway && setLockAndMint && !setDeposit) {
         setLockAndMint(undefined);
         try {

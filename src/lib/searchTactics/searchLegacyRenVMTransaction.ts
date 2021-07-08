@@ -78,9 +78,7 @@ export const queryMintOrBurn = async (
   provider: RenVMProvider,
   transactionHash: string,
   getChain: (chainName: string) => ChainCommon | null
-): Promise<
-  SummarizedTransaction
-> => {
+): Promise<SummarizedTransaction> => {
   let response: ResponseQueryTx;
   try {
     response = await provider.queryTx(transactionHash, 1);

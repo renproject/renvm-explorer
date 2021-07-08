@@ -6,9 +6,7 @@ import {
 import { Card, Spinner, Table } from "react-bootstrap";
 import { UIContainer } from "../../../containers/UIContainer";
 import React, { useEffect, useState } from "react";
-import {
-  LockAndMint,
-} from "@renproject/ren/build/main/lockAndMint";
+import { LockAndMint } from "@renproject/ren/build/main/lockAndMint";
 import { useRouteMatch } from "react-router-dom";
 import { RecipientRow } from "../TransactionPage/rows/RecipientRow";
 import { TransactionDiagram } from "../TransactionPage/TransactionDiagram";
@@ -31,8 +29,9 @@ export const GatewayPage = () => {
   const queryGateway =
     gateway && !(gateway instanceof Error) && gateway.queryGateway;
 
-  const [lockAndMint, setLockAndMint] =
-    useState<LockAndMint | Error | null | undefined>(undefined);
+  const [lockAndMint, setLockAndMint] = useState<
+    LockAndMint | Error | null | undefined
+  >(undefined);
 
   const lockAndMintInstance =
     lockAndMint ||

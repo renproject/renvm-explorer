@@ -23,8 +23,9 @@ function useUIContainer() {
 
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
 
-  const [transaction, setTransaction] =
-    useState<RenVMTransaction | LegacyRenVMTransaction | null | Error>(null);
+  const [transaction, setTransaction] = useState<
+    RenVMTransaction | LegacyRenVMTransaction | null | Error
+  >(null);
   const [gateway, setGateway] = useState<RenVMGateway | null | Error>(null);
   const [updatedCount, setUpdatedCount] = useState(0);
 

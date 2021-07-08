@@ -28,11 +28,10 @@ export const TransactionPage = () => {
 
   const {
     params: { hash, legacyHash },
-  } =
-    useRouteMatch<
-      | { hash: string; legacyHash: undefined }
-      | { hash: undefined; legacyHash: string }
-    >();
+  } = useRouteMatch<
+    | { hash: string; legacyHash: undefined }
+    | { hash: undefined; legacyHash: string }
+  >();
 
   useEffect(() => {
     if (hash) {
@@ -46,10 +45,12 @@ export const TransactionPage = () => {
   const queryTx =
     transaction && !(transaction instanceof Error) && transaction.queryTx;
 
-  const [deposit, setDeposit] =
-    useState<LockAndMintDeposit | Error | null | undefined>(undefined);
-  const [lockAndMint, setLockAndMint] =
-    useState<LockAndMint | Error | null | undefined>(undefined);
+  const [deposit, setDeposit] = useState<
+    LockAndMintDeposit | Error | null | undefined
+  >(undefined);
+  const [lockAndMint, setLockAndMint] = useState<
+    LockAndMint | Error | null | undefined
+  >(undefined);
 
   return (
     <TransactionPageContainer>

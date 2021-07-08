@@ -1,8 +1,5 @@
 import { SearchTactic } from "./searchTactic";
-import {
-  ChainCommon,
-  TxStatus,
-} from "@renproject/interfaces";
+import { ChainCommon, TxStatus } from "@renproject/interfaces";
 import {
   RenVMProvider,
   unmarshalMintTx,
@@ -11,7 +8,11 @@ import {
   RPCMethod,
 } from "@renproject/rpc/build/main/v2";
 import { NETWORK } from "../../environmentVariables";
-import { RenVMTransaction, SummarizedTransaction, TransactionType } from "../searchResult";
+import {
+  RenVMTransaction,
+  SummarizedTransaction,
+  TransactionType,
+} from "../searchResult";
 import { doesntError, toURLBase64 } from "@renproject/utils";
 import { summarizeTransaction } from "./searchRenVMHash";
 import { ChainArray } from "../chains/chains";
@@ -20,11 +21,7 @@ export const queryTxsByTxid = async (
   provider: RenVMProvider,
   txid: Buffer,
   getChain: (chainName: string) => ChainCommon | null
-): Promise<
-  Array<
-    SummarizedTransaction
-  >
-> => {
+): Promise<Array<SummarizedTransaction>> => {
   const response: { txs: Array<RenVMResponses[RPCMethod.QueryTx]["tx"]> } =
     await provider.sendMessage(
       "ren_queryTxsByTxid" as any,
