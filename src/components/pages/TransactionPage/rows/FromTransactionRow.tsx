@@ -1,6 +1,9 @@
 import React from "react";
 import { ExternalLink } from "../../../common/ExternalLink";
-import { SummarizedTransaction, TransactionType } from "../../../../lib/searchResult";
+import {
+  SummarizedTransaction,
+  TransactionType,
+} from "../../../../lib/searchResult";
 import { isDefined } from "@renproject/utils";
 
 interface Props {

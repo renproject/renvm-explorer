@@ -4,14 +4,14 @@ import {
   DepositStatus,
   LockAndMintDeposit,
 } from "@renproject/ren/build/main/lockAndMint";
-import {
-  DepositCommon,
-  TxStatus,
-} from "@renproject/interfaces";
+import { DepositCommon, TxStatus } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { ConnectWallet } from "../../../Multiwallet";
 import { NETWORK } from "../../../../environmentVariables";
-import { SummarizedTransaction, TransactionType } from "../../../../lib/searchResult";
+import {
+  SummarizedTransaction,
+  TransactionType,
+} from "../../../../lib/searchResult";
 
 interface Props {
   queryTx: SummarizedTransaction;
@@ -26,8 +26,9 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
   const { enabledChains } = useMultiwallet();
 
   // Multiwallet modal
-  const [multiwalletChain, setMultiwalletChain] =
-    React.useState<string | null>(null);
+  const [multiwalletChain, setMultiwalletChain] = React.useState<string | null>(
+    null
+  );
   const closeMultiwallet = () => {
     setMultiwalletChain(null);
   };
@@ -71,55 +72,76 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
       <tr>
         <td>Status</td>
         <td>
-          <div className="connect-wallets">
-            <ConnectWallet
-              chain={multiwalletChain}
-              close={closeMultiwallet}
-              network={NETWORK}
-            />
-          </div>
-
-          {deposit && !(deposit instanceof Error) ? (
+          {queryTx.result.txStatus === TxStatus.TxStatusDone &&
+          queryTx.result.out.revert &&
+          queryTx.result.out.revert.length > 0 ? (
             <>
-              <RenderDepositStatus status={deposit.status} />
-
-              {deposit &&
-              !(deposit instanceof Error) &&
-              deposit.status === DepositStatus.Signed ? (
-                mintChainProvider ? (
-                  <Button
-                    variant="outline-success"
-                    disabled={submitting}
-                    onClick={submit}
-                    style={{ marginLeft: 5 }}
-                  >
-                    {submitting ? <>Submitting...</> : <>Submit</>}
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outline-success"
-                    onClick={connectMintChain}
-                    style={{ marginLeft: 5 }}
-                  >
-                    Connect wallet
-                  </Button>
-                )
-              ) : null}
+              <RenderRenVMStatus
+                transactionType={queryTx.transactionType}
+                status={TxStatus.TxStatusReverted}
+                revertReason={queryTx.result.out.revert}
+              />
             </>
           ) : (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <div style={{ opacity: queryTx.transactionType === TransactionType.Mint ? 0.3 : 1 }}>
-                <RenderRenVMStatus
-                  transactionType={queryTx.transactionType}
-                  status={queryTx.result.txStatus}
+            <>
+              <div className="connect-wallets">
+                <ConnectWallet
+                  chain={multiwalletChain}
+                  close={closeMultiwallet}
+                  network={NETWORK}
                 />
               </div>
-            </div>
+
+              {deposit && !(deposit instanceof Error) ? (
+                <>
+                  <RenderDepositStatus status={deposit.status} />
+
+                  {deposit &&
+                  !(deposit instanceof Error) &&
+                  deposit.status === DepositStatus.Signed ? (
+                    mintChainProvider ? (
+                      <Button
+                        variant="outline-success"
+                        disabled={submitting}
+                        onClick={submit}
+                        style={{ marginLeft: 5 }}
+                      >
+                        {submitting ? <>Submitting...</> : <>Submit</>}
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outline-success"
+                        onClick={connectMintChain}
+                        style={{ marginLeft: 5 }}
+                      >
+                        Connect wallet
+                      </Button>
+                    )
+                  ) : null}
+                </>
+              ) : (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                  }}
+                >
+                  <div
+                    style={{
+                      opacity:
+                        queryTx.transactionType === TransactionType.Mint
+                          ? 0.3
+                          : 1,
+                    }}
+                  >
+                    <RenderRenVMStatus
+                      transactionType={queryTx.transactionType}
+                      status={queryTx.result.txStatus}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </td>
       </tr>
@@ -127,10 +149,11 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
   );
 };
 
-const RenderRenVMStatus: React.FC<{ status: TxStatus; transactionType: TransactionType }> = ({
-  status,
-  transactionType,
-}) => {
+const RenderRenVMStatus: React.FC<{
+  status: TxStatus;
+  transactionType: TransactionType;
+  revertReason?: string;
+}> = ({ status, transactionType, revertReason }) => {
   switch (status) {
     case TxStatus.TxStatusNil:
       return <>No status</>;
@@ -141,12 +164,16 @@ const RenderRenVMStatus: React.FC<{ status: TxStatus; transactionType: Transacti
     case TxStatus.TxStatusExecuting:
       return <>Executing</>;
     case TxStatus.TxStatusReverted:
-      return <>Reverted</>;
+      return (
+        <span style={{ color: "#E05C52" }}>
+          Reverted{revertReason ? ` - ${revertReason}` : null}
+        </span>
+      );
     case TxStatus.TxStatusDone:
       return transactionType === TransactionType.Mint ? (
         <>Signed</>
       ) : (
-        <span style={{ color: "green" }}>Complete</span>
+        <span style={{ color: "#7BB662" }}>Complete</span>
       );
   }
 };

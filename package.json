@@ -1,8 +1,8 @@
 {
-  "name": "new-dev-tools",
+  "name": "dev-tools",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://renproject.github.io/dev-tools/",
+  "homepage": "https://renproject.github.io/dev-tools-testnet/",
   "dependencies": {
     "@material-ui/core": "^4.11.4",
     "@material-ui/icons": "^4.11.2",
@@ -50,8 +50,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "echo 'Make sure you've set the homepage in package.json.\n\n\n\n'; yarn build && gh-pages -d build --repo git@github.com:renproject/dev-tools.git",
-    "deploy:testnet": "echo 'Make sure you've set the homepage in package.json.\n\n\n\n'; yarn build && gh-pages -d build --repo git@github.com:renproject/dev-tools-mainnet.git"
+    "deploy": "sed -i 's/https:\\/\\/renproject.github.io\\/dev-tools-testnet\\//https:\\/\\/renproject.github.io\\/dev-tools\\//' package.json; REACT_APP_NETWORK=\"mainnet\" yarn build && gh-pages -d build --repo git@github.com:renproject/dev-tools.git",
+    "deploy:testnet": "sed -i 's/https:\\/\\/renproject.github.io\\/dev-tools\\//https:\\/\\/renproject.github.io\\/dev-tools-testnet\\//' package.json; REACT_APP_NETWORK=\"testnet\" yarn build && gh-pages -d build --repo git@github.com:renproject/dev-tools-testnet.git"
   },
   "eslintConfig": {
     "extends": [

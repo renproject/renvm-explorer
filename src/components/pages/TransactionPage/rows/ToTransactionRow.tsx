@@ -2,7 +2,10 @@ import React from "react";
 import { DepositCommon } from "@renproject/interfaces";
 import { LockAndMintDeposit } from "@renproject/ren";
 import { ExternalLink } from "../../../common/ExternalLink";
-import { SummarizedTransaction, TransactionType } from "../../../../lib/searchResult";
+import {
+  SummarizedTransaction,
+  TransactionType,
+} from "../../../../lib/searchResult";
 
 interface Props {
   queryTx: SummarizedTransaction;
@@ -38,7 +41,11 @@ export const ToTransactionRow: React.FC<Props> = ({ queryTx, deposit }) => {
   } else {
     // Burn
 
-    if (queryTx.result.out && (queryTx.result.out as any).txid) {
+    if (
+      queryTx.result.out &&
+      (queryTx.result.out as any).txid &&
+      (queryTx.result.out as any).txid.length > 0
+    ) {
       return (
         <tr>
           <td>
