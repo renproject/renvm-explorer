@@ -1,27 +1,13 @@
 import React, { useCallback } from "react";
-import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
+import { LockAndMint } from "@renproject/ren";
 
 import { Link, useHistory } from "react-router-dom";
 import { RenVMGateway } from "../../../../lib/searchResult";
 import { UIContainer } from "../../../../containers/UIContainer";
-import {
-  BurnAndReleaseTransaction,
-  LockAndMintTransaction,
-} from "@renproject/interfaces";
-import { TransactionSummary } from "../../../../lib/searchResult";
+import { SummarizedTransaction } from "../../../../lib/searchResult";
 
 interface Props {
-  queryTx:
-    | {
-        result: LockAndMintTransaction;
-        isMint: true;
-        summary: TransactionSummary;
-      }
-    | {
-        result: BurnAndReleaseTransaction;
-        isMint: false;
-        summary: TransactionSummary;
-      };
+  queryTx: SummarizedTransaction;
   lockAndMint: LockAndMint | Error | undefined | null;
 }
 
@@ -60,7 +46,7 @@ export const GatewayAddressRow: React.FC<Props> = ({
       setSearchResult(result);
       history.push(result.resultPath);
     },
-    [history, setSearchResult, lockAndMint]
+    [history, setSearchResult, lockAndMint, queryTx]
   );
 
   return lockAndMint && !(lockAndMint instanceof Error) ? (

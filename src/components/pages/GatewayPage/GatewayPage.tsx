@@ -5,16 +5,12 @@ import {
 } from "../TransactionPage/TransactionPageStyles";
 import { Card, Spinner, Table } from "react-bootstrap";
 import { UIContainer } from "../../../containers/UIContainer";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   LockAndMint,
-  LockAndMintDeposit,
 } from "@renproject/ren/build/main/lockAndMint";
 import { useRouteMatch } from "react-router-dom";
-import { FromTransactionRow } from "../TransactionPage/rows/FromTransactionRow";
 import { RecipientRow } from "../TransactionPage/rows/RecipientRow";
-import { GatewayAddressRow } from "../TransactionPage/rows/GatewayAddressRow";
-import { AmountRows } from "../TransactionPage/rows/AmountRows";
 import { TransactionDiagram } from "../TransactionPage/TransactionDiagram";
 import { LoadAdditionalDetails } from "../TransactionPage/LoadAdditionalDetails";
 import { TransactionError } from "../TransactionPage/TransactionError";

@@ -19,25 +19,30 @@ export const networkMapper =
   (map: {
     [RenNetwork.MainnetVDot3]: { networkID: number };
     [RenNetwork.TestnetVDot3]: { networkID: number };
+    [RenNetwork.DevnetVDot3]?: { networkID: number };
   }) =>
   (id: string | number): RenNetwork => {
     return {
       [map[RenNetwork.MainnetVDot3].networkID]: RenNetwork.Mainnet,
       [map[RenNetwork.TestnetVDot3].networkID]: RenNetwork.Testnet,
+      [map[RenNetwork.DevnetVDot3]!.networkID]: RenNetwork.DevnetVDot3,
     }[parseInt(id as string)] as RenNetwork; // tslint:disable-line: radix
   };
 
 export const injectedConnectorFactory = (map: {
   [RenNetwork.MainnetVDot3]: { networkID: number };
   [RenNetwork.TestnetVDot3]: { networkID: number };
-}) => ({
-  name: "Metamask",
-  logo: Icons.Metamask,
-  connector: new EthereumInjectedConnector({
-    debug: true,
-    networkIdMapper: networkMapper(map),
-  }),
-});
+  [RenNetwork.DevnetVDot3]?: { networkID: number };
+}) => {
+  return {
+    name: "Metamask",
+    logo: Icons.Metamask,
+    connector: new EthereumInjectedConnector({
+      debug: true,
+      networkIdMapper: networkMapper(map),
+    }),
+  };
+};
 
 export const multiwalletOptions: WalletPickerConfig<any, any> = {
   chains: {

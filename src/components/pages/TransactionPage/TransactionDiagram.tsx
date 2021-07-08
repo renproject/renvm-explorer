@@ -1,24 +1,9 @@
 import React from "react";
-import {
-  BurnAndReleaseTransaction,
-  LockAndMintTransaction,
-} from "@renproject/interfaces";
-import { TransactionSummary } from "../../../lib/searchResult";
+import { SummarizedTransaction } from "../../../lib/searchResult";
 import { ChainIcon } from "../../common/ChainIcon";
-import BigNumber from "bignumber.js";
 
 interface Props {
-  queryTx:
-    | {
-        result: LockAndMintTransaction;
-        isMint: true;
-        summary: TransactionSummary;
-      }
-    | {
-        result: BurnAndReleaseTransaction;
-        isMint: false;
-        summary: TransactionSummary;
-      };
+  queryTx: SummarizedTransaction;
 }
 
 export const TransactionDiagram: React.FC<Props> = ({ queryTx }) => {

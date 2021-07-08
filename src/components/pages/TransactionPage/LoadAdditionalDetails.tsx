@@ -7,27 +7,13 @@ import {
 import { NETWORK } from "../../../environmentVariables";
 import { getTransactionDepositInstance } from "../../../lib/searchTransaction";
 import { getLegacyTransactionDepositInstance } from "../../../lib/searchLegacyTransaction";
-import {
-  BurnAndReleaseTransaction,
-  LockAndMintTransaction,
-} from "@renproject/interfaces";
-import { TransactionSummary } from "../../../lib/searchResult";
+import { SummarizedTransaction, TransactionType } from "../../../lib/searchResult";
 import { getGatewayInstance } from "../../../lib/searchGateway";
 
 interface Props {
   legacy: boolean;
   gateway: boolean;
-  queryTx:
-    | {
-        result: LockAndMintTransaction;
-        isMint: true;
-        summary: TransactionSummary;
-      }
-    | {
-        result: BurnAndReleaseTransaction;
-        isMint: false;
-        summary: TransactionSummary;
-      };
+  queryTx: SummarizedTransaction;
 
   deposit: LockAndMint | LockAndMintDeposit | Error | null | undefined;
   setDeposit?(deposit: LockAndMintDeposit | Error | null | undefined): void;
@@ -46,7 +32,7 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
 
   const fetchDepositInstance = useCallback(async () => {
     setFetchingDeposit(true);
-    if (queryTx && !(queryTx instanceof Error) && queryTx.isMint) {
+    if (queryTx && !(queryTx instanceof Error) && queryTx.transactionType === TransactionType.Mint) {
       if (gateway && setLockAndMint && !setDeposit) {
         setLockAndMint(undefined);
         try {
@@ -87,7 +73,7 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
       }
     }
     setFetchingDeposit(false);
-  }, [queryTx, setDeposit, legacy]);
+  }, [queryTx, setDeposit, legacy, gateway, setLockAndMint]);
 
   return (
     <>
@@ -109,7 +95,7 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
         <>Unable to fetch additional transaction details</>
       ) : null}
 
-      {queryTx.isMint && !deposit ? (
+      {queryTx.transactionType === TransactionType.Mint && !deposit ? (
         <>
           <Button
             disabled={fetchingDeposit}

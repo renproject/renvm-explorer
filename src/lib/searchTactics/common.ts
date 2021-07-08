@@ -10,7 +10,8 @@ const assert = (input: boolean) => {
 const doesntError = <T extends any[]>(f: (...p: T) => boolean | void) => {
   return (...p: T) => {
     try {
-      return f(...p) === undefined || true ? true : false;
+      const response = f(...p);
+      return response === undefined || response === true ? true : false;
     } catch (error) {
       if (DEBUG) {
         console.error(error);

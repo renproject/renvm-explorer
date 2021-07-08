@@ -29,18 +29,22 @@ export const etherscanAPIMap: {
   [Ethereum.chain]: {
     [RenNetwork.Mainnet]: "https://api.etherscan.io/api",
     [RenNetwork.Testnet]: "https://api-kovan.etherscan.io/api",
+    [RenNetwork.DevnetVDot3]: "https://api-kovan.etherscan.io/api",
   },
   [BinanceSmartChain.chain]: {
     [RenNetwork.Mainnet]: "https://api.bscscan.com/api",
     [RenNetwork.Testnet]: "https://api-testnet.bscscan.com/api",
+    [RenNetwork.DevnetVDot3]: "https://api-testnet.bscscan.com/api",
   },
   [Fantom.chain]: {
     [RenNetwork.Mainnet]: "https://api.ftmscan.com/api",
     [RenNetwork.Testnet]: "https://api-testnet.ftmscan.com/api",
+    [RenNetwork.DevnetVDot3]: "https://api-testnet.ftmscan.com/api",
   },
   [Polygon.chain]: {
     [RenNetwork.Mainnet]: "https://api.polygonscan.com/api",
     [RenNetwork.Testnet]: "https://api-testnet.polygonscan.com/api",
+    [RenNetwork.DevnetVDot3]: "https://api-testnet.polygonscan.com/api",
   },
 };
 

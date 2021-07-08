@@ -1,23 +1,9 @@
 import React from "react";
-import {
-  BurnAndReleaseTransaction,
-  LockAndMintTransaction,
-} from "@renproject/interfaces";
-import { TransactionSummary } from "../../../../lib/searchResult";
+import { SummarizedTransaction } from "../../../../lib/searchResult";
 import { Tooltip } from "../../../common/Tooltip";
 
 interface Props {
-  queryTx:
-    | {
-        result: LockAndMintTransaction;
-        isMint: true;
-        summary: TransactionSummary;
-      }
-    | {
-        result: BurnAndReleaseTransaction;
-        isMint: false;
-        summary: TransactionSummary;
-      };
+  queryTx: SummarizedTransaction;
 }
 
 export const AmountRows: React.FC<Props> = ({ queryTx }) => {

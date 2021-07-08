@@ -1,24 +1,10 @@
 import React from "react";
 import { ExternalLink } from "../../../common/ExternalLink";
-import {
-  BurnAndReleaseTransaction,
-  LockAndMintTransaction,
-} from "@renproject/interfaces";
-import { TransactionSummary } from "../../../../lib/searchResult";
+import { SummarizedTransaction, TransactionType } from "../../../../lib/searchResult";
 import { isDefined } from "@renproject/utils";
 
 interface Props {
-  queryTx:
-    | {
-        result: LockAndMintTransaction;
-        isMint: true;
-        summary: TransactionSummary;
-      }
-    | {
-        result: BurnAndReleaseTransaction;
-        isMint: false;
-        summary: TransactionSummary;
-      };
+  queryTx: SummarizedTransaction;
 }
 
 export const FromTransactionRow: React.FC<Props> = ({ queryTx }) => {
@@ -29,11 +15,21 @@ export const FromTransactionRow: React.FC<Props> = ({ queryTx }) => {
   if ((queryTx.result.in as any).txid) {
     txid = (queryTx.result.in as any).txid;
     txindex = (queryTx.result.in as any).txindex;
-  } else if (queryTx.isMint) {
+  } else if (queryTx.transactionType === TransactionType.Mint) {
     txid = Buffer.from(queryTx.result.in.utxo.txHash, "hex");
     txindex = queryTx.result.in.utxo.vOut.toString();
     reversed = false;
   }
+
+  const txHash =
+    queryTx.summary.fromChain &&
+    txid &&
+    txindex &&
+    queryTx.summary.fromChain.transactionIDFromRPCFormat(
+      Buffer.from(txid),
+      txindex,
+      reversed
+    );
 
   return isDefined(txid) && isDefined(txindex) && txid.length > 0 ? (
     <tr>
@@ -50,25 +46,13 @@ export const FromTransactionRow: React.FC<Props> = ({ queryTx }) => {
               {queryTx.summary.fromChain.utils.transactionExplorerLink ? (
                 <ExternalLink
                   href={queryTx.summary.fromChain.utils.transactionExplorerLink(
-                    queryTx.summary.fromChain.transactionIDFromRPCFormat(
-                      txid,
-                      txindex,
-                      reversed
-                    )
+                    txHash
                   )}
                 >
-                  {queryTx.summary.fromChain.transactionIDFromRPCFormat(
-                    txid,
-                    txindex,
-                    reversed
-                  )}
+                  {txHash}
                 </ExternalLink>
               ) : (
-                queryTx.summary.fromChain.transactionIDFromRPCFormat(
-                  txid,
-                  txindex,
-                  reversed
-                )
+                txHash
               )}
             </>
           ) : (
@@ -76,9 +60,7 @@ export const FromTransactionRow: React.FC<Props> = ({ queryTx }) => {
               {txid.toString("hex")}, {txindex.toString()}
             </span>
           )
-        ) : (
-          <>{queryTx.isMint ? null : null}</>
-        )}
+        ) : null}
       </td>
     </tr>
   ) : null;

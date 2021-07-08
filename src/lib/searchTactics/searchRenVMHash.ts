@@ -15,16 +15,17 @@ import { NETWORK } from "../../environmentVariables";
 import {
   RenVMTransaction,
   RenVMTransactionError,
+  SummarizedTransaction,
   TransactionSummary,
+  TransactionType,
 } from "../searchResult";
 import BigNumber from "bignumber.js";
 import { toReadable } from "@renproject/utils";
 import { errorMatches, TaggedError } from "../taggedError";
+import { unmarshalClaimFeesTx } from "../unmarshalClaimFees";
 
-/**
- * parseV1Selector splits a RenVM contract (e.g. `BTC0Eth2Btc`) into the asset
- * (`BTC`), the origin chain (`Eth`) and the target chain (`Btc`).
- */
+const RenVMChain = "RenVM";
+
 export const parseV2Selector = (selector: string) => {
   const maybeMint = selector.split("/to");
   if (maybeMint.length === 2) {
@@ -44,6 +45,16 @@ export const parseV2Selector = (selector: string) => {
     };
   }
 
+  const maybeClaimFees = /(.*)\/claimFees/.exec(selector);
+  if (maybeClaimFees) {
+    const asset = maybeClaimFees[1];
+    return {
+      asset,
+      from: RenVMChain,
+      to: asset,
+    };
+  }
+
   throw new Error(`Unable to parse v2 selector ${selector}`);
 };
 
@@ -51,10 +62,12 @@ export const summarizeTransaction = async (
   searchDetails: LockAndMintTransaction | BurnAndReleaseTransaction,
   getChain: (chainName: string) => ChainCommon | null
 ): Promise<TransactionSummary> => {
-  const { to, from, asset } = parseV2Selector(searchDetails.to);
+  let { to, from, asset } = parseV2Selector(searchDetails.to);
 
   const fromChain = getChain(from);
+  from = fromChain ? fromChain.name : from;
   const toChain = getChain(to);
+  to = toChain ? toChain.name : to;
 
   let amountInRaw: BigNumber | undefined;
   let amountIn: BigNumber | undefined;
@@ -68,18 +81,23 @@ export const summarizeTransaction = async (
     amountInRaw = new BigNumber((searchDetails.in as any).amount);
   }
 
-  if (amountInRaw && fromChain) {
-    amountIn = toReadable(amountInRaw, await fromChain.assetDecimals(asset));
+  let chain;
+  if (fromChain && fromChain.assetIsNative(asset)) {
+    chain = fromChain;
+  } else {
+    chain = toChain;
+  }
+
+  if (amountInRaw && chain) {
+    amountIn = toReadable(amountInRaw, await chain.assetDecimals(asset));
     if (
       searchDetails.out &&
-      searchDetails.out.revert === undefined &&
+      (searchDetails.out.revert === undefined ||
+        searchDetails.out.revert.length === 0) &&
       (searchDetails.out as any).amount
     ) {
       amountOutRaw = new BigNumber((searchDetails.out as any).amount);
-      amountOut = toReadable(
-        amountOutRaw,
-        await fromChain.assetDecimals(asset)
-      );
+      amountOut = toReadable(amountOutRaw, await chain.assetDecimals(asset));
     }
   }
 
@@ -103,18 +121,7 @@ export const queryMintOrBurn = async (
   provider: RenVMProvider,
   transactionHash: string,
   getChain: (chainName: string) => ChainCommon | null
-): Promise<
-  | {
-      result: LockAndMintTransaction;
-      isMint: true;
-      summary: TransactionSummary;
-    }
-  | {
-      result: BurnAndReleaseTransaction;
-      isMint: false;
-      summary: TransactionSummary;
-    }
-> => {
+): Promise<SummarizedTransaction> => {
   let response: ResponseQueryTx;
   try {
     response = await provider.queryTx(transactionHash, 1);
@@ -126,20 +133,28 @@ export const queryMintOrBurn = async (
   }
 
   const isMint = /((\/to)|(To))/.exec(response.tx.selector);
+  const isClaim = /\/claimFees/.exec(response.tx.selector);
 
   // Unmarshal transaction.
-  if (isMint) {
+  if (isClaim) {
+    const unmarshalled = unmarshalClaimFeesTx(response);
+    return {
+      result: unmarshalled,
+      transactionType: TransactionType.ClaimFees as const,
+      summary: await summarizeTransaction(unmarshalled, getChain),
+    };
+  } else if (isMint) {
     const unmarshalled = unmarshalMintTx(response);
     return {
       result: unmarshalled,
-      isMint: true,
+      transactionType: TransactionType.Mint as const,
       summary: await summarizeTransaction(unmarshalled, getChain),
     };
   } else {
     const unmarshalled = unmarshalBurnTx(response);
     return {
       result: unmarshalled,
-      isMint: false,
+      transactionType: TransactionType.Burn as const,
       summary: await summarizeTransaction(unmarshalled, getChain),
     };
   }

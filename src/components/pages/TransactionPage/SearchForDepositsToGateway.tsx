@@ -12,7 +12,6 @@ import {
   RenVMTransaction,
 } from "../../../lib/searchResult";
 import { UIContainer } from "../../../containers/UIContainer";
-import BigNumber from "bignumber.js";
 
 interface Props {
   lockAndMint?: LockAndMint | Error | null | undefined;
@@ -45,7 +44,7 @@ export const SearchForDepositsToGateway: React.FC<Props> = ({
     setFetchingDeposits(true);
 
     try {
-      await new Promise((_resolve, reject) => {
+      await new Promise((_resolve, _reject) => {
         lockAndMint.on("deposit", onDeposit);
       });
     } catch (error) {
@@ -53,7 +52,7 @@ export const SearchForDepositsToGateway: React.FC<Props> = ({
     }
 
     setFetchingDeposits(false);
-  }, [lockAndMint]);
+  }, [lockAndMint, onDeposit]);
 
   const onClick = useCallback(
     (txHash: string, deposit: LockAndMintDeposit) => {

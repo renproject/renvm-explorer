@@ -80,10 +80,10 @@ export const TransactionPage = () => {
                           <td>RenVM Hash</td>
                           <td>{queryTx.result.hash}</td>
                         </tr>
-                        {/* <tr>
+                        <tr>
                           <td>Selector</td>
                           <td>{queryTx.result.to}</td>
-                        </tr> */}
+                        </tr>
                         <GatewayAddressRow
                           lockAndMint={lockAndMint}
                           queryTx={queryTx}

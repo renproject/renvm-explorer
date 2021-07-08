@@ -13,6 +13,7 @@ import {
   EthereumClass,
   Avalanche,
 } from "@renproject/chains";
+import { TerraNetwork } from "@renproject/chains-terra/build/main/api/deposit";
 import { ChainCommon, MintChain, RenNetwork } from "@renproject/interfaces";
 import {
   getAvalancheProvider,
@@ -90,25 +91,31 @@ export const ChainMapper = (
   switch (chain.toLowerCase()) {
     case "bitcoin":
     case "btc":
-      return Bitcoin();
+      return Bitcoin(network === RenNetwork.Mainnet ? "mainnet" : "testnet");
     case "zcash":
     case "zec":
-      return Zcash();
+      return Zcash(network === RenNetwork.Mainnet ? "mainnet" : "testnet");
     case "bitcoincash":
     case "bch":
-      return BitcoinCash();
+      return BitcoinCash(
+        network === RenNetwork.Mainnet ? "mainnet" : "testnet"
+      );
     case "dogecoin":
     case "doge":
-      return Dogecoin();
+      return Dogecoin(network === RenNetwork.Mainnet ? "mainnet" : "testnet");
     case "filecoin":
     case "fil":
-      return Filecoin();
+      return Filecoin(network === RenNetwork.Mainnet ? "mainnet" : "testnet");
     case "digibyte":
     case "dgb":
-      return DigiByte();
+      return DigiByte(network === RenNetwork.Mainnet ? "mainnet" : "testnet");
     case "terra":
     case "luna":
-      return Terra();
+      return Terra(
+        network === RenNetwork.Mainnet
+          ? TerraNetwork.Columbus
+          : TerraNetwork.Tequila
+      );
     case "ethereum":
     case "eth":
       return Ethereum(getEthereumProvider(network), network);

@@ -1,8 +1,5 @@
-import { isHex } from "./common";
 import { SearchTactic } from "./searchTactic";
 import {
-  LockAndMintTransaction,
-  BurnAndReleaseTransaction,
   ChainCommon,
   TxStatus,
 } from "@renproject/interfaces";
@@ -14,7 +11,7 @@ import {
   RPCMethod,
 } from "@renproject/rpc/build/main/v2";
 import { NETWORK } from "../../environmentVariables";
-import { RenVMTransaction, TransactionSummary } from "../searchResult";
+import { RenVMTransaction, SummarizedTransaction, TransactionType } from "../searchResult";
 import { doesntError, toURLBase64 } from "@renproject/utils";
 import { summarizeTransaction } from "./searchRenVMHash";
 import { ChainArray } from "../chains/chains";
@@ -25,21 +22,12 @@ export const queryTxsByTxid = async (
   getChain: (chainName: string) => ChainCommon | null
 ): Promise<
   Array<
-    | {
-        result: LockAndMintTransaction;
-        isMint: true;
-        summary: TransactionSummary;
-      }
-    | {
-        result: BurnAndReleaseTransaction;
-        isMint: false;
-        summary: TransactionSummary;
-      }
+    SummarizedTransaction
   >
 > => {
   const response: { txs: Array<RenVMResponses[RPCMethod.QueryTx]["tx"]> } =
     await provider.sendMessage(
-      "ren_queryTxByTxid" as any,
+      "ren_queryTxsByTxid" as any,
       { txid: toURLBase64(txid) },
       1
     );
@@ -62,14 +50,14 @@ export const queryTxsByTxid = async (
         const unmarshalled = unmarshalMintTx(response);
         return {
           result: unmarshalled,
-          isMint: true as const,
+          transactionType: TransactionType.Mint as const,
           summary: await summarizeTransaction(unmarshalled, getChain),
         };
       } else {
         const unmarshalled = unmarshalBurnTx(response);
         return {
           result: unmarshalled,
-          isMint: false as const,
+          transactionType: TransactionType.Burn as const,
           summary: await summarizeTransaction(unmarshalled, getChain),
         };
       }
@@ -99,9 +87,9 @@ export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
               : null
           )
           .filter((txid) => txid !== null)
-          .map((x) => (x !== null ? x.toString() : null))
+          .map((x) => (x !== null ? x.toString("hex") : null))
       )
-    ).map((x) => (x !== null ? Buffer.from(x) : null));
+    ).map((x) => (x !== null ? Buffer.from(x, "hex") : null));
 
     if (formats.length) {
       updateStatus(

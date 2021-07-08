@@ -7,7 +7,7 @@ import { multiwalletOptions } from "../lib/chains/multiwalletConfig";
 interface Props {
   chain: string | null;
   close: () => void;
-  network: RenNetwork.Testnet | RenNetwork.Mainnet;
+  network: RenNetwork;
 }
 
 export const ConnectWallet: React.FC<Props> = ({ chain, close, network }) => {

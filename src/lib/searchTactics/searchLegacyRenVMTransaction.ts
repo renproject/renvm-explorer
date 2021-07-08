@@ -17,7 +17,9 @@ import { NETWORK } from "../../environmentVariables";
 import {
   LegacyRenVMTransaction,
   RenVMTransactionError,
+  SummarizedTransaction,
   TransactionSummary,
+  TransactionType,
 } from "../searchResult";
 import BigNumber from "bignumber.js";
 import { parseV1Selector, toReadable } from "@renproject/utils";
@@ -77,16 +79,7 @@ export const queryMintOrBurn = async (
   transactionHash: string,
   getChain: (chainName: string) => ChainCommon | null
 ): Promise<
-  | {
-      result: LockAndMintTransaction;
-      isMint: true;
-      summary: TransactionSummary;
-    }
-  | {
-      result: BurnAndReleaseTransaction;
-      isMint: false;
-      summary: TransactionSummary;
-    }
+  SummarizedTransaction
 > => {
   let response: ResponseQueryTx;
   try {
@@ -106,14 +99,14 @@ export const queryMintOrBurn = async (
     const unmarshalled = unmarshalMintTx(response as ResponseQueryMintTx);
     return {
       result: unmarshalled,
-      isMint: true,
+      transactionType: TransactionType.Mint as const,
       summary: await summarizeTransaction(unmarshalled, getChain),
     };
   } else {
     const unmarshalled = unmarshalBurnTx(response as ResponseQueryBurnTx);
     return {
       result: unmarshalled,
-      isMint: false,
+      transactionType: TransactionType.Burn as const,
       summary: await summarizeTransaction(unmarshalled, getChain),
     };
   }

@@ -5,30 +5,16 @@ import {
   LockAndMintDeposit,
 } from "@renproject/ren/build/main/lockAndMint";
 import {
-  BurnAndReleaseTransaction,
   DepositCommon,
-  getRenNetworkDetails,
-  LockAndMintTransaction,
-  RenNetwork,
   TxStatus,
 } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
 import { ConnectWallet } from "../../../Multiwallet";
 import { NETWORK } from "../../../../environmentVariables";
-import { TransactionSummary } from "../../../../lib/searchResult";
+import { SummarizedTransaction, TransactionType } from "../../../../lib/searchResult";
 
 interface Props {
-  queryTx:
-    | {
-        result: LockAndMintTransaction;
-        isMint: true;
-        summary: TransactionSummary;
-      }
-    | {
-        result: BurnAndReleaseTransaction;
-        isMint: false;
-        summary: TransactionSummary;
-      };
+  queryTx: SummarizedTransaction;
   deposit:
     | LockAndMintDeposit<any, DepositCommon<any>, any, any, any>
     | Error
@@ -89,11 +75,7 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
             <ConnectWallet
               chain={multiwalletChain}
               close={closeMultiwallet}
-              network={
-                getRenNetworkDetails(NETWORK).isTestnet
-                  ? RenNetwork.Testnet
-                  : RenNetwork.Mainnet
-              }
+              network={NETWORK}
             />
           </div>
 
@@ -131,9 +113,9 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
                 alignItems: "center",
               }}
             >
-              <div style={{ opacity: queryTx.isMint ? 0.3 : 1 }}>
+              <div style={{ opacity: queryTx.transactionType === TransactionType.Mint ? 0.3 : 1 }}>
                 <RenderRenVMStatus
-                  isMint={queryTx.isMint}
+                  transactionType={queryTx.transactionType}
                   status={queryTx.result.txStatus}
                 />
               </div>
@@ -145,9 +127,9 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
   );
 };
 
-const RenderRenVMStatus: React.FC<{ status: TxStatus; isMint: boolean }> = ({
+const RenderRenVMStatus: React.FC<{ status: TxStatus; transactionType: TransactionType }> = ({
   status,
-  isMint,
+  transactionType,
 }) => {
   switch (status) {
     case TxStatus.TxStatusNil:
@@ -161,7 +143,7 @@ const RenderRenVMStatus: React.FC<{ status: TxStatus; isMint: boolean }> = ({
     case TxStatus.TxStatusReverted:
       return <>Reverted</>;
     case TxStatus.TxStatusDone:
-      return isMint ? (
+      return transactionType === TransactionType.Mint ? (
         <>Signed</>
       ) : (
         <span style={{ color: "green" }}>Complete</span>

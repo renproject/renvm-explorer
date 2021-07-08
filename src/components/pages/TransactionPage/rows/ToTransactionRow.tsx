@@ -2,24 +2,10 @@ import React from "react";
 import { DepositCommon } from "@renproject/interfaces";
 import { LockAndMintDeposit } from "@renproject/ren";
 import { ExternalLink } from "../../../common/ExternalLink";
-import {
-  BurnAndReleaseTransaction,
-  LockAndMintTransaction,
-} from "@renproject/interfaces";
-import { TransactionSummary } from "../../../../lib/searchResult";
+import { SummarizedTransaction, TransactionType } from "../../../../lib/searchResult";
 
 interface Props {
-  queryTx:
-    | {
-        result: LockAndMintTransaction;
-        isMint: true;
-        summary: TransactionSummary;
-      }
-    | {
-        result: BurnAndReleaseTransaction;
-        isMint: false;
-        summary: TransactionSummary;
-      };
+  queryTx: SummarizedTransaction;
   deposit:
     | LockAndMintDeposit<any, DepositCommon<any>, any, any, any>
     | Error
@@ -28,7 +14,7 @@ interface Props {
 }
 
 export const ToTransactionRow: React.FC<Props> = ({ queryTx, deposit }) => {
-  if (queryTx.isMint) {
+  if (queryTx.transactionType === TransactionType.Mint) {
     // Mint
 
     return deposit && !(deposit instanceof Error) && deposit.mintTransaction ? (

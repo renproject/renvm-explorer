@@ -1,10 +1,6 @@
 import React from "react";
 import { ExternalLink } from "../../../common/ExternalLink";
-import {
-  BurnAndReleaseTransaction,
-  LockAndMintTransaction,
-} from "@renproject/interfaces";
-import { TransactionSummary } from "../../../../lib/searchResult";
+import { SummarizedTransaction, TransactionType } from "../../../../lib/searchResult";
 import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
 import { TaggedText } from "../../../common/TaggedText";
 import { Table } from "react-bootstrap";
@@ -12,17 +8,7 @@ import { Ox } from "@renproject/utils";
 import { MaybeLink } from "../../../common/MaybeLink";
 
 interface Props {
-  queryTx:
-    | {
-        result: LockAndMintTransaction;
-        isMint: true;
-        summary: TransactionSummary;
-      }
-    | {
-        result: BurnAndReleaseTransaction;
-        isMint: false;
-        summary: TransactionSummary;
-      };
+  queryTx: SummarizedTransaction;
   deposit: LockAndMint | LockAndMintDeposit | Error | undefined | null;
   legacy: boolean;
 }
@@ -33,7 +19,7 @@ export const RecipientRow: React.FC<Props> = ({ queryTx, deposit, legacy }) => {
       ? deposit.params.to
       : queryTx.summary.toChain;
 
-  return queryTx.isMint ? (
+  return queryTx.transactionType === TransactionType.Mint ? (
     <>
       <tr>
         <td>Recipient</td>
