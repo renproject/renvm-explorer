@@ -1,22 +1,22 @@
 {
   "files": {
     "main.css": "/dev-tools/static/css/main.4c9ac36b.chunk.css",
-    "main.js": "/dev-tools/static/js/main.435e11cf.chunk.js",
-    "main.js.map": "/dev-tools/static/js/main.435e11cf.chunk.js.map",
-    "runtime-main.js": "/dev-tools/static/js/runtime-main.f0dd7d5b.js",
-    "runtime-main.js.map": "/dev-tools/static/js/runtime-main.f0dd7d5b.js.map",
-    "static/js/2.1002d467.chunk.js": "/dev-tools/static/js/2.1002d467.chunk.js",
-    "static/js/2.1002d467.chunk.js.map": "/dev-tools/static/js/2.1002d467.chunk.js.map",
-    "static/js/3.67f0ea27.chunk.js": "/dev-tools/static/js/3.67f0ea27.chunk.js",
-    "static/js/3.67f0ea27.chunk.js.map": "/dev-tools/static/js/3.67f0ea27.chunk.js.map",
-    "static/js/4.bf27645c.chunk.js": "/dev-tools/static/js/4.bf27645c.chunk.js",
-    "static/js/4.bf27645c.chunk.js.map": "/dev-tools/static/js/4.bf27645c.chunk.js.map",
-    "static/js/5.bf753448.chunk.js": "/dev-tools/static/js/5.bf753448.chunk.js",
-    "static/js/5.bf753448.chunk.js.map": "/dev-tools/static/js/5.bf753448.chunk.js.map",
+    "main.js": "/dev-tools/static/js/main.54303283.chunk.js",
+    "main.js.map": "/dev-tools/static/js/main.54303283.chunk.js.map",
+    "runtime-main.js": "/dev-tools/static/js/runtime-main.81eb2941.js",
+    "runtime-main.js.map": "/dev-tools/static/js/runtime-main.81eb2941.js.map",
+    "static/js/2.73217997.chunk.js": "/dev-tools/static/js/2.73217997.chunk.js",
+    "static/js/2.73217997.chunk.js.map": "/dev-tools/static/js/2.73217997.chunk.js.map",
+    "static/js/3.d8063d3a.chunk.js": "/dev-tools/static/js/3.d8063d3a.chunk.js",
+    "static/js/3.d8063d3a.chunk.js.map": "/dev-tools/static/js/3.d8063d3a.chunk.js.map",
+    "static/js/4.ae55e0a4.chunk.js": "/dev-tools/static/js/4.ae55e0a4.chunk.js",
+    "static/js/4.ae55e0a4.chunk.js.map": "/dev-tools/static/js/4.ae55e0a4.chunk.js.map",
+    "static/js/5.fa57bcc0.chunk.js": "/dev-tools/static/js/5.fa57bcc0.chunk.js",
+    "static/js/5.fa57bcc0.chunk.js.map": "/dev-tools/static/js/5.fa57bcc0.chunk.js.map",
     "index.html": "/dev-tools/index.html",
     "static/css/main.4c9ac36b.chunk.css.map": "/dev-tools/static/css/main.4c9ac36b.chunk.css.map",
-    "static/js/2.1002d467.chunk.js.LICENSE.txt": "/dev-tools/static/js/2.1002d467.chunk.js.LICENSE.txt",
-    "static/js/3.67f0ea27.chunk.js.LICENSE.txt": "/dev-tools/static/js/3.67f0ea27.chunk.js.LICENSE.txt",
+    "static/js/2.73217997.chunk.js.LICENSE.txt": "/dev-tools/static/js/2.73217997.chunk.js.LICENSE.txt",
+    "static/js/3.d8063d3a.chunk.js.LICENSE.txt": "/dev-tools/static/js/3.d8063d3a.chunk.js.LICENSE.txt",
     "static/media/avalanche.7297a3d2.svg": "/dev-tools/static/media/avalanche.7297a3d2.svg",
     "static/media/binancesmartchain.78c8a0d9.svg": "/dev-tools/static/media/binancesmartchain.78c8a0d9.svg",
     "static/media/bitcoin.24195ce2.svg": "/dev-tools/static/media/bitcoin.24195ce2.svg",
@@ -34,9 +34,9 @@
     "static/media/zcash.ba3265c4.svg": "/dev-tools/static/media/zcash.ba3265c4.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.f0dd7d5b.js",
-    "static/js/2.1002d467.chunk.js",
+    "static/js/runtime-main.81eb2941.js",
+    "static/js/2.73217997.chunk.js",
     "static/css/main.4c9ac36b.chunk.css",
-    "static/js/main.435e11cf.chunk.js"
+    "static/js/main.54303283.chunk.js"
   ]
 }
