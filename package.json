@@ -51,7 +51,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy": "sed -i 's/https:\\/\\/renproject.github.io\\/dev-tools-testnet\\//https:\\/\\/renproject.github.io\\/dev-tools\\//' package.json; REACT_APP_NETWORK=\"mainnet\" yarn build && gh-pages -d build --repo git@github.com:renproject/dev-tools.git",
-    "deploy:testnet": "sed -i 's/https:\\/\\/renproject.github.io\\/dev-tools\\//https:\\/\\/renproject.github.io\\/dev-tools-testnet\\//' package.json; REACT_APP_NETWORK=\"testnet\" yarn build && gh-pages -d build --repo git@github.com:renproject/dev-tools-testnet.git"
+    "deploy:testnet": "sed -i 's/https:\\/\\/renproject.github.io\\/dev-tools\\//https:\\/\\/renproject.github.io\\/dev-tools-testnet\\//' package.json; REACT_APP_NETWORK=\"testnet\" yarn build && gh-pages -d build --repo git@github.com:renproject/dev-tools-testnet.git; sed -i 's/https:\\/\\/renproject.github.io\\/dev-tools-testnet\\//https:\\/\\/renproject.github.io\\/dev-tools\\//' package.json"
   },
   "eslintConfig": {
     "extends": [

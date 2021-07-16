@@ -28,7 +28,7 @@ export const search = async (
           updateStatus,
           getChain
         );
-        if (result) {
+        if (result && (!Array.isArray(result) || result.length > 0)) {
           return result;
         }
       }

@@ -50,7 +50,7 @@ export const TransactionDiagram: React.FC<Props> = ({ queryTx }) => {
           flex: "1",
         }}
       >
-        {queryTx.summary.amountIn && !queryTx.summary.amountIn.isNaN()
+        {queryTx.summary.amountIn && !queryTx.summary.amountIn.isNaN() && !queryTx.summary.amountIn.isZero()
           ? queryTx.summary.amountIn.toFixed()
           : ""}{" "}
         {queryTx.summary.asset}

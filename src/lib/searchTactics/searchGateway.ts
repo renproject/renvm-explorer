@@ -15,6 +15,8 @@ import {
 } from "../searchResult";
 import { errorMatches, TaggedError } from "../taggedError";
 import { summarizeTransaction } from "./searchRenVMHash";
+import { ChainArray } from "../chains/chains";
+import { doesntError } from "@renproject/utils";
 
 export const queryGateway = async (
   provider: RenVMProvider,
@@ -48,11 +50,13 @@ export const queryGateway = async (
   };
 };
 
+const OR = (left: boolean, right: boolean) => left || right;
+
 export const searchGateway: SearchTactic<RenVMGateway> = {
   match: (searchString: string) =>
-    isURLBase64(searchString, {
-      length: 32,
-    }),
+    ChainArray.map((chain) =>
+      doesntError(() => chain.utils.addressIsValid(searchString))()
+    ).reduce(OR, false),
 
   search: async (
     searchString: string,
