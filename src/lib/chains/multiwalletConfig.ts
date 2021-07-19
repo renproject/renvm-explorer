@@ -22,10 +22,11 @@ export const networkMapper =
     [RenNetwork.DevnetVDot3]?: { networkID: number };
   }) =>
   (id: string | number): RenNetwork => {
+    const devnet = map[RenNetwork.DevnetVDot3];
     return {
       [map[RenNetwork.MainnetVDot3].networkID]: RenNetwork.Mainnet,
       [map[RenNetwork.TestnetVDot3].networkID]: RenNetwork.Testnet,
-      [map[RenNetwork.DevnetVDot3]!.networkID]: RenNetwork.DevnetVDot3,
+      [devnet ? devnet.networkID : -1]: RenNetwork.DevnetVDot3,
     }[parseInt(id as string)] as RenNetwork; // tslint:disable-line: radix
   };
 
