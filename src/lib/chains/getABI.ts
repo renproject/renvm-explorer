@@ -9,7 +9,10 @@ import { TaggedError } from "../taggedError";
 import BasicAdapter from "./ABIs/BasicAdapter.json";
 
 const hardcodedABIs = (chain: ChainCommon, to: string): AbiItem[] | null => {
-  if (to === "0xd087b0540e172553c12deeecdef3dfd21ec02066") {
+  if (
+    to === "0xd087b0540e172553c12deeecdef3dfd21ec02066" ||
+    to === "0xac23817f7e9ec7eb6b7889bdd2b50e04a44470c5"
+  ) {
     return BasicAdapter as AbiItem[];
   }
 

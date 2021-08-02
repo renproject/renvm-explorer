@@ -69,27 +69,43 @@ export const getTransactionDepositInstance = async (
     to: await getMintChainParams(
       summary.toChain as MintChain,
       inputs.to,
-      inputs.payload
+      Buffer.isBuffer(inputs.payload)
+        ? inputs.payload.toString("hex")
+        : inputs.payload
     ),
     nonce: Ox(inputs.nonce),
   };
 
   const provider = new RenVMProvider(NETWORK);
-  const lockAndMint = await new RenJS(provider).lockAndMint(params, {
-    transactionVersion: searchDetails.version,
-    gPubKey: (searchDetails.in as any).gpubkey,
-    loadCompletedDeposits: true,
-  });
+  const lockAndMint = await new RenJS(provider as any).lockAndMint(
+    params as any,
+    {
+      transactionVersion: searchDetails.version,
+      gPubKey: (searchDetails.in as any).gpubkey,
+      loadCompletedDeposits: true,
+    }
+  );
 
-  const deposit = await lockAndMint.processDeposit({
-    transaction: await summary.fromChain.transactionFromRPCFormat(
+  let transaction;
+  try {
+    transaction = await summary.fromChain.transactionFromRPCFormat(
       inputs.txid,
       inputs.txindex.toString(),
       true
-    ),
+    );
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+
+  const deposit = await lockAndMint.processDeposit({
+    transaction,
     amount: inputs.amount.toFixed(),
   });
   (deposit as any).gatewayAddress = lockAndMint.gatewayAddress;
+
+  // console.log("Calling signed!!!");
+  // await deposit.signed();
 
   return {
     lockAndMint,

@@ -6,13 +6,13 @@ import {
 } from "@renproject/chains";
 import { EthArgs, RenNetwork } from "@renproject/interfaces";
 import Web3 from "web3";
-import { provider } from "web3-providers";
+// import { provider } from "web3-providers";
 import { INFURA_KEY } from "../../environmentVariables";
 import { getEvmABI } from "./getABI";
-import { AbiCoder } from "web3-eth-abi";
+import AbiCoder from "web3-eth-abi";
 import { Ox } from "@renproject/utils";
 
-export const getEthereumProvider = (network: RenNetwork): provider => {
+export const getEthereumProvider = (network: RenNetwork): any => {
   return new Web3(
     `https://${
       network === RenNetwork.Mainnet ? "mainnet" : "kovan"
@@ -20,7 +20,7 @@ export const getEthereumProvider = (network: RenNetwork): provider => {
   ).currentProvider;
 };
 
-export const getBSCProvider = (network: RenNetwork): provider => {
+export const getBSCProvider = (network: RenNetwork): any => {
   if (network === RenNetwork.Localnet) {
     throw new Error("Localnet not supported.");
   }
@@ -35,7 +35,7 @@ export const getBSCProvider = (network: RenNetwork): provider => {
   ).currentProvider;
 };
 
-export const getPolygonProvider = (network: RenNetwork): provider => {
+export const getPolygonProvider = (network: RenNetwork): any => {
   if (network === RenNetwork.DevnetVDot3 || network === RenNetwork.Localnet) {
     throw new Error(`Unsupported network ${network}`);
   }
@@ -50,7 +50,7 @@ export const getPolygonProvider = (network: RenNetwork): provider => {
   ).currentProvider;
 };
 
-export const getFantomProvider = (network: RenNetwork): provider => {
+export const getFantomProvider = (network: RenNetwork): any => {
   if (network === RenNetwork.Localnet) {
     throw new Error("Localnet not supported.");
   }
@@ -66,7 +66,7 @@ export const getFantomProvider = (network: RenNetwork): provider => {
   ).currentProvider;
 };
 
-export const getAvalancheProvider = (network: RenNetwork): provider => {
+export const getAvalancheProvider = (network: RenNetwork): any => {
   if (network === RenNetwork.DevnetVDot3 || network === RenNetwork.Localnet) {
     throw new Error(`Unsupported network ${network}`);
   }
@@ -102,7 +102,7 @@ export const getEthereumMintParams = async (
       abi.inputs[abi.inputs?.length - 1].type === "bytes"
   )[0];
 
-  const abiValues = new AbiCoder().decodeParameters(
+  const abiValues = (AbiCoder as any as AbiCoder.AbiCoder).decodeParameters(
     (abi.inputs?.slice(0, -3) || []).map((x) => x.type),
     payload
   );

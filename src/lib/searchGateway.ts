@@ -74,11 +74,14 @@ export const getGatewayInstance = async (
   };
 
   const provider = new RenVMProvider(NETWORK);
-  const lockAndMint = await new RenJS(provider).lockAndMint(params, {
-    transactionVersion: searchDetails.version,
-    gPubKey: (searchDetails.in as any).gpubkey,
-    loadCompletedDeposits: true,
-  });
+  const lockAndMint = await new RenJS(provider as any).lockAndMint(
+    params as any,
+    {
+      transactionVersion: searchDetails.version,
+      gPubKey: (searchDetails.in as any).gpubkey,
+      loadCompletedDeposits: true,
+    }
+  );
 
   return lockAndMint;
 };

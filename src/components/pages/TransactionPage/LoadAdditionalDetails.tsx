@@ -50,6 +50,7 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
           );
           setLockAndMint(deposit);
         } catch (error) {
+          console.error(error);
           setLockAndMint(error instanceof Error ? error : new Error(error));
         }
       } else if (setDeposit && setLockAndMint) {
@@ -75,6 +76,7 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
             setLockAndMint(lockAndMint);
           }
         } catch (error) {
+          console.error(error);
           setDeposit(error instanceof Error ? error : new Error(error));
         }
       }

@@ -49,19 +49,30 @@ export const GatewayAddressRow: React.FC<Props> = ({
     [history, setSearchResult, lockAndMint, queryTx]
   );
 
-  return lockAndMint && !(lockAndMint instanceof Error) ? (
+  if (!lockAndMint || lockAndMint instanceof Error) {
+    return null;
+  }
+
+  const gatewayAddressString: string = (queryTx.summary.fromChain as any)
+    .addressToString
+    ? (queryTx.summary.fromChain as any).addressToString(
+        lockAndMint.gatewayAddress
+      )
+    : String(lockAndMint.gatewayAddress);
+
+  return (
     <tr>
       <td>Gateway address</td>
       <td>
         <Link
           onClick={onClick}
-          to={`/gateway/${lockAndMint.gatewayAddress}`}
+          to={`/gateway/gatewayAddressString`}
           style={{ textDecoration: "underline" }}
         >
-          {lockAndMint.gatewayAddress}
+          {gatewayAddressString}
         </Link>
         {/* <i>{" "}- click to search for additional deposits</i> */}
       </td>
     </tr>
-  ) : null;
+  );
 };
