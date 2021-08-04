@@ -8,7 +8,7 @@ import {
   RenNetwork,
 } from "@renproject/interfaces";
 import RenJS from "@renproject/ren";
-import { AbiCoder } from "web3-eth-abi";
+import { ethers } from "ethers";
 import { LegacyRenVMTransaction, TransactionSummary } from "./searchResult";
 import { queryMintOrBurn } from "./searchTactics/searchLegacyRenVMTransaction";
 import { RenVMProvider } from "@renproject/rpc/build/main/v1";
@@ -40,7 +40,6 @@ export const getLegacyTransactionDepositInstance = async (
 ) => {
   // const abi = (searchDetails.in.p.abi[0].inputs || []).slice(0, -3);
 
-  // /* @ts-ignore */
   // const abiCoder = new AbiCoder();
   // const abiValues = abiCoder.decodeParameters(
   //   abi.map((x) => x.type),
@@ -62,9 +61,7 @@ export const getLegacyTransactionDepositInstance = async (
     if (searchDetails.in.p.abi[0] && searchDetails.in.p.abi[0].inputs) {
       const abi = (searchDetails.in.p.abi[0].inputs || []).slice(0, -3);
 
-      /* @ts-ignore */
-      const abiCoder = new AbiCoder();
-      const abiValues = abiCoder.decodeParameters(
+      const abiValues = ethers.utils.defaultAbiCoder.decode(
         abi.map((x) => x.type),
         "0x" + searchDetails.in.p.value.toString("hex")
       );
@@ -92,7 +89,7 @@ export const getLegacyTransactionDepositInstance = async (
           abi.inputs[abi.inputs?.length - 1].type === "bytes"
       )[0];
 
-      const abiValues = new AbiCoder().decodeParameters(
+      const abiValues = ethers.utils.defaultAbiCoder.decode(
         (abi.inputs?.slice(0, -3) || []).map((x) => x.type),
         Ox(inputs.p.value)
       );
