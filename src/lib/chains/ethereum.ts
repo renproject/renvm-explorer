@@ -1,30 +1,33 @@
-import { EthereumClass, AvalancheConfigMap } from "@renproject/chains";
 import {
+  EthereumClass,
+  AvalancheConfigMap,
   BscConfigMap,
   FantomConfigMap,
   PolygonConfigMap,
 } from "@renproject/chains";
 import { EthArgs, RenNetwork } from "@renproject/interfaces";
-import Web3 from "web3";
-// import { provider } from "web3-providers";
 import { INFURA_KEY } from "../../environmentVariables";
 import { getEvmABI } from "./getABI";
-import AbiCoder from "web3-eth-abi";
+import { ethers } from "ethers";
 import { Ox } from "@renproject/utils";
 
-export const getEthereumProvider = (network: RenNetwork): any => {
-  return new Web3(
+export const getEthereumProvider = (
+  network: RenNetwork
+): ethers.providers.JsonRpcProvider => {
+  return new ethers.providers.JsonRpcProvider(
     `https://${
       network === RenNetwork.Mainnet ? "mainnet" : "kovan"
     }.infura.io/v3/${INFURA_KEY}`
-  ).currentProvider;
+  );
 };
 
-export const getBSCProvider = (network: RenNetwork): any => {
+export const getBSCProvider = (
+  network: RenNetwork
+): ethers.providers.JsonRpcProvider => {
   if (network === RenNetwork.Localnet) {
     throw new Error("Localnet not supported.");
   }
-  return new Web3(
+  return new ethers.providers.JsonRpcProvider(
     BscConfigMap[
       network === RenNetwork.Mainnet
         ? RenNetwork.MainnetVDot3
@@ -32,14 +35,16 @@ export const getBSCProvider = (network: RenNetwork): any => {
         ? RenNetwork.TestnetVDot3
         : network
     ].infura
-  ).currentProvider;
+  );
 };
 
-export const getPolygonProvider = (network: RenNetwork): any => {
+export const getPolygonProvider = (
+  network: RenNetwork
+): ethers.providers.JsonRpcProvider => {
   if (network === RenNetwork.DevnetVDot3 || network === RenNetwork.Localnet) {
     throw new Error(`Unsupported network ${network}`);
   }
-  return new Web3(
+  return new ethers.providers.JsonRpcProvider(
     PolygonConfigMap[
       network === RenNetwork.Mainnet
         ? RenNetwork.MainnetVDot3
@@ -47,15 +52,17 @@ export const getPolygonProvider = (network: RenNetwork): any => {
         ? RenNetwork.TestnetVDot3
         : network
     ].infura
-  ).currentProvider;
+  );
 };
 
-export const getFantomProvider = (network: RenNetwork): any => {
+export const getFantomProvider = (
+  network: RenNetwork
+): ethers.providers.JsonRpcProvider => {
   if (network === RenNetwork.Localnet) {
     throw new Error("Localnet not supported.");
   }
 
-  return new Web3(
+  return new ethers.providers.JsonRpcProvider(
     FantomConfigMap[
       network === RenNetwork.Mainnet
         ? RenNetwork.MainnetVDot3
@@ -63,15 +70,17 @@ export const getFantomProvider = (network: RenNetwork): any => {
         ? RenNetwork.TestnetVDot3
         : network
     ].infura
-  ).currentProvider;
+  );
 };
 
-export const getAvalancheProvider = (network: RenNetwork): any => {
+export const getAvalancheProvider = (
+  network: RenNetwork
+): ethers.providers.JsonRpcProvider => {
   if (network === RenNetwork.DevnetVDot3 || network === RenNetwork.Localnet) {
     throw new Error(`Unsupported network ${network}`);
   }
 
-  return new Web3(
+  return new ethers.providers.JsonRpcProvider(
     AvalancheConfigMap[
       network === RenNetwork.Mainnet
         ? RenNetwork.MainnetVDot3
@@ -79,7 +88,7 @@ export const getAvalancheProvider = (network: RenNetwork): any => {
         ? RenNetwork.TestnetVDot3
         : network
     ].infura
-  ).currentProvider;
+  );
 };
 
 export const getEthereumMintParams = async (
@@ -102,7 +111,7 @@ export const getEthereumMintParams = async (
       abi.inputs[abi.inputs?.length - 1].type === "bytes"
   )[0];
 
-  const abiValues = (AbiCoder as any as AbiCoder.AbiCoder).decodeParameters(
+  const abiValues = ethers.utils.defaultAbiCoder.decode(
     (abi.inputs?.slice(0, -3) || []).map((x) => x.type),
     payload
   );

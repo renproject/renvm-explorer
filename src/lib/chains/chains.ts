@@ -15,6 +15,7 @@ import {
 } from "@renproject/chains";
 import { TerraNetwork } from "@renproject/chains-terra/build/main/api/deposit";
 import { ChainCommon, MintChain, RenNetwork } from "@renproject/interfaces";
+import { ethers } from "ethers";
 import {
   getAvalancheProvider,
   getBSCProvider,
@@ -88,6 +89,8 @@ export const ChainMapper = (
   chain: string,
   network: RenNetwork
 ): ChainCommon | null => {
+  let provider: ethers.providers.JsonRpcProvider;
+  let signer: ethers.providers.JsonRpcSigner;
   switch (chain.toLowerCase()) {
     case "bitcoin":
     case "btc":
@@ -118,16 +121,41 @@ export const ChainMapper = (
       );
     case "ethereum":
     case "eth":
-      return Ethereum(getEthereumProvider(network), network);
+      provider = getEthereumProvider(network);
+      if (provider === null) {
+        throw new Error(`Invalid provider for ${network}.`);
+      }
+      signer = provider.getSigner();
+      return Ethereum({ provider, signer }, network);
     case "binancesmartchain":
     case "bsc":
-      return BinanceSmartChain(getBSCProvider(network), network);
+      provider = getBSCProvider(network);
+      if (provider === null) {
+        throw new Error(`Invalid provider for ${network}.`);
+      }
+      signer = provider.getSigner();
+      return BinanceSmartChain({ provider, signer }, network);
     case "fantom":
-      return Fantom(getFantomProvider(network), network);
+      provider = getFantomProvider(network);
+      if (provider === null) {
+        throw new Error(`Invalid provider for ${network}.`);
+      }
+      signer = provider.getSigner();
+      return Fantom({ provider, signer }, network);
     case "polygon":
-      return Polygon(getPolygonProvider(network), network);
+      provider = getPolygonProvider(network);
+      if (provider === null) {
+        throw new Error(`Invalid provider for ${network}.`);
+      }
+      signer = provider.getSigner();
+      return Polygon({ provider, signer }, network);
     case "avalanche":
-      return Avalanche(getAvalancheProvider(network), network);
+      provider = getAvalancheProvider(network);
+      if (provider === null) {
+        throw new Error(`Invalid provider for ${network}.`);
+      }
+      signer = provider.getSigner();
+      return Avalanche({ provider, signer }, network);
   }
   return null;
 };

@@ -40,6 +40,7 @@ function useUIContainer() {
       }
 
       chain = ChainMapper(chainName, NETWORK);
+      chain?.initialize(NETWORK);
 
       setChains((chains) => chains.set(chainName, chain));
       return chain;

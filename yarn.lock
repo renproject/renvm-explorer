@@ -11,7 +11,7 @@
     deep-eql "^0.1.3"
     keypather "^1.10.2"
 
-"@CoinSpace/bitcore-lib-dogecoin@github:CoinSpace/bitcore-lib-dogecoin":
+"@CoinSpace/bitcore-lib-dogecoin@CoinSpace/bitcore-lib-dogecoin":
   version "8.1.2"
   resolved "https://codeload.github.com/CoinSpace/bitcore-lib-dogecoin/tar.gz/cf8b3f663d6f065c12a643d8eb7c9e7b7f516bf1"
   dependencies:
@@ -1446,21 +1446,10 @@
     "@ethersproject/transactions" "^5.4.0"
     "@ethersproject/web" "^5.4.0"
 
-"@ethersproject/abstract-signer@5.4.1":
+"@ethersproject/abstract-signer@5.4.1", "@ethersproject/abstract-signer@^5.4.0":
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/@ethersproject/abstract-signer/-/abstract-signer-5.4.1.tgz#e4e9abcf4dd4f1ba0db7dff9746a5f78f355ea81"
   integrity sha512-SkkFL5HVq1k4/25dM+NWP9MILgohJCgGv5xT5AcRruGz4ILpfHeBtO/y6j+Z3UN/PAjDeb4P7E51Yh8wcGNLGA==
-  dependencies:
-    "@ethersproject/abstract-provider" "^5.4.0"
-    "@ethersproject/bignumber" "^5.4.0"
-    "@ethersproject/bytes" "^5.4.0"
-    "@ethersproject/logger" "^5.4.0"
-    "@ethersproject/properties" "^5.4.0"
-
-"@ethersproject/abstract-signer@^5.4.0":
-  version "5.4.0"
-  resolved "https://registry.yarnpkg.com/@ethersproject/abstract-signer/-/abstract-signer-5.4.0.tgz#cd5f50b93141ee9f9f49feb4075a0b3eafb57d65"
-  integrity sha512-AieQAzt05HJZS2bMofpuxMEp81AHufA5D6M4ScKwtolj041nrfIbIi8ciNW7+F59VYxXq+V4c3d568Q6l2m8ew==
   dependencies:
     "@ethersproject/abstract-provider" "^5.4.0"
     "@ethersproject/bignumber" "^5.4.0"
@@ -1494,7 +1483,7 @@
     "@ethersproject/bytes" "^5.4.0"
     "@ethersproject/properties" "^5.4.0"
 
-"@ethersproject/bignumber@5.4.1":
+"@ethersproject/bignumber@5.4.1", "@ethersproject/bignumber@^5.4.0":
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/@ethersproject/bignumber/-/bignumber-5.4.1.tgz#64399d3b9ae80aa83d483e550ba57ea062c1042d"
   integrity sha512-fJhdxqoQNuDOk6epfM7yD6J8Pol4NUCy1vkaGAkuujZm0+lNow//MKu1hLhRiYV4BsOHyBv5/lsTjF+7hWwhJg==
@@ -1503,7 +1492,7 @@
     "@ethersproject/logger" "^5.4.0"
     bn.js "^4.11.9"
 
-"@ethersproject/bignumber@^5.0.7", "@ethersproject/bignumber@^5.4.0":
+"@ethersproject/bignumber@^5.0.7":
   version "5.4.0"
   resolved "https://registry.yarnpkg.com/@ethersproject/bignumber/-/bignumber-5.4.0.tgz#be8dea298c0ec71208ee60f0b245be0761217ad9"
   integrity sha512-OXUu9f9hO3vGRIPxU40cignXZVaYyfx6j9NNMjebKdnaCL3anCLSSy8/b8d03vY6dh7duCC0kW72GEC4tZer2w==
@@ -2312,7 +2301,7 @@
     "@renproject/interfaces" "^2.5.0-alpha.0"
     "@types/node" ">=10"
 
-"@renproject/interfaces@^2.5.0-alpha.0", "@renproject/interfaces@^2.5.0-alpha.1":
+"@renproject/interfaces@^2.5.0-alpha.0":
   version "2.5.0-alpha.0"
   resolved "https://registry.yarnpkg.com/@renproject/interfaces/-/interfaces-2.5.0-alpha.0.tgz#bee3a5025cc649b9494dc8071167ae7bebc9c0a0"
   integrity sha512-l0b2F58lel1sho+jYvV1eQzjgT53RahavGxXuM3DnOKbqYhAGQLVUiNC2Jrbmj7Dt15hjOZrK+gV8sAtppgvPw==
@@ -2372,7 +2361,7 @@
     "@types/node" ">=10"
     "@walletconnect/web3-provider" "^1.4.1"
 
-"@renproject/multiwallet-ui@^2.5.0-alpha.1":
+"@renproject/multiwallet-ui@^2.5.0-alpha.0":
   version "2.5.0-alpha.0"
   resolved "https://registry.yarnpkg.com/@renproject/multiwallet-ui/-/multiwallet-ui-2.5.0-alpha.0.tgz#8930f26fcf0b12ac9d662b370fc60d562673ea41"
   integrity sha512-BCcwAlOfdvFTzJFfPlU6p/cYp5WzHBskVgR1UHPUtftJ9iuEsC4/R8PuysmWz32m0moBlPl9BBpixExX9Wx9RQ==
@@ -4406,7 +4395,7 @@ bitcore-lib-cash@^8.24.2:
     inherits "=2.0.1"
     lodash "^4.17.20"
 
-"bitcore-lib-zcash@github:zcash-hackworks/bitcore-lib-zcash":
+bitcore-lib-zcash@zcash-hackworks/bitcore-lib-zcash:
   version "0.13.19"
   resolved "https://codeload.github.com/zcash-hackworks/bitcore-lib-zcash/tar.gz/e97ae1dd2e9f14d6076d5e5429c75d8965afa4ab"
   dependencies:
@@ -7176,7 +7165,7 @@ ethereumjs-vm@^2.3.4:
     rustbn.js "~0.2.0"
     safe-buffer "^5.1.1"
 
-ethers@^5.3.0:
+ethers@^5.3.0, ethers@^5.4.3:
   version "5.4.3"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.4.3.tgz#9469e7f353285caac4114467eb2618f755a3f7d0"
   integrity sha512-esWqdrFZObpyZyhH6VLHCz5vRA/YJrEmQO77sALWSWFjFtJr5ITIRwJ448N+mxIrvnqjZGQ2Jx2zC3xt5lc64g==
