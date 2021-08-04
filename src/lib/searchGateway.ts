@@ -34,7 +34,7 @@ export const searchGateway = async (
 
 export const getGatewayInstance = async (
   searchDetails: LockAndMintTransaction,
-  network: RenNetwork,
+  _network: RenNetwork,
   summary: TransactionSummary
 ) => {
   const inputs = searchDetails.in as unknown as {

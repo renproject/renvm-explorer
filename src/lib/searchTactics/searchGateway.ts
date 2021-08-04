@@ -1,4 +1,3 @@
-import { isURLBase64 } from "./common";
 import { SearchTactic } from "./searchTactic";
 import { LockAndMintTransaction, ChainCommon } from "@renproject/interfaces";
 import {

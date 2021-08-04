@@ -12,18 +12,20 @@ import {
   Polygon,
   EthereumClass,
   Avalanche,
+  EthereumConfig,
+  BscConfigMap,
+  FantomConfigMap,
+  PolygonConfigMap,
+  AvalancheConfigMap,
+  GoerliConfigMap,
+  Goerli,
+  EthereumConfigMap,
 } from "@renproject/chains";
 import { TerraNetwork } from "@renproject/chains-terra/build/main/api/deposit";
 import { ChainCommon, MintChain, RenNetwork } from "@renproject/interfaces";
 import { ethers } from "ethers";
-import {
-  getAvalancheProvider,
-  getBSCProvider,
-  getEthereumMintParams,
-  getEthereumProvider,
-  getFantomProvider,
-  getPolygonProvider,
-} from "./ethereum";
+import { INFURA_KEY } from "../../environmentVariables";
+import { getEthereumMintParams } from "./ethereum";
 
 export enum Chain {
   Ethereum = "Ethereum",
@@ -89,6 +91,7 @@ export const ChainMapper = (
   chain: string,
   network: RenNetwork
 ): ChainCommon | null => {
+  let config: EthereumConfig | undefined;
   let provider: ethers.providers.JsonRpcProvider;
   let signer: ethers.providers.JsonRpcSigner;
   switch (chain.toLowerCase()) {
@@ -121,41 +124,72 @@ export const ChainMapper = (
       );
     case "ethereum":
     case "eth":
-      provider = getEthereumProvider(network);
-      if (provider === null) {
-        throw new Error(`Invalid provider for ${network}.`);
+      config = (EthereumConfigMap as { [network: string]: EthereumConfig })[
+        network as any
+      ];
+      if (!config) {
       }
+      provider = new ethers.providers.JsonRpcProvider(
+        config?.publicProvider({ infura: INFURA_KEY })
+      );
       signer = provider.getSigner();
       return Ethereum({ provider, signer }, network);
     case "binancesmartchain":
     case "bsc":
-      provider = getBSCProvider(network);
-      if (provider === null) {
-        throw new Error(`Invalid provider for ${network}.`);
+      config = (BscConfigMap as { [network: string]: EthereumConfig })[
+        network as any
+      ];
+      if (!config) {
       }
+      provider = new ethers.providers.JsonRpcProvider(
+        config?.publicProvider({ infura: INFURA_KEY })
+      );
       signer = provider.getSigner();
       return BinanceSmartChain({ provider, signer }, network);
     case "fantom":
-      provider = getFantomProvider(network);
-      if (provider === null) {
-        throw new Error(`Invalid provider for ${network}.`);
+      config = (FantomConfigMap as { [network: string]: EthereumConfig })[
+        network as any
+      ];
+      if (!config) {
       }
+      provider = new ethers.providers.JsonRpcProvider(
+        config?.publicProvider({ infura: INFURA_KEY })
+      );
       signer = provider.getSigner();
       return Fantom({ provider, signer }, network);
     case "polygon":
-      provider = getPolygonProvider(network);
-      if (provider === null) {
-        throw new Error(`Invalid provider for ${network}.`);
+      config = (PolygonConfigMap as { [network: string]: EthereumConfig })[
+        network as any
+      ];
+      if (!config) {
       }
+      provider = new ethers.providers.JsonRpcProvider(
+        config?.publicProvider({ infura: INFURA_KEY })
+      );
       signer = provider.getSigner();
       return Polygon({ provider, signer }, network);
     case "avalanche":
-      provider = getAvalancheProvider(network);
-      if (provider === null) {
-        throw new Error(`Invalid provider for ${network}.`);
+      config = (AvalancheConfigMap as { [network: string]: EthereumConfig })[
+        network as any
+      ];
+      if (!config) {
       }
+      provider = new ethers.providers.JsonRpcProvider(
+        config?.publicProvider({ infura: INFURA_KEY })
+      );
       signer = provider.getSigner();
       return Avalanche({ provider, signer }, network);
+    case "goerli":
+      config = (GoerliConfigMap as { [network: string]: EthereumConfig })[
+        network as any
+      ];
+      if (!config) {
+      }
+      provider = new ethers.providers.JsonRpcProvider(
+        config?.publicProvider({ infura: INFURA_KEY })
+      );
+      signer = provider.getSigner();
+      return Goerli({ provider, signer }, network);
   }
   return null;
 };
