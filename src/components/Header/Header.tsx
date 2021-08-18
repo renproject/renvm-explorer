@@ -14,6 +14,7 @@ import React, { useCallback, useRef } from "react";
 import { NETWORK } from "../../environmentVariables";
 import { RenNetwork } from "@renproject/interfaces";
 import { ExternalLink } from "../common/ExternalLink";
+import { titleCase } from "title-case";
 
 export const Header = () => {
   const { handleSearchForm } = UIContainer.useContainer();
@@ -47,10 +48,10 @@ export const Header = () => {
               />
             </HeaderLogo>
             {NETWORK === RenNetwork.Mainnet ? (
-              <>Ren Dev Tools</>
+              <>RenVM Explorer</>
             ) : (
               <span style={{ color: "#265A99" }}>
-                Ren {NETWORK.toUpperCase()}
+                RenVM {titleCase(NETWORK)} Explorer
               </span>
             )}
           </Navbar.Brand>

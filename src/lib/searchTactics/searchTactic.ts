@@ -4,7 +4,10 @@ import { SearchResult } from "../searchResult";
 export interface SearchTactic<
   GenericResult extends SearchResult = SearchResult
 > {
-  match: (searchString: string) => boolean;
+  match: (
+    searchString: string,
+    getChain: (chainName: string) => ChainCommon | null
+  ) => boolean;
   search: (
     searchString: string,
     updateStatus: (status: string) => void,

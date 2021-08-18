@@ -28,7 +28,13 @@ export const AmountRows: React.FC<Props> = ({ queryTx }) => {
       {queryTx.summary.amountInRaw && queryTx.summary.amountOutRaw ? (
         <>
           <tr>
-            <td>{queryTx.summary.asset} Fee</td>
+            <td>
+              {queryTx.summary.asset} Fee{" "}
+              <Tooltip id="renvm-fee">
+                Includes the fee set by RenVM and the cost of a{" "}
+                {queryTx.summary.asset} transfer.
+              </Tooltip>
+            </td>
             <td>
               {queryTx.summary.amountIn && queryTx.summary.amountOut ? (
                 <>
@@ -44,15 +50,6 @@ export const AmountRows: React.FC<Props> = ({ queryTx }) => {
                     .toFixed()}
                 </span>
               )}
-            </td>
-          </tr>
-          <tr>
-            <td>RenVM Fee</td>
-            <td>
-              <Tooltip id="renvm-fee">
-                RenVM fees will soon be included in the "{queryTx.summary.asset}{" "}
-                Fee" section.
-              </Tooltip>
             </td>
           </tr>
         </>

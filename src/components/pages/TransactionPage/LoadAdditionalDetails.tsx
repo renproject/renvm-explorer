@@ -90,7 +90,7 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
         <>
           <p>Error fetching additional transaction details</p>
           {deposit.message ? (
-            <p style={{ color: "red" }}>{deposit.message}</p>
+            <p style={{ color: "#e33e33" }}>{deposit.message}</p>
           ) : null}
           <Button
             disabled={fetchingDeposit}

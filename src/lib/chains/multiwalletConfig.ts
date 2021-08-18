@@ -2,6 +2,7 @@ import {
   Avalanche,
   BinanceSmartChain,
   Ethereum,
+  EthereumConfig,
   Fantom,
   Polygon,
 } from "@renproject/chains";
@@ -12,7 +13,6 @@ import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum
 import { WalletPickerConfig } from "@renproject/multiwallet-ui";
 import { INFURA_KEY } from "../../environmentVariables";
 
-import { Chain } from "./chains";
 import { Icons } from "./icons/wallets/index";
 
 export const networkMapper =
@@ -30,11 +30,11 @@ export const networkMapper =
     }[parseInt(id as string)] as RenNetwork; // tslint:disable-line: radix
   };
 
-export const injectedConnectorFactory = (map: {
-  [RenNetwork.Mainnet]: { networkID: number };
-  [RenNetwork.Testnet]: { networkID: number };
-  [RenNetwork.Devnet]?: { networkID: number };
-}) => {
+export const injectedConnectorFactory = (
+  map: {
+    [network in RenNetwork]?: EthereumConfig;
+  }
+) => {
   return {
     name: "Metamask",
     logo: Icons.Metamask,
@@ -47,15 +47,8 @@ export const injectedConnectorFactory = (map: {
 
 export const multiwalletOptions: WalletPickerConfig<any, any> = {
   chains: {
-    [Chain.Ethereum]: [
-      {
-        name: "Metamask",
-        logo: Icons.Metamask,
-        connector: new EthereumInjectedConnector({
-          debug: true,
-          networkIdMapper: networkMapper(Ethereum.configMap),
-        }),
-      },
+    Ethereum: [
+      injectedConnectorFactory(Ethereum.configMap),
       {
         name: "WalletConnect",
         logo: Icons.WalletConnect,
@@ -72,7 +65,7 @@ export const multiwalletOptions: WalletPickerConfig<any, any> = {
         }),
       },
     ],
-    [Chain.BSC]: [
+    BSC: [
       injectedConnectorFactory(BinanceSmartChain.configMap),
       {
         name: "BinanceSmartWallet",
@@ -83,8 +76,8 @@ export const multiwalletOptions: WalletPickerConfig<any, any> = {
         }),
       },
     ],
-    [Chain.Fantom]: [injectedConnectorFactory(Fantom.configMap)],
-    [Chain.Polygon]: [injectedConnectorFactory(Polygon.configMap)],
-    [Chain.Avalanche]: [injectedConnectorFactory(Avalanche.configMap)],
+    Fantom: [injectedConnectorFactory(Fantom.configMap)],
+    Polygon: [injectedConnectorFactory(Polygon.configMap)],
+    Avalanche: [injectedConnectorFactory(Avalanche.configMap)],
   },
 };

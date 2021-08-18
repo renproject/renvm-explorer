@@ -69,82 +69,85 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
 
   return (
     <>
-      <tr>
-        <td>Status</td>
-        <td>
-          {queryTx.result.txStatus === TxStatus.TxStatusDone &&
-          queryTx.result.out.revert &&
-          queryTx.result.out.revert.length > 0 ? (
-            <>
-              <RenderRenVMStatus
-                transactionType={queryTx.transactionType}
-                status={TxStatus.TxStatusReverted}
-                revertReason={queryTx.result.out.revert}
-              />
-            </>
-          ) : (
-            <>
-              <div className="connect-wallets">
-                <ConnectWallet
-                  chain={multiwalletChain}
-                  close={closeMultiwallet}
-                  network={NETWORK}
+      {(!deposit || deposit instanceof Error) &&
+      queryTx.result.txStatus === TxStatus.TxStatusNil ? null : (
+        <tr>
+          <td>Status</td>
+          <td>
+            {queryTx.result.txStatus === TxStatus.TxStatusDone &&
+            queryTx.result.out.revert &&
+            queryTx.result.out.revert.length > 0 ? (
+              <>
+                <RenderRenVMStatus
+                  transactionType={queryTx.transactionType}
+                  status={TxStatus.TxStatusReverted}
+                  revertReason={queryTx.result.out.revert}
                 />
-              </div>
+              </>
+            ) : (
+              <>
+                <div className="connect-wallets">
+                  <ConnectWallet
+                    chain={multiwalletChain}
+                    close={closeMultiwallet}
+                    network={NETWORK}
+                  />
+                </div>
 
-              {deposit && !(deposit instanceof Error) ? (
-                <>
-                  <RenderDepositStatus status={deposit.status} />
+                {deposit && !(deposit instanceof Error) ? (
+                  <>
+                    <RenderDepositStatus status={deposit.status} />
 
-                  {deposit &&
-                  !(deposit instanceof Error) &&
-                  deposit.status === DepositStatus.Signed ? (
-                    mintChainProvider ? (
-                      <Button
-                        variant="outline-success"
-                        disabled={submitting}
-                        onClick={submit}
-                        style={{ marginLeft: 5 }}
-                      >
-                        {submitting ? <>Submitting...</> : <>Submit</>}
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outline-success"
-                        onClick={connectMintChain}
-                        style={{ marginLeft: 5 }}
-                      >
-                        Connect wallet
-                      </Button>
-                    )
-                  ) : null}
-                </>
-              ) : (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
+                    {deposit &&
+                    !(deposit instanceof Error) &&
+                    deposit.status === DepositStatus.Signed ? (
+                      mintChainProvider ? (
+                        <Button
+                          variant="outline-success"
+                          disabled={submitting}
+                          onClick={submit}
+                          style={{ marginLeft: 5 }}
+                        >
+                          {submitting ? <>Submitting...</> : <>Submit</>}
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outline-success"
+                          onClick={connectMintChain}
+                          style={{ marginLeft: 5 }}
+                        >
+                          Connect wallet
+                        </Button>
+                      )
+                    ) : null}
+                  </>
+                ) : (
                   <div
                     style={{
-                      opacity:
-                        queryTx.transactionType === TransactionType.Mint
-                          ? 0.3
-                          : 1,
+                      display: "flex",
+                      alignItems: "center",
                     }}
                   >
-                    <RenderRenVMStatus
-                      transactionType={queryTx.transactionType}
-                      status={queryTx.result.txStatus}
-                    />
+                    <div
+                      style={{
+                        opacity:
+                          queryTx.transactionType === TransactionType.Mint
+                            ? 0.3
+                            : 1,
+                      }}
+                    >
+                      <RenderRenVMStatus
+                        transactionType={queryTx.transactionType}
+                        status={queryTx.result.txStatus}
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
-            </>
-          )}
-        </td>
-      </tr>
+                )}
+              </>
+            )}
+          </td>
+        </tr>
+      )}
     </>
   );
 };
@@ -187,10 +190,10 @@ const RenderDepositStatus: React.FC<{ status: DepositStatus }> = ({
     case DepositStatus.Confirmed:
       return <>Submitting to RenVM</>;
     case DepositStatus.Signed:
-      return <span style={{ color: "green" }}>Ready for minting</span>;
+      return <span style={{ color: "#97b85d" }}>Ready for minting</span>;
     case DepositStatus.Reverted:
-      return <span style={{ color: "red" }}>Reverted</span>;
+      return <span style={{ color: "#e33e33" }}>Reverted</span>;
     case DepositStatus.Submitted:
-      return <span style={{ color: "green" }}>Complete</span>;
+      return <span style={{ color: "#97b85d" }}>Complete</span>;
   }
 };

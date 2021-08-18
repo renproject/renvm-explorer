@@ -6,13 +6,16 @@ import { App } from "./components/App/App";
 import reportWebVitals from "./reportWebVitals";
 import { UIContainer } from "./containers/UIContainer";
 import { MultiwalletProvider } from "@renproject/multiwallet-ui";
+import { LatestTransactionsContainer } from "./containers/LatestTransactionsContainer";
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <MultiwalletProvider>
         <UIContainer.Provider>
-          <App />
+          <LatestTransactionsContainer.Provider>
+            <App />
+          </LatestTransactionsContainer.Provider>
         </UIContainer.Provider>
       </MultiwalletProvider>
     </Router>

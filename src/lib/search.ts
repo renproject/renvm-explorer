@@ -22,7 +22,7 @@ export const search = async (
 ): Promise<SearchResult | SearchResult[]> => {
   for (const tactic of searchTactics) {
     try {
-      if (tactic.match(searchString)) {
+      if (tactic.match(searchString, getChain)) {
         const result = await tactic.search(
           searchString,
           updateStatus,

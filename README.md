@@ -1,6 +1,6 @@
-# ![](https://user-images.githubusercontent.com/2221955/123574170-b4d80900-d812-11eb-8e93-eba82d486400.png) `ren dev tools`
+# ![](https://user-images.githubusercontent.com/2221955/123574170-b4d80900-d812-11eb-8e93-eba82d486400.png) `renvm explorer`
 
-The Ren Dev Tools provide functionality for looking up RenVM transactions and gateways.
+The RenVM Explorer allows you to look up RenVM transactions and gateways.
 
 ## Screenshots
 

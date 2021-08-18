@@ -12,11 +12,12 @@ import {
 import { searchTransaction } from "../lib/searchTransaction";
 import { OrderedMap } from "immutable";
 import { ChainCommon } from "@renproject/interfaces";
-import { ChainMapper } from "../lib/chains/chains";
+import { allChains, ChainMapper } from "../lib/chains/chains";
 import { NETWORK } from "../environmentVariables";
 import { searchLegacyTransaction } from "../lib/searchLegacyTransaction";
 import { searchGateway } from "../lib/searchGateway";
 import { TaggedError } from "../lib/taggedError";
+import { useMemo } from "react";
 
 function useUIContainer() {
   const history = useHistory();
@@ -29,23 +30,29 @@ function useUIContainer() {
   const [gateway, setGateway] = useState<RenVMGateway | null | Error>(null);
   const [updatedCount, setUpdatedCount] = useState(0);
 
-  const [chains, setChains] = useState<OrderedMap<string, ChainCommon | null>>(
-    OrderedMap()
-  );
+  const chains = useMemo(() => {
+    return allChains.reduce((acc, chainDetails) => {
+      try {
+        const chain = ChainMapper(chainDetails.chain, NETWORK);
+        chain?.initialize(NETWORK);
+        return acc.set(chainDetails.chain, chain || null);
+      } catch (error) {
+        console.error(error);
+        return acc.set(chainDetails.chain, null);
+      }
+    }, OrderedMap<string, ChainCommon | null>());
+  }, []);
+
   const getChain = useCallback(
     (chainName: string) => {
-      let chain = chains.get(chainName, null);
-      if (chain) {
-        return chain;
+      for (const chain of allChains) {
+        if (chain.chainPattern.exec(chainName)) {
+          return chains.get(chain.chain, null);
+        }
       }
-
-      chain = ChainMapper(chainName, NETWORK);
-      chain?.initialize(NETWORK);
-
-      setChains((chains) => chains.set(chainName, chain));
-      return chain;
+      return null;
     },
-    [chains, setChains]
+    [chains]
   );
 
   // handleSearchURL is called when the search parameter in the URL changes.

@@ -117,21 +117,10 @@ export const summarizeTransaction = async (
   };
 };
 
-export const queryMintOrBurn = async (
-  provider: RenVMProvider,
-  transactionHash: string,
+export const unmarshalTransaction = async (
+  response: ResponseQueryTx,
   getChain: (chainName: string) => ChainCommon | null
 ): Promise<SummarizedTransaction> => {
-  let response: ResponseQueryTx;
-  try {
-    response = await provider.queryTx(transactionHash, 1);
-  } catch (error) {
-    if (errorMatches(error, "not found")) {
-      throw new TaggedError(error, RenVMTransactionError.TransactionNotFound);
-    }
-    throw error;
-  }
-
   const isMint = /((\/to)|(To))/.exec(response.tx.selector);
   const isClaim = /\/claimFees/.exec(response.tx.selector);
 
@@ -158,6 +147,24 @@ export const queryMintOrBurn = async (
       summary: await summarizeTransaction(unmarshalled, getChain),
     };
   }
+};
+
+export const queryMintOrBurn = async (
+  provider: RenVMProvider,
+  transactionHash: string,
+  getChain: (chainName: string) => ChainCommon | null
+): Promise<SummarizedTransaction> => {
+  let response: ResponseQueryTx;
+  try {
+    response = await provider.queryTx(transactionHash, 1);
+  } catch (error) {
+    if (errorMatches(error, "not found")) {
+      throw new TaggedError(error, RenVMTransactionError.TransactionNotFound);
+    }
+    throw error;
+  }
+
+  return unmarshalTransaction(response, getChain);
 };
 
 export const searchRenVMHash: SearchTactic<RenVMTransaction> = {

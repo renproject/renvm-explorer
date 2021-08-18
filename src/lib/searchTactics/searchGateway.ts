@@ -14,7 +14,7 @@ import {
 } from "../searchResult";
 import { errorMatches, TaggedError } from "../taggedError";
 import { summarizeTransaction } from "./searchRenVMHash";
-import { ChainArray } from "../chains/chains";
+import { allChains } from "../chains/chains";
 import { doesntError } from "@renproject/utils";
 
 export const queryGateway = async (
@@ -52,10 +52,18 @@ export const queryGateway = async (
 const OR = (left: boolean, right: boolean) => left || right;
 
 export const searchGateway: SearchTactic<RenVMGateway> = {
-  match: (searchString: string) =>
-    ChainArray.map((chain) =>
-      doesntError(() => chain.utils.addressIsValid(searchString))()
-    ).reduce(OR, false),
+  match: (
+    searchString: string,
+    getChain: (chainName: string) => ChainCommon | null
+  ) =>
+    allChains
+      .map((chain) => getChain(chain.chain))
+      .map((chain) =>
+        doesntError(() =>
+          chain ? chain.utils.addressIsValid(searchString) : false
+        )()
+      )
+      .reduce(OR, false),
 
   search: async (
     searchString: string,

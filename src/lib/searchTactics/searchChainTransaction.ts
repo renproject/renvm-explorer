@@ -15,7 +15,7 @@ import {
 } from "../searchResult";
 import { doesntError, toURLBase64 } from "@renproject/utils";
 import { summarizeTransaction } from "./searchRenVMHash";
-import { ChainArray } from "../chains/chains";
+import { allChains } from "../chains/chains";
 
 export const queryTxsByTxid = async (
   provider: RenVMProvider,
@@ -65,10 +65,18 @@ export const queryTxsByTxid = async (
 const OR = (left: boolean, right: boolean) => left || right;
 
 export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
-  match: (searchString: string) =>
-    ChainArray.map((chain) =>
-      doesntError(() => chain.utils.transactionIsValid(searchString))()
-    ).reduce(OR, false),
+  match: (
+    searchString: string,
+    getChain: (chainName: string) => ChainCommon | null
+  ) =>
+    allChains
+      .map((chain) => getChain(chain.chain))
+      .map((chain) =>
+        doesntError(() =>
+          chain ? chain.utils.transactionIsValid(searchString) : false
+        )()
+      )
+      .reduce(OR, false),
   search: async (
     searchString: string,
     updateStatus: (status: string) => void,
@@ -77,7 +85,8 @@ export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
     const formats = Array.from(
       // Remove duplicates.
       new Set(
-        ChainArray.map((chain) => getChain(chain.chain))
+        allChains
+          .map((chain) => getChain(chain.chain))
           .map((chain) =>
             chain && chain.utils.transactionIsValid(searchString)
               ? chain.transactionRPCTxidFromID(searchString, true)

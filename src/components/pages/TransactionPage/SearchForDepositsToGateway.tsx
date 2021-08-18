@@ -24,9 +24,9 @@ export const SearchForDepositsToGateway: React.FC<Props> = ({
   const history = useHistory();
 
   const [fetchingDeposits, setFetchingDeposits] = useState(false);
-  const [deposits, setDeposits] = useState<
-    OrderedMap<string, LockAndMintDeposit>
-  >(OrderedMap());
+  const [deposits, setDeposits] = useState(
+    OrderedMap<string, LockAndMintDeposit>()
+  );
 
   const onDeposit = useCallback(
     (deposit) => {

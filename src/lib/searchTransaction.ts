@@ -104,9 +104,6 @@ export const getTransactionDepositInstance = async (
   });
   (deposit as any).gatewayAddress = lockAndMint.gatewayAddress;
 
-  // console.log("Calling signed!!!");
-  // await deposit.signed();
-
   return {
     lockAndMint,
     deposit,
