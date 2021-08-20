@@ -17,6 +17,8 @@ import {
   GoerliDetails,
   PolygonDetails,
 } from "./chains/evmChains";
+import { SolanaDetails } from "./chains/solana";
+import { WalletPickerConfig } from "@renproject/multiwallet-ui";
 
 export const mintChains = [
   EthereumDetails,
@@ -26,6 +28,7 @@ export const mintChains = [
   AvalancheDetails,
   GoerliDetails,
   ArbitrumDetails,
+  SolanaDetails,
 ];
 
 export const lockChains = [
@@ -39,6 +42,22 @@ export const lockChains = [
 ];
 
 export const allChains = [...mintChains, ...lockChains];
+
+export const multiwalletOptions = (
+  network: RenNetwork
+): WalletPickerConfig<any, any> => {
+  const chains = allChains.reduce((acc, chain) => {
+    if (chain.multiwalletConfig) {
+      return {
+        ...acc,
+        [chain.chain]: chain.multiwalletConfig(network),
+      };
+    } else {
+      return acc;
+    }
+  }, {});
+  return { chains };
+};
 
 export const ChainMapper = (
   chainName: string,
@@ -64,12 +83,13 @@ export const ChainMapper = (
 export const getMintChainParams = async (
   mintChain: MintChain,
   to: string,
-  payload: string
+  payload: string,
+  asset: string
 ): Promise<MintChain> => {
   for (const chainDetails of mintChains) {
     if (chainDetails.chainPattern.exec(mintChain.name)) {
       if (chainDetails && chainDetails.getMintParams) {
-        return chainDetails.getMintParams(mintChain, to, payload);
+        return chainDetails.getMintParams(mintChain, to, payload, asset);
       } else {
         throw new Error(
           `Reconstructing mint parameters for ${mintChain.name} is not supported yet.`

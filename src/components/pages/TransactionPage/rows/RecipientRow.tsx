@@ -9,6 +9,7 @@ import { TaggedText } from "../../../common/TaggedText";
 import { Table } from "react-bootstrap";
 import { Ox } from "@renproject/utils";
 import { MaybeLink } from "../../../common/MaybeLink";
+import { NETWORK } from "../../../../environmentVariables";
 
 interface Props {
   queryTx: SummarizedTransaction;
@@ -27,18 +28,25 @@ export const RecipientRow: React.FC<Props> = ({ queryTx, deposit, legacy }) => {
       <tr>
         <td>Recipient</td>
         <td>
-          <TaggedText tag="Smart Contract">
+          <TaggedText
+            tag={
+              toChain && toChain.name === "Solana"
+                ? "Account"
+                : "Smart Contract"
+            }
+          >
             <MaybeLink
               href={
                 toChain && toChain.utils.addressExplorerLink
                   ? toChain.utils.addressExplorerLink(
-                      Ox(queryTx.result.in.to.toString())
+                      queryTx.result.in.to.toString(),
+                      NETWORK
                     )
                   : undefined
               }
               noUnderline
             >
-              {Ox(queryTx.result.in.to.toString())}
+              {queryTx.result.in.to.toString()}
             </MaybeLink>
           </TaggedText>
           {deposit &&
@@ -70,7 +78,8 @@ export const RecipientRow: React.FC<Props> = ({ queryTx, deposit, legacy }) => {
                           deposit.params.to.utils.addressExplorerLink ? (
                             <ExternalLink
                               href={deposit.params.to.utils.addressExplorerLink(
-                                param.value
+                                param.value,
+                                NETWORK
                               )}
                             >
                               {param.value.toString()}
@@ -100,7 +109,8 @@ export const RecipientRow: React.FC<Props> = ({ queryTx, deposit, legacy }) => {
               ? toChain.utils.addressExplorerLink(
                   legacy
                     ? Buffer.from(queryTx.result.in.to, "base64").toString()
-                    : queryTx.result.in.to.toString()
+                    : queryTx.result.in.to.toString(),
+                  NETWORK
                 )
               : undefined
           }

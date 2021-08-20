@@ -43,16 +43,21 @@ function useUIContainer() {
     }, OrderedMap<string, ChainCommon | null>());
   }, []);
 
+  const getChainDetails = useCallback((chainName: string) => {
+    for (const chain of allChains) {
+      if (chain.chainPattern.exec(chainName)) {
+        return chain;
+      }
+    }
+    return null;
+  }, []);
+
   const getChain = useCallback(
     (chainName: string) => {
-      for (const chain of allChains) {
-        if (chain.chainPattern.exec(chainName)) {
-          return chains.get(chain.chain, null);
-        }
-      }
-      return null;
+      const chainDetails = getChainDetails(chainName);
+      return chainDetails ? chains.get(chainDetails.chain, null) : null;
     },
-    [chains]
+    [chains, getChainDetails]
   );
 
   // handleSearchURL is called when the search parameter in the URL changes.
@@ -220,6 +225,7 @@ function useUIContainer() {
     handleTransactionURL,
     handleLegacyTransactionURL,
     handleGatewayURL,
+    getChainDetails,
     getChain,
     handleSelectResult,
   };

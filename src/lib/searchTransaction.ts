@@ -71,7 +71,8 @@ export const getTransactionDepositInstance = async (
       inputs.to,
       Buffer.isBuffer(inputs.payload)
         ? inputs.payload.toString("hex")
-        : inputs.payload
+        : inputs.payload,
+      summary.asset
     ),
     nonce: Ox(inputs.nonce),
   };
@@ -103,6 +104,8 @@ export const getTransactionDepositInstance = async (
     amount: inputs.amount.toFixed(),
   });
   (deposit as any).gatewayAddress = lockAndMint.gatewayAddress;
+
+  // await deposit.signed();
 
   return {
     lockAndMint,

@@ -17,9 +17,39 @@ import { ethers } from "ethers";
 
 import { INFURA_KEY } from "../../../environmentVariables";
 import { Icons } from "../icons/wallets";
-import { injectedConnectorFactory, networkMapper } from "../multiwalletConfig";
 import { getEvmABI } from "../getABI";
 import { ChainDetails } from "./types";
+import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
+
+export const networkMapper =
+  (map: {
+    [RenNetwork.Mainnet]?: { networkID: number };
+    [RenNetwork.Testnet]?: { networkID: number };
+    [RenNetwork.Devnet]?: { networkID: number };
+  }) =>
+  (id: string | number): RenNetwork => {
+    const devnet = map[RenNetwork.Devnet];
+    return {
+      [map[RenNetwork.Mainnet]!.networkID]: RenNetwork.Mainnet,
+      [map[RenNetwork.Testnet]!.networkID]: RenNetwork.Testnet,
+      [devnet ? devnet.networkID : -1]: RenNetwork.Devnet,
+    }[parseInt(id as string)] as RenNetwork; // tslint:disable-line: radix
+  };
+
+export const injectedConnectorFactory = (
+  map: {
+    [network in RenNetwork]?: EthereumConfig;
+  }
+) => {
+  return {
+    name: "Metamask",
+    logo: Icons.Metamask,
+    connector: new EthereumInjectedConnector({
+      debug: true,
+      networkIdMapper: networkMapper(map),
+    }),
+  };
+};
 
 export const EthereumDetails: ChainDetails<Ethereum> = {
   chain: Ethereum.chain,
@@ -27,7 +57,7 @@ export const EthereumDetails: ChainDetails<Ethereum> = {
   usePublicProvider: (network: RenNetwork) =>
     getPublicEthereumProvider<Ethereum>(Ethereum, network),
 
-  multiwalletConfig: [
+  multiwalletConfig: (network: RenNetwork) => [
     injectedConnectorFactory(Ethereum.configMap),
     {
       name: "WalletConnect",
@@ -64,7 +94,9 @@ export const BinanceSmartChainDetails: ChainDetails<BinanceSmartChain> = {
   usePublicProvider: (network: RenNetwork) =>
     getPublicEthereumProvider<BinanceSmartChain>(BinanceSmartChain, network),
 
-  multiwalletConfig: [injectedConnectorFactory(BinanceSmartChain.configMap)],
+  multiwalletConfig: (network: RenNetwork) => [
+    injectedConnectorFactory(BinanceSmartChain.configMap),
+  ],
 
   nativeAssets: [],
 
@@ -84,7 +116,9 @@ export const FantomDetails: ChainDetails<Fantom> = {
   usePublicProvider: (network: RenNetwork) =>
     getPublicEthereumProvider<Fantom>(Fantom, network),
 
-  multiwalletConfig: [injectedConnectorFactory(Fantom.configMap)],
+  multiwalletConfig: (network: RenNetwork) => [
+    injectedConnectorFactory(Fantom.configMap),
+  ],
 
   nativeAssets: [],
 
@@ -104,7 +138,9 @@ export const PolygonDetails: ChainDetails<Polygon> = {
   usePublicProvider: (network: RenNetwork) =>
     getPublicEthereumProvider<Polygon>(Polygon, network),
 
-  multiwalletConfig: [injectedConnectorFactory(Polygon.configMap)],
+  multiwalletConfig: (network: RenNetwork) => [
+    injectedConnectorFactory(Polygon.configMap),
+  ],
 
   nativeAssets: [],
 
@@ -124,7 +160,9 @@ export const AvalancheDetails: ChainDetails<Avalanche> = {
   usePublicProvider: (network: RenNetwork) =>
     getPublicEthereumProvider<Avalanche>(Avalanche, network),
 
-  multiwalletConfig: [injectedConnectorFactory(Avalanche.configMap)],
+  multiwalletConfig: (network: RenNetwork) => [
+    injectedConnectorFactory(Avalanche.configMap),
+  ],
 
   nativeAssets: [],
 
@@ -149,7 +187,9 @@ export const GoerliDetails: ChainDetails<Goerli> = {
     }
   },
 
-  multiwalletConfig: [injectedConnectorFactory(Goerli.configMap)],
+  multiwalletConfig: (network: RenNetwork) => [
+    injectedConnectorFactory(Goerli.configMap),
+  ],
 
   nativeAssets: [],
 
@@ -169,7 +209,9 @@ export const ArbitrumDetails: ChainDetails<Arbitrum> = {
   usePublicProvider: (network: RenNetwork) =>
     getPublicEthereumProvider<Arbitrum>(Arbitrum, network),
 
-  multiwalletConfig: [injectedConnectorFactory(Arbitrum.configMap)],
+  multiwalletConfig: (network: RenNetwork) => [
+    injectedConnectorFactory(Arbitrum.configMap),
+  ],
 
   nativeAssets: [],
 
@@ -195,6 +237,7 @@ export const getPublicEthereumProvider = <
     | Polygon
 >(
   Class: {
+    chain: string;
     new (...p: any[]): T;
     configMap: { [network: string]: EthereumConfig };
   },
@@ -202,6 +245,9 @@ export const getPublicEthereumProvider = <
 ): T => {
   const config = Class.configMap[network as any];
   if (!config) {
+    throw new Error(
+      `No network configuration for ${network} and ${Class.chain}.`
+    );
   }
   const provider = new ethers.providers.JsonRpcProvider(
     config?.publicProvider({ infura: INFURA_KEY })

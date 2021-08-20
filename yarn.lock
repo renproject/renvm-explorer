@@ -2022,6 +2022,14 @@
     bn.js "^5.1.2"
     buffer-layout "^1.2.0"
 
+"@project-serum/sol-wallet-adapter@^0.2.5":
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/@project-serum/sol-wallet-adapter/-/sol-wallet-adapter-0.2.5.tgz#d949a8cc4d2f74e31e4f0205989703977689c76b"
+  integrity sha512-Y0XHe+FXXJ7P8XZtx3luAlatO0ge2LdrZUCmqMSzJf+K+fko+qTYIBSUuWwO7y/O4brIXVReR1mEUvF6QKDF2w==
+  dependencies:
+    bs58 "^4.0.1"
+    eventemitter3 "^4.0.7"
+
 "@renproject/chains-bitcoin@^2.5.1":
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/@renproject/chains-bitcoin/-/chains-bitcoin-2.5.1.tgz#354304ffb7d2b73e7b0af8c0973945db0c5a6e21"
@@ -2180,6 +2188,16 @@
     "@renproject/multiwallet-base-connector" "^2.5.1"
     "@types/node" ">=10"
     "@walletconnect/web3-provider" "^1.4.1"
+
+"@renproject/multiwallet-solana-connector@^2.5.1":
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/@renproject/multiwallet-solana-connector/-/multiwallet-solana-connector-2.5.1.tgz#4101476bca00c3cf389f5c5773da8fa1bda5178e"
+  integrity sha512-z6Ew2F9FJPJquMLKmHLEcf86SRufT3Mn4DJxJvm9/e9Mu4hB5ZbrCPeE7SJD4IHMAA8FU6EtZN4yLR2n0M7DyQ==
+  dependencies:
+    "@project-serum/sol-wallet-adapter" "^0.2.5"
+    "@renproject/interfaces" "^2.5.1"
+    "@renproject/multiwallet-base-connector" "^2.5.1"
+    "@types/node" ">=10"
 
 "@renproject/multiwallet-ui@^2.5.1":
   version "2.5.1"

@@ -68,7 +68,8 @@ export const getGatewayInstance = async (
     to: await getMintChainParams(
       summary.toChain as MintChain,
       inputs.to,
-      inputs.payload
+      inputs.payload,
+      summary.asset
     ),
     nonce: Ox(inputs.nonce),
   };

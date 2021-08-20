@@ -2,7 +2,7 @@ import { RenNetwork } from "@renproject/interfaces";
 import { WalletPickerModal } from "@renproject/multiwallet-ui";
 import React from "react";
 
-import { multiwalletOptions } from "../lib/chains/multiwalletConfig";
+import { multiwalletOptions } from "../lib/chains/chains";
 
 interface Props {
   chain: string | null;
@@ -18,7 +18,7 @@ export const ConnectWallet: React.FC<Props> = ({ chain, close, network }) => {
         targetNetwork: network,
         chain: chain || "",
         onClose: close,
-        config: multiwalletOptions,
+        config: multiwalletOptions(network),
       }}
     />
   );

@@ -100,6 +100,7 @@ export const TransactionPage = () => {
                             SearchResultType.LegacyRenVMTransaction
                           }
                         />
+                        {/* <TokenAccountRow queryTx={queryTx} deposit={deposit} /> */}
                         <StatusRow queryTx={queryTx} deposit={deposit} />
                       </tbody>
                     </Table>

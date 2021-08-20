@@ -34,6 +34,7 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
   };
 
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<String | null>(null);
 
   const mintChain =
     deposit && !(deposit instanceof Error) && deposit.params.to.name;
@@ -55,6 +56,7 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
       }
 
       setSubmitting(true);
+      setSubmitError(null);
 
       if (deposit.params.to.withProvider) {
         await deposit.params.to.withProvider(mintChainProvider);
@@ -64,7 +66,23 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
       .finally(() => {
         setSubmitting(false);
       })
-      .catch(console.error);
+      .catch((error) => {
+        console.error(error);
+        if (
+          queryTx.summary.to === "Solana" &&
+          String(error.message || error).match(/AccountNotFound/)
+        ) {
+          setSubmitError(
+            `Can only submit from ${
+              deposit && !(deposit instanceof Error)
+                ? deposit.params.contractCalls?.[0]?.sendTo
+                : "the recipient account"
+            }.`
+          );
+        } else {
+          setSubmitError(String(error.message || error));
+        }
+      });
   }, [mintChainProvider, deposit]);
 
   return (
@@ -102,14 +120,19 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
                     !(deposit instanceof Error) &&
                     deposit.status === DepositStatus.Signed ? (
                       mintChainProvider ? (
-                        <Button
-                          variant="outline-success"
-                          disabled={submitting}
-                          onClick={submit}
-                          style={{ marginLeft: 5 }}
-                        >
-                          {submitting ? <>Submitting...</> : <>Submit</>}
-                        </Button>
+                        <>
+                          <Button
+                            variant="outline-success"
+                            disabled={submitting}
+                            onClick={submit}
+                            style={{ marginLeft: 5 }}
+                          >
+                            {submitting ? <>Submitting...</> : <>Submit</>}
+                          </Button>
+                          {submitError ? (
+                            <p style={{ color: "#e33e33" }}>{submitError}</p>
+                          ) : null}
+                        </>
                       ) : (
                         <Button
                           variant="outline-success"
