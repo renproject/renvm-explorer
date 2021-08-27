@@ -7,6 +7,7 @@ import Axios from "axios";
 import { TaggedError } from "../taggedError";
 
 import BasicAdapter from "./ABIs/BasicAdapter.json";
+import MEW from "./ABIs/MEW.json";
 
 const hardcodedABIs = (chain: ChainCommon, to: string): AbiItem[] | null => {
   if (
@@ -14,6 +15,10 @@ const hardcodedABIs = (chain: ChainCommon, to: string): AbiItem[] | null => {
     to === "0xac23817f7e9ec7eb6b7889bdd2b50e04a44470c5"
   ) {
     return BasicAdapter as AbiItem[];
+  }
+
+  if (to === "0x10aa7bbcb29cf100fe0f25819d11499e43caaea5") {
+    return MEW as AbiItem[];
   }
 
   return null;

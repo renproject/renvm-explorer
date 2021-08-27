@@ -55,12 +55,19 @@ export const LunaDetails: ChainDetails<Terra> = {
   chain: "Luna",
   nativeAssets: [{ symbol: "LUNA", name: "Luna" }],
   chainPattern: /^(luna|terra)$/i,
-  usePublicProvider: (network: RenNetwork) =>
-    Terra(
+  usePublicProvider: (network: RenNetwork) => {
+    console.log(
+      network,
       network === RenNetwork.Mainnet
         ? TerraNetwork.Columbus
         : TerraNetwork.Tequila
-    ),
+    );
+    return Terra(
+      network === RenNetwork.Mainnet
+        ? TerraNetwork.Columbus
+        : TerraNetwork.Tequila
+    );
+  },
 };
 
 export const DogecoinDetails: ChainDetails<Dogecoin> = {

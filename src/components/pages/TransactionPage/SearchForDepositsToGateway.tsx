@@ -31,6 +31,7 @@ export const SearchForDepositsToGateway: React.FC<Props> = ({
   const onDeposit = useCallback(
     (deposit) => {
       const txHash = deposit.txHash();
+      deposit.signed();
       setDeposits((deposits) => deposits.set(txHash, deposit));
     },
     [setDeposits]
