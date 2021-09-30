@@ -63,8 +63,6 @@ export const getLegacyTransactionDepositInstance = async (
     if (searchDetails.in.p.abi[0] && searchDetails.in.p.abi[0].inputs) {
       const abi = (searchDetails.in.p.abi[0].inputs || []).slice(0, -3);
 
-      console.log("Abi", abi);
-
       const abiValues = ethers.utils.defaultAbiCoder.decode(
         abi.map((x) => x.type),
         "0x" + searchDetails.in.p.value.toString("hex")

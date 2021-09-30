@@ -1,15 +1,17 @@
 import React from "react";
-import { ExternalLink } from "../../../common/ExternalLink";
-import {
-  SummarizedTransaction,
-  TransactionType,
-} from "../../../../lib/searchResult";
-import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
-import { TaggedText } from "../../../common/TaggedText";
 import { Table } from "react-bootstrap";
+
+import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
 import { Ox } from "@renproject/utils";
-import { MaybeLink } from "../../../common/MaybeLink";
+
 import { NETWORK } from "../../../../environmentVariables";
+import {
+    SummarizedTransaction,
+    TransactionType,
+} from "../../../../lib/searchResult";
+import { ExternalLink } from "../../../common/ExternalLink";
+import { MaybeLink } from "../../../common/MaybeLink";
+import { TaggedText } from "../../../common/TaggedText";
 
 interface Props {
   queryTx: SummarizedTransaction;
@@ -69,7 +71,13 @@ export const RecipientRow: React.FC<Props> = ({ queryTx, deposit, legacy }) => {
                     deposit.params.contractCalls.length - 1
                   ].contractParams?.map((param, i) => {
                     return (
-                      <tr key={i}>
+                      <tr
+                        key={i}
+                        style={{
+                          opacity:
+                            param.onlyInPayload || param.notInPayload ? 0.5 : 1,
+                        }}
+                      >
                         <td>Param {i + 1}</td>
                         <td>{param.name}</td>
                         <td>{param.type}</td>

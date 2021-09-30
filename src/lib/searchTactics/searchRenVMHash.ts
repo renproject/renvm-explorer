@@ -126,9 +126,6 @@ export const unmarshalTransaction = async (
   const isMint = /((\/to)|(To))/.exec(response.tx.selector);
   const isClaim = /\/claimFees/.exec(response.tx.selector);
 
-  console.log("isMint", isMint);
-  console.log("isClaim", isClaim);
-
   // Unmarshal transaction.
   if (isClaim) {
     const unmarshalled = unmarshalClaimFeesTx(response);
@@ -138,9 +135,7 @@ export const unmarshalTransaction = async (
       summary: await summarizeTransaction(unmarshalled, getChain),
     };
   } else if (isMint) {
-    console.log("ismint");
     const unmarshalled = unmarshalMintTx(response);
-    console.log("unmarshalled", unmarshalled);
     return {
       result: unmarshalled,
       transactionType: TransactionType.Mint as const,

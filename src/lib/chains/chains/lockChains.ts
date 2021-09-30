@@ -1,14 +1,15 @@
-import { TerraNetwork } from "@renproject/chains-terra/build/main/api/deposit";
 import {
-  Bitcoin,
-  BitcoinCash,
-  DigiByte,
-  Dogecoin,
-  Filecoin,
-  Terra,
-  Zcash,
+    Bitcoin,
+    BitcoinCash,
+    DigiByte,
+    Dogecoin,
+    Filecoin,
+    Terra,
+    Zcash,
 } from "@renproject/chains";
+import { TerraNetwork } from "@renproject/chains-terra/build/main/api/deposit";
 import { RenNetwork } from "@renproject/interfaces";
+
 import { ChainDetails } from "./types";
 
 export const BitcoinDetails: ChainDetails<Bitcoin> = {
@@ -56,12 +57,6 @@ export const LunaDetails: ChainDetails<Terra> = {
   nativeAssets: [{ symbol: "LUNA", name: "Luna" }],
   chainPattern: /^(luna|terra)$/i,
   usePublicProvider: (network: RenNetwork) => {
-    console.log(
-      network,
-      network === RenNetwork.Mainnet
-        ? TerraNetwork.Columbus
-        : TerraNetwork.Tequila
-    );
     return Terra(
       network === RenNetwork.Mainnet
         ? TerraNetwork.Columbus

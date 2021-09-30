@@ -277,25 +277,43 @@ export const getEthereumMintParams = async (
   );
 
   let abi = abis[0];
+  let valuesToDecode = abi.inputs;
   if (
     abis.length > 1 &&
     abis.filter((abi) => abi.name === "mintThenSwap").length
   ) {
     abi = abis.filter((abi) => abi.name === "mintThenSwap")[0];
+    valuesToDecode = abi.inputs?.filter(
+      (x) => x.name !== "_newMinExchangeRate"
+    );
   }
 
   const abiValues = ethers.utils.defaultAbiCoder.decode(
-    (abi.inputs?.slice(0, -3) || []).map((x) => x.type),
+    (valuesToDecode?.slice(0, -3) || []).map((x) => x.type),
     fromHex(payload)
   );
 
-  let parameters: EthArgs = (abi.inputs?.slice(0, -3) || []).map(
+  let parameters: EthArgs = (valuesToDecode?.slice(0, -3) || []).map(
     (abiItem, i) => ({
       name: abiItem.name,
       type: abiItem.type,
       value: abiValues[i],
     })
   );
+
+  if (abi.name === "mintThenSwap") {
+    parameters = [
+      ...parameters.slice(0, 1),
+      { ...parameters[0], notInPayload: true, name: "_newMinExchangeRate" },
+      ...parameters.slice(1),
+      {
+        name: "_msgSender",
+        type: "address",
+        value: parameters[2].value,
+        onlyInPayload: true,
+      },
+    ];
+  }
 
   return (mintChain as EthereumClass).Contract({
     sendTo: Ox(to.toString()),
