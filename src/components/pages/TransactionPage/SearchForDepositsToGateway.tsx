@@ -1,17 +1,19 @@
-import { Spinner, Button } from "react-bootstrap";
-import React, { useCallback, useState } from "react";
-import {
-  LockAndMint,
-  LockAndMintDeposit,
-} from "@renproject/ren/build/main/lockAndMint";
-import { Link, useHistory } from "react-router-dom";
-import { Card } from "@material-ui/core";
 import { OrderedMap } from "immutable";
+import React, { useCallback, useState } from "react";
+import { Button, Spinner } from "react-bootstrap";
+import { Link, useHistory } from "react-router-dom";
+
+import { Card } from "@material-ui/core";
 import {
-  LegacyRenVMTransaction,
-  RenVMTransaction,
-} from "../../../lib/searchResult";
+    LockAndMint,
+    LockAndMintDeposit,
+} from "@renproject/ren/build/main/lockAndMint";
+
 import { UIContainer } from "../../../containers/UIContainer";
+import {
+    LegacyRenVMTransaction,
+    RenVMTransaction,
+} from "../../../lib/searchResult";
 
 interface Props {
   lockAndMint?: LockAndMint | Error | null | undefined;
@@ -48,7 +50,7 @@ export const SearchForDepositsToGateway: React.FC<Props> = ({
       await new Promise((_resolve, _reject) => {
         lockAndMint.on("deposit", onDeposit);
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
     }
 

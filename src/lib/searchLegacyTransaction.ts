@@ -1,20 +1,22 @@
+import { ethers } from "ethers";
+
 import {
-  ChainCommon,
-  EthArgs,
-  LockAndMintParams,
-  LockAndMintTransaction,
-  LockChain,
-  MintChain,
-  RenNetwork,
+    ChainCommon,
+    EthArgs,
+    LockAndMintParams,
+    LockAndMintTransaction,
+    LockChain,
+    MintChain,
+    RenNetwork,
 } from "@renproject/interfaces";
 import RenJS from "@renproject/ren";
-import { ethers } from "ethers";
-import { LegacyRenVMTransaction, TransactionSummary } from "./searchResult";
-import { queryMintOrBurn } from "./searchTactics/searchLegacyRenVMTransaction";
 import { RenVMProvider } from "@renproject/rpc/build/main/v1";
+import { Ox } from "@renproject/utils";
+
 import { NETWORK } from "../environmentVariables";
 import { getEvmABI } from "./chains/getABI";
-import { Ox } from "@renproject/utils";
+import { LegacyRenVMTransaction, TransactionSummary } from "./searchResult";
+import { queryMintOrBurn } from "./searchTactics/searchLegacyRenVMTransaction";
 
 export const searchLegacyTransaction = async (
   transaction: LegacyRenVMTransaction,
@@ -61,6 +63,8 @@ export const getLegacyTransactionDepositInstance = async (
     if (searchDetails.in.p.abi[0] && searchDetails.in.p.abi[0].inputs) {
       const abi = (searchDetails.in.p.abi[0].inputs || []).slice(0, -3);
 
+      console.log("Abi", abi);
+
       const abiValues = ethers.utils.defaultAbiCoder.decode(
         abi.map((x) => x.type),
         "0x" + searchDetails.in.p.value.toString("hex")
@@ -79,7 +83,7 @@ export const getLegacyTransactionDepositInstance = async (
         throw new Error(abiFull);
       }
 
-      const abi = abiFull.filter(
+      const abis = abiFull.filter(
         (abi) =>
           abi.inputs &&
           abi.inputs.length >= 3 &&
@@ -87,7 +91,15 @@ export const getLegacyTransactionDepositInstance = async (
             abi.inputs[abi.inputs?.length - 3].type === "uint") &&
           abi.inputs[abi.inputs?.length - 2].type === "bytes32" &&
           abi.inputs[abi.inputs?.length - 1].type === "bytes"
-      )[0];
+      );
+
+      let abi = abis[0];
+      if (
+        abis.length > 1 &&
+        abis.filter((abi) => abi.name === "mintThenSwap").length
+      ) {
+        abi = abis.filter((abi) => abi.name === "mintThenSwap")[0];
+      }
 
       const abiValues = ethers.utils.defaultAbiCoder.decode(
         (abi.inputs?.slice(0, -3) || []).map((x) => x.type),
@@ -136,6 +148,14 @@ export const getLegacyTransactionDepositInstance = async (
         transaction: tx,
         amount: searchDetails.in.utxo.amount,
       });
+
+      const depositHash = deposit.txHash();
+      if (depositHash !== searchDetails.hash) {
+        console.error(
+          `Expected ${depositHash} to equal ${searchDetails.hash}.`
+        );
+        await deposit.signed();
+      }
 
       return {
         lockAndMint,

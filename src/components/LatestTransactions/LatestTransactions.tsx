@@ -1,14 +1,14 @@
-import {
-  LatestTransactionsOuter,
-  LatestTransactionsInner,
-  LatestTransactionsTitle,
-  LatestTransactionsSubtitle,
-} from "./LatestTransactionsStyles";
-import { Container } from "react-bootstrap";
 import React, { useCallback, useEffect, useState } from "react";
+import { Container, Spinner } from "react-bootstrap";
+
 import { LatestTransactionsContainer } from "../../containers/LatestTransactionsContainer";
+import {
+    LatestTransactionsInner,
+    LatestTransactionsOuter,
+    LatestTransactionsSubtitle,
+    LatestTransactionsTitle,
+} from "./LatestTransactionsStyles";
 import { TransactionPreview } from "./TransactionPreview";
-import { Spinner } from "react-bootstrap";
 
 export const LatestTransactions = () => {
   const { latestTransactions, fetchLatestTransactions } =
@@ -28,7 +28,7 @@ export const LatestTransactions = () => {
           setRefreshed(true);
           setTimeout(() => setRefreshed(false), 3 * 1000);
         }
-      } catch (error) {
+      } catch (error: any) {
         setFetchingError(error);
       }
       setFetching(false);

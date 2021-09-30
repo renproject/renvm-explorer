@@ -1,17 +1,19 @@
-import { Spinner, Button } from "react-bootstrap";
 import React, { useCallback, useState } from "react";
+import { Button, Spinner } from "react-bootstrap";
+
 import {
-  LockAndMint,
-  LockAndMintDeposit,
+    LockAndMint,
+    LockAndMintDeposit,
 } from "@renproject/ren/build/main/lockAndMint";
+
 import { NETWORK } from "../../../environmentVariables";
-import { getTransactionDepositInstance } from "../../../lib/searchTransaction";
+import { getGatewayInstance } from "../../../lib/searchGateway";
 import { getLegacyTransactionDepositInstance } from "../../../lib/searchLegacyTransaction";
 import {
-  SummarizedTransaction,
-  TransactionType,
+    SummarizedTransaction,
+    TransactionType,
 } from "../../../lib/searchResult";
-import { getGatewayInstance } from "../../../lib/searchGateway";
+import { getTransactionDepositInstance } from "../../../lib/searchTransaction";
 
 interface Props {
   legacy: boolean;
@@ -49,7 +51,7 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
             queryTx.summary
           );
           setLockAndMint(deposit);
-        } catch (error) {
+        } catch (error: any) {
           console.error(error);
           setLockAndMint(error instanceof Error ? error : new Error(error));
         }
@@ -75,7 +77,7 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
             setDeposit(deposit);
             setLockAndMint(lockAndMint);
           }
-        } catch (error) {
+        } catch (error: any) {
           console.error(error);
           setDeposit(error instanceof Error ? error : new Error(error));
         }

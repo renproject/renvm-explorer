@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { SummarizedTransaction } from "../../../../lib/searchResult";
-import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
+import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
-import { UIContainer } from "../../../../containers/UIContainer";
-import { useCallback } from "react";
+
 import { MintChain } from "@renproject/interfaces";
+import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
+
+import { UIContainer } from "../../../../containers/UIContainer";
 import { getMintChainParams } from "../../../../lib/chains/chains";
+import { SummarizedTransaction } from "../../../../lib/searchResult";
 
 interface Props {
   queryTx: SummarizedTransaction;
@@ -37,7 +38,7 @@ export const TokenAccountRow: React.FC<Props> = ({ queryTx, deposit }) => {
         );
 
         setTokenAccount(maybeTokenAccount || null);
-      } catch (error) {
+      } catch (error: any) {
         setTokenAccount(null);
       }
     }

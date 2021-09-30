@@ -1,5 +1,6 @@
-import { RenNetwork } from "@renproject/interfaces";
 import { config } from "dotenv";
+
+import { RenNetwork } from "@renproject/interfaces";
 
 config();
 

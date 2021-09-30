@@ -1,6 +1,5 @@
+import { Button, FormControl, Navbar, Row } from "react-bootstrap";
 import styled from "styled-components";
-
-import { Navbar, FormControl } from "react-bootstrap";
 
 export const HeaderLogo = styled.div`
   display: inline;
@@ -18,4 +17,31 @@ export const NavbarStyled = styled(Navbar)`
   } */
 `;
 
-export const SearchInputStyled = styled(FormControl)``;
+export const SearchInputStyled = styled(FormControl)`
+  flex: 1 0;
+
+  @media screen and (max-width: 991px) {
+    margin: 0 5px;
+    width: calc(100% - 10px);
+  }
+`;
+
+export const CollapseStyled = styled(Navbar.Collapse)`
+  justify-content: space-between;
+`;
+
+export const SearchRow = styled(Row)`
+  @media screen and (max-width: 991px) {
+    flex-flow: column;
+  }
+`;
+
+export const SearchButton = styled(Button)`
+  flex: 1 0;
+  margin: 0 5px;
+  width: calc(100% - 10px);
+
+  @media screen and (max-width: 991px) {
+    margin-top: 5px;
+  }
+`;

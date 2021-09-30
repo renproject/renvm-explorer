@@ -1,11 +1,12 @@
+import Axios from "axios";
+
 import { Fantom, Polygon } from "@renproject/chains";
 import { BinanceSmartChain, Ethereum } from "@renproject/chains-ethereum";
 import { AbiItem, ChainCommon, RenNetwork } from "@renproject/interfaces";
 import { Ox } from "@renproject/utils";
-import { NETWORK } from "../../environmentVariables";
-import Axios from "axios";
-import { TaggedError } from "../taggedError";
 
+import { NETWORK } from "../../environmentVariables";
+import { TaggedError } from "../taggedError";
 import BasicAdapter from "./ABIs/BasicAdapter.json";
 import MEW from "./ABIs/MEW.json";
 
@@ -128,7 +129,7 @@ export const getEvmABI = async (
   for (const tactic of tactics) {
     try {
       return await tactic(chain, to);
-    } catch (error) {
+    } catch (error: any) {
       if ((error as TaggedError)._tag === ABIError.ChainNotSupported) {
         continue;
       }

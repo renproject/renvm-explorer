@@ -1,29 +1,31 @@
-import { isBase64 } from "./common";
-import { SearchTactic } from "./searchTactic";
+import BigNumber from "bignumber.js";
+
 import {
-  LockAndMintTransaction,
-  BurnAndReleaseTransaction,
-  ChainCommon,
+    BurnAndReleaseTransaction,
+    ChainCommon,
+    LockAndMintTransaction,
 } from "@renproject/interfaces";
 import {
-  RenVMProvider,
-  unmarshalMintTx,
-  unmarshalBurnTx,
-  ResponseQueryTx,
-  ResponseQueryMintTx,
-  ResponseQueryBurnTx,
+    RenVMProvider,
+    ResponseQueryBurnTx,
+    ResponseQueryMintTx,
+    ResponseQueryTx,
+    unmarshalBurnTx,
+    unmarshalMintTx,
 } from "@renproject/rpc/build/main/v1";
+import { parseV1Selector, toReadable } from "@renproject/utils";
+
 import { NETWORK } from "../../environmentVariables";
 import {
-  LegacyRenVMTransaction,
-  RenVMTransactionError,
-  SummarizedTransaction,
-  TransactionSummary,
-  TransactionType,
+    LegacyRenVMTransaction,
+    RenVMTransactionError,
+    SummarizedTransaction,
+    TransactionSummary,
+    TransactionType,
 } from "../searchResult";
-import BigNumber from "bignumber.js";
-import { parseV1Selector, toReadable } from "@renproject/utils";
 import { errorMatches, TaggedError } from "../taggedError";
+import { isBase64 } from "./common";
+import { SearchTactic } from "./searchTactic";
 
 export const summarizeTransaction = async (
   searchDetails: LockAndMintTransaction | BurnAndReleaseTransaction,
@@ -82,7 +84,7 @@ export const queryMintOrBurn = async (
   let response: ResponseQueryTx;
   try {
     response = await provider.queryTx(transactionHash, 1);
-  } catch (error) {
+  } catch (error: any) {
     if (errorMatches(error, "not found")) {
       throw new TaggedError(error, RenVMTransactionError.TransactionNotFound);
     }

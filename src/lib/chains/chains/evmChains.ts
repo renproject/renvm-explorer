@@ -1,25 +1,25 @@
-import {
-  Arbitrum,
-  Avalanche,
-  BinanceSmartChain,
-  Ethereum,
-  EthereumClass,
-  EthereumConfig,
-  Fantom,
-  Goerli,
-  Polygon,
-} from "@renproject/chains";
-import { EthArgs } from "@renproject/interfaces";
-import { fromHex, Ox } from "@renproject/utils";
-import { MintChain, RenNetwork } from "@renproject/interfaces";
-import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
 import { ethers } from "ethers";
 
-import { INFURA_KEY } from "../../../environmentVariables";
-import { Icons } from "../icons/wallets";
-import { getEvmABI } from "../getABI";
-import { ChainDetails } from "./types";
+import {
+    Arbitrum,
+    Avalanche,
+    BinanceSmartChain,
+    Ethereum,
+    EthereumClass,
+    EthereumConfig,
+    Fantom,
+    Goerli,
+    Polygon,
+} from "@renproject/chains";
+import { EthArgs, MintChain, RenNetwork } from "@renproject/interfaces";
 import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
+import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
+import { fromHex, Ox } from "@renproject/utils";
+
+import { INFURA_KEY } from "../../../environmentVariables";
+import { getEvmABI } from "../getABI";
+import { Icons } from "../icons/wallets";
+import { ChainDetails } from "./types";
 
 export const networkMapper =
   (map: {
@@ -266,7 +266,7 @@ export const getEthereumMintParams = async (
     throw new Error(abiFull);
   }
 
-  const abi = abiFull.filter(
+  const abis = abiFull.filter(
     (abi) =>
       abi.inputs &&
       abi.inputs.length >= 3 &&
@@ -274,14 +274,22 @@ export const getEthereumMintParams = async (
         abi.inputs[abi.inputs?.length - 3].type === "uint") &&
       abi.inputs[abi.inputs?.length - 2].type === "bytes32" &&
       abi.inputs[abi.inputs?.length - 1].type === "bytes"
-  )[0];
+  );
+
+  let abi = abis[0];
+  if (
+    abis.length > 1 &&
+    abis.filter((abi) => abi.name === "mintThenSwap").length
+  ) {
+    abi = abis.filter((abi) => abi.name === "mintThenSwap")[0];
+  }
 
   const abiValues = ethers.utils.defaultAbiCoder.decode(
     (abi.inputs?.slice(0, -3) || []).map((x) => x.type),
     fromHex(payload)
   );
 
-  const parameters: EthArgs = (abi.inputs?.slice(0, -3) || []).map(
+  let parameters: EthArgs = (abi.inputs?.slice(0, -3) || []).map(
     (abiItem, i) => ({
       name: abiItem.name,
       type: abiItem.type,

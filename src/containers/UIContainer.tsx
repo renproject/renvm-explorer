@@ -1,23 +1,24 @@
-import { useCallback, useState } from "react";
+import { OrderedMap } from "immutable";
+import { useCallback, useMemo, useState } from "react";
 import { useHistory } from "react-router";
 import { createContainer } from "unstated-next";
+
+import { ChainCommon } from "@renproject/interfaces";
+
+import { NETWORK } from "../environmentVariables";
+import { allChains, ChainMapper } from "../lib/chains/chains";
 import { search, SearchErrors } from "../lib/search";
+import { searchGateway } from "../lib/searchGateway";
+import { searchLegacyTransaction } from "../lib/searchLegacyTransaction";
 import {
-  RenVMGateway,
-  RenVMTransaction,
-  LegacyRenVMTransaction,
-  SearchResult,
-  Searching,
+    LegacyRenVMTransaction,
+    RenVMGateway,
+    RenVMTransaction,
+    Searching,
+    SearchResult,
 } from "../lib/searchResult";
 import { searchTransaction } from "../lib/searchTransaction";
-import { OrderedMap } from "immutable";
-import { ChainCommon } from "@renproject/interfaces";
-import { allChains, ChainMapper } from "../lib/chains/chains";
-import { NETWORK } from "../environmentVariables";
-import { searchLegacyTransaction } from "../lib/searchLegacyTransaction";
-import { searchGateway } from "../lib/searchGateway";
 import { TaggedError } from "../lib/taggedError";
-import { useMemo } from "react";
 
 function useUIContainer() {
   const history = useHistory();
@@ -36,7 +37,7 @@ function useUIContainer() {
         const chain = ChainMapper(chainDetails.chain, NETWORK);
         chain?.initialize(NETWORK);
         return acc.set(chainDetails.chain, chain || null);
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
         return acc.set(chainDetails.chain, null);
       }

@@ -1,12 +1,16 @@
-import {
-  SearchFormInner,
-  SearchFormOuter,
-  SearchSubtitle,
-  SearchTitle,
-} from "./SearchFormStyles";
-import { Container, Form, Col, Button, FormControl } from "react-bootstrap";
 import React, { useCallback, useRef } from "react";
+import { Container, Form } from "react-bootstrap";
+
 import { UIContainer } from "../../containers/UIContainer";
+import {
+    SearchButton,
+    SearchFormControl,
+    SearchFormInner,
+    SearchFormOuter,
+    SearchRow,
+    SearchSubtitle,
+    SearchTitle,
+} from "./SearchFormStyles";
 
 export const SearchForm = () => {
   const { handleSearchForm } = UIContainer.useContainer();
@@ -37,18 +41,14 @@ export const SearchForm = () => {
           </SearchSubtitle>
 
           <Form onSubmit={searchFormSubmitCallback}>
-            <Form.Row>
-              <Col xs={5}>
-                <FormControl
-                  ref={searchFormInputRef}
-                  type="text"
-                  placeholder="Search"
-                />
-              </Col>
-              <Col>
-                <Button type="submit">Search</Button>
-              </Col>
-            </Form.Row>
+            <SearchRow>
+              <SearchFormControl
+                ref={searchFormInputRef}
+                type="text"
+                placeholder="Search"
+              />
+              <SearchButton type="submit">Search</SearchButton>
+            </SearchRow>
           </Form>
         </SearchFormInner>
       </Container>

@@ -1,21 +1,22 @@
-import { SearchTactic } from "./searchTactic";
 import { ChainCommon, TxStatus } from "@renproject/interfaces";
 import {
-  RenVMProvider,
-  unmarshalMintTx,
-  unmarshalBurnTx,
-  RenVMResponses,
-  RPCMethod,
+    RenVMProvider,
+    RenVMResponses,
+    RPCMethod,
+    unmarshalBurnTx,
+    unmarshalMintTx,
 } from "@renproject/rpc/build/main/v2";
-import { NETWORK } from "../../environmentVariables";
-import {
-  RenVMTransaction,
-  SummarizedTransaction,
-  TransactionType,
-} from "../searchResult";
 import { doesntError, toURLBase64 } from "@renproject/utils";
-import { summarizeTransaction } from "./searchRenVMHash";
+
+import { NETWORK } from "../../environmentVariables";
 import { allChains } from "../chains/chains";
+import {
+    RenVMTransaction,
+    SummarizedTransaction,
+    TransactionType,
+} from "../searchResult";
+import { summarizeTransaction } from "./searchRenVMHash";
+import { SearchTactic } from "./searchTactic";
 
 export const queryTxsByTxid = async (
   provider: RenVMProvider,
@@ -114,7 +115,7 @@ export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
       try {
         queryTxs = await queryTxsByTxid(provider, format!, getChain);
         break;
-      } catch (error) {
+      } catch (error: any) {
         continue;
       }
     }

@@ -1,7 +1,7 @@
 import React from "react";
-import { Card, CardDeck } from "react-bootstrap";
-import styled from "styled-components";
+import { Card, Col, Row } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
+import styled from "styled-components";
 
 const Tag = styled.span`
   padding: 5px;
@@ -45,17 +45,19 @@ const ToolCard = ({
 
 export const ToolList = () => {
   return (
-    <CardDeck>
-      <ToolCard
-        title={<>pack.encode and pack.decode</>}
-        description={<>Convert between pack-encoded values and JSON</>}
-        tags={["pack"]}
-      />
-      <ToolCard
-        title={<>Tool title</>}
-        description={<>Tool that helps out someway</>}
-        tags={["Tag 1", "Tag 2"]}
-      />
-    </CardDeck>
+    <Row xs={1} md={2} className="g-4">
+      <Col>
+        <ToolCard
+          title={<>pack.encode and pack.decode</>}
+          description={<>Convert between pack-encoded values and JSON</>}
+          tags={["pack"]}
+        />
+        <ToolCard
+          title={<>Tool title</>}
+          description={<>Tool that helps out someway</>}
+          tags={["Tag 1", "Tag 2"]}
+        />
+      </Col>
+    </Row>
   );
 };

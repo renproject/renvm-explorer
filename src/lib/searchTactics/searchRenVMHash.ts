@@ -1,28 +1,30 @@
-import { isURLBase64 } from "./common";
-import { SearchTactic } from "./searchTactic";
+import BigNumber from "bignumber.js";
+
 import {
-  LockAndMintTransaction,
-  BurnAndReleaseTransaction,
-  ChainCommon,
+    BurnAndReleaseTransaction,
+    ChainCommon,
+    LockAndMintTransaction,
 } from "@renproject/interfaces";
 import {
-  RenVMProvider,
-  unmarshalMintTx,
-  unmarshalBurnTx,
-  ResponseQueryTx,
+    RenVMProvider,
+    ResponseQueryTx,
+    unmarshalBurnTx,
+    unmarshalMintTx,
 } from "@renproject/rpc/build/main/v2";
+import { toReadable } from "@renproject/utils";
+
 import { NETWORK } from "../../environmentVariables";
 import {
-  RenVMTransaction,
-  RenVMTransactionError,
-  SummarizedTransaction,
-  TransactionSummary,
-  TransactionType,
+    RenVMTransaction,
+    RenVMTransactionError,
+    SummarizedTransaction,
+    TransactionSummary,
+    TransactionType,
 } from "../searchResult";
-import BigNumber from "bignumber.js";
-import { toReadable } from "@renproject/utils";
 import { errorMatches, TaggedError } from "../taggedError";
 import { unmarshalClaimFeesTx } from "../unmarshalClaimFees";
+import { isURLBase64 } from "./common";
+import { SearchTactic } from "./searchTactic";
 
 const RenVMChain = "RenVM";
 
@@ -124,6 +126,9 @@ export const unmarshalTransaction = async (
   const isMint = /((\/to)|(To))/.exec(response.tx.selector);
   const isClaim = /\/claimFees/.exec(response.tx.selector);
 
+  console.log("isMint", isMint);
+  console.log("isClaim", isClaim);
+
   // Unmarshal transaction.
   if (isClaim) {
     const unmarshalled = unmarshalClaimFeesTx(response);
@@ -133,7 +138,9 @@ export const unmarshalTransaction = async (
       summary: await summarizeTransaction(unmarshalled, getChain),
     };
   } else if (isMint) {
+    console.log("ismint");
     const unmarshalled = unmarshalMintTx(response);
+    console.log("unmarshalled", unmarshalled);
     return {
       result: unmarshalled,
       transactionType: TransactionType.Mint as const,
@@ -157,7 +164,7 @@ export const queryMintOrBurn = async (
   let response: ResponseQueryTx;
   try {
     response = await provider.queryTx(transactionHash, 1);
-  } catch (error) {
+  } catch (error: any) {
     if (errorMatches(error, "not found")) {
       throw new TaggedError(error, RenVMTransactionError.TransactionNotFound);
     }

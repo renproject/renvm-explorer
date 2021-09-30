@@ -1,21 +1,22 @@
-import { SearchTactic } from "./searchTactic";
-import { LockAndMintTransaction, ChainCommon } from "@renproject/interfaces";
+import { ChainCommon, LockAndMintTransaction } from "@renproject/interfaces";
 import {
-  RenVMProvider,
-  unmarshalMintTx,
-  ResponseQueryTx,
+    RenVMProvider,
+    ResponseQueryTx,
+    unmarshalMintTx,
 } from "@renproject/rpc/build/main/v2";
+import { doesntError } from "@renproject/utils";
+
 import { NETWORK } from "../../environmentVariables";
+import { allChains } from "../chains/chains";
 import {
-  RenVMGateway,
-  RenVMTransactionError,
-  TransactionSummary,
-  TransactionType,
+    RenVMGateway,
+    RenVMTransactionError,
+    TransactionSummary,
+    TransactionType,
 } from "../searchResult";
 import { errorMatches, TaggedError } from "../taggedError";
 import { summarizeTransaction } from "./searchRenVMHash";
-import { allChains } from "../chains/chains";
-import { doesntError } from "@renproject/utils";
+import { SearchTactic } from "./searchTactic";
 
 export const queryGateway = async (
   provider: RenVMProvider,
@@ -33,7 +34,7 @@ export const queryGateway = async (
       { gateway: gatewayAddress },
       1
     );
-  } catch (error) {
+  } catch (error: any) {
     if (errorMatches(error, "not found")) {
       throw new TaggedError(error, RenVMTransactionError.TransactionNotFound);
     }

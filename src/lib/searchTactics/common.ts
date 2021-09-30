@@ -1,4 +1,5 @@
 import { toURLBase64 } from "@renproject/utils";
+
 import { DEBUG } from "../../environmentVariables";
 
 const assert = (input: boolean) => {
@@ -12,7 +13,7 @@ const doesntError = <T extends any[]>(f: (...p: T) => boolean | void) => {
     try {
       const response = f(...p);
       return response === undefined || response === true ? true : false;
-    } catch (error) {
+    } catch (error: any) {
       if (DEBUG) {
         console.error(error);
       }

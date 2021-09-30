@@ -1,20 +1,22 @@
+import BigNumber from "bignumber.js";
+
 import {
-  ChainCommon,
-  LockAndMintParams,
-  LockAndMintTransaction,
-  LockChain,
-  MintChain,
-  RenNetwork,
+    ChainCommon,
+    LockAndMintParams,
+    LockAndMintTransaction,
+    LockChain,
+    MintChain,
+    RenNetwork,
 } from "@renproject/interfaces";
 import RenJS from "@renproject/ren";
 import { LockAndMintDeposit } from "@renproject/ren/build/main/lockAndMint";
-import { Ox } from "@renproject/utils";
-import BigNumber from "bignumber.js";
-import { RenVMTransaction, TransactionSummary } from "./searchResult";
-import { queryMintOrBurn } from "./searchTactics/searchRenVMHash";
 import { RenVMProvider } from "@renproject/rpc/build/main/v2";
+import { Ox } from "@renproject/utils";
+
 import { NETWORK } from "../environmentVariables";
 import { getMintChainParams } from "./chains/chains";
+import { RenVMTransaction, TransactionSummary } from "./searchResult";
+import { queryMintOrBurn } from "./searchTactics/searchRenVMHash";
 
 export const searchTransaction = async (
   transaction: RenVMTransaction,
@@ -94,7 +96,7 @@ export const getTransactionDepositInstance = async (
       inputs.txindex.toString(),
       true
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
     throw error;
   }
@@ -106,6 +108,12 @@ export const getTransactionDepositInstance = async (
   (deposit as any).gatewayAddress = lockAndMint.gatewayAddress;
 
   // await deposit.signed();
+
+  const depositHash = deposit.txHash();
+  if (depositHash !== searchDetails.hash) {
+    console.error(`Expected ${depositHash} to equal ${searchDetails.hash}.`);
+    await deposit.signed();
+  }
 
   return {
     lockAndMint,

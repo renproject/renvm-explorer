@@ -1,4 +1,5 @@
 import { ChainCommon } from "@renproject/interfaces";
+
 import { DEBUG } from "../environmentVariables";
 import { SearchResult } from "./searchResult";
 import { searchTactics } from "./searchTactics";
@@ -32,7 +33,7 @@ export const search = async (
           return result;
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       if (DEBUG) {
         console.error("DEBUG", error);
       }

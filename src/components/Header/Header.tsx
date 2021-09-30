@@ -1,20 +1,22 @@
-import { HeaderLogo, NavbarStyled, SearchInputStyled } from "./HeaderStyles";
-import { ReactComponent as Logo } from "../../images/logo.svg";
-import {
-  Navbar,
-  NavDropdown,
-  Nav,
-  Form,
-  Button,
-  Container,
-} from "react-bootstrap";
-import { LinkContainer } from "react-router-bootstrap";
-import { UIContainer } from "../../containers/UIContainer";
 import React, { useCallback, useRef } from "react";
-import { NETWORK } from "../../environmentVariables";
-import { RenNetwork } from "@renproject/interfaces";
-import { ExternalLink } from "../common/ExternalLink";
+import { Container, Form, Nav, Navbar, NavDropdown } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
 import { titleCase } from "title-case";
+
+import { RenNetwork } from "@renproject/interfaces";
+
+import { UIContainer } from "../../containers/UIContainer";
+import { NETWORK } from "../../environmentVariables";
+import { ReactComponent as Logo } from "../../images/logo.svg";
+import { ExternalLink } from "../common/ExternalLink";
+import {
+    CollapseStyled,
+    HeaderLogo,
+    NavbarStyled,
+    SearchButton,
+    SearchInputStyled,
+    SearchRow,
+} from "./HeaderStyles";
 
 export const Header = () => {
   const { handleSearchForm } = UIContainer.useContainer();
@@ -57,7 +59,7 @@ export const Header = () => {
           </Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+        <CollapseStyled id="basic-navbar-nav">
           <Nav className="mr-auto">
             <LinkContainer to="/">
               <Nav.Link>Home</Nav.Link>
@@ -118,18 +120,20 @@ export const Header = () => {
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
-          <Form inline onSubmit={searchFormSubmitCallback}>
-            <SearchInputStyled
-              ref={searchFormInputRef}
-              type="text"
-              placeholder="Search"
-              className="mr-sm-2"
-            />
-            <Button type="submit" variant="outline-success">
-              Search
-            </Button>
+          <Form onSubmit={searchFormSubmitCallback}>
+            <SearchRow>
+              <SearchInputStyled
+                ref={searchFormInputRef}
+                type="text"
+                placeholder="Search"
+                className="mr-sm-2"
+              />
+              <SearchButton type="submit" variant="outline-success">
+                Search
+              </SearchButton>
+            </SearchRow>
           </Form>
-        </Navbar.Collapse>
+        </CollapseStyled>
       </Container>
     </NavbarStyled>
   );
