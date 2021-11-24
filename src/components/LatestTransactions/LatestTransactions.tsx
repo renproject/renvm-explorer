@@ -102,7 +102,7 @@ export const LatestTransactions = () => {
           })}
           {fetchingError ? (
             <p>
-              Error fetchin transactions (
+              Error fetching transactions (
               {String(fetchingError.message || fetchingError)})
             </p>
           ) : null}

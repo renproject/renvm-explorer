@@ -36,11 +36,9 @@ export const networkMapper =
     }[parseInt(id as string)] as RenNetwork; // tslint:disable-line: radix
   };
 
-export const injectedConnectorFactory = (
-  map: {
-    [network in RenNetwork]?: EthereumConfig;
-  }
-) => {
+export const injectedConnectorFactory = (map: {
+  [network in RenNetwork]?: EthereumConfig;
+}) => {
   return {
     name: "Metamask",
     logo: Icons.Metamask,
@@ -81,9 +79,10 @@ export const EthereumDetails: ChainDetails<Ethereum> = {
   getMintParams: async (
     mintChain: MintChain,
     to: string,
-    payload: string
+    payload: string,
+    asset: string
   ): Promise<MintChain> =>
-    getEthereumMintParams(mintChain as EthereumClass, to, payload),
+    getEthereumMintParams(mintChain as EthereumClass, to, payload, asset),
 };
 
 // BinanceSmartChain ///////////////////////////////////////////////////////////
@@ -103,9 +102,10 @@ export const BinanceSmartChainDetails: ChainDetails<BinanceSmartChain> = {
   getMintParams: async (
     mintChain: MintChain,
     to: string,
-    payload: string
+    payload: string,
+    asset: string
   ): Promise<MintChain> =>
-    getEthereumMintParams(mintChain as BinanceSmartChain, to, payload),
+    getEthereumMintParams(mintChain as BinanceSmartChain, to, payload, asset),
 };
 
 // Fantom ////////////////////////////////////////////////////////////////////
@@ -125,9 +125,10 @@ export const FantomDetails: ChainDetails<Fantom> = {
   getMintParams: async (
     mintChain: MintChain,
     to: string,
-    payload: string
+    payload: string,
+    asset: string
   ): Promise<MintChain> =>
-    getEthereumMintParams(mintChain as Fantom, to, payload),
+    getEthereumMintParams(mintChain as Fantom, to, payload, asset),
 };
 
 // Polygon ////////////////////////////////////////////////////////////////////
@@ -147,9 +148,10 @@ export const PolygonDetails: ChainDetails<Polygon> = {
   getMintParams: async (
     mintChain: MintChain,
     to: string,
-    payload: string
+    payload: string,
+    asset: string
   ): Promise<MintChain> =>
-    getEthereumMintParams(mintChain as Polygon, to, payload),
+    getEthereumMintParams(mintChain as Polygon, to, payload, asset),
 };
 
 // Avalanche ////////////////////////////////////////////////////////////////////
@@ -169,9 +171,10 @@ export const AvalancheDetails: ChainDetails<Avalanche> = {
   getMintParams: async (
     mintChain: MintChain,
     to: string,
-    payload: string
+    payload: string,
+    asset: string
   ): Promise<MintChain> =>
-    getEthereumMintParams(mintChain as Avalanche, to, payload),
+    getEthereumMintParams(mintChain as Avalanche, to, payload, asset),
 };
 
 // Goerli ////////////////////////////////////////////////////////////////////
@@ -196,9 +199,10 @@ export const GoerliDetails: ChainDetails<Goerli> = {
   getMintParams: async (
     mintChain: MintChain,
     to: string,
-    payload: string
+    payload: string,
+    asset: string
   ): Promise<MintChain> =>
-    getEthereumMintParams(mintChain as Goerli, to, payload),
+    getEthereumMintParams(mintChain as Goerli, to, payload, asset),
 };
 
 // Arbitrum ////////////////////////////////////////////////////////////////////
@@ -218,9 +222,10 @@ export const ArbitrumDetails: ChainDetails<Arbitrum> = {
   getMintParams: async (
     mintChain: MintChain,
     to: string,
-    payload: string
+    payload: string,
+    asset: string
   ): Promise<MintChain> =>
-    getEthereumMintParams(mintChain as Arbitrum, to, payload),
+    getEthereumMintParams(mintChain as Arbitrum, to, payload, asset),
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -259,12 +264,16 @@ export const getPublicEthereumProvider = <
 export const getEthereumMintParams = async (
   mintChain: EthereumClass,
   to: string,
-  payload: string
+  payload: string,
+  asset: string
 ) => {
   const abiFull = await getEvmABI(mintChain, to);
   if (!Array.isArray(abiFull)) {
     throw new Error(abiFull);
   }
+
+  console.log("abiFull", abiFull);
+  console.log("payload", payload);
 
   const abis = abiFull.filter(
     (abi) =>
@@ -277,6 +286,7 @@ export const getEthereumMintParams = async (
   );
 
   let abi = abis[0];
+
   let valuesToDecode = abi.inputs;
   if (
     abis.length > 1 &&
@@ -288,31 +298,69 @@ export const getEthereumMintParams = async (
     );
   }
 
-  const abiValues = ethers.utils.defaultAbiCoder.decode(
-    (valuesToDecode?.slice(0, -3) || []).map((x) => x.type),
-    fromHex(payload)
-  );
+  let parameters: EthArgs;
 
-  let parameters: EthArgs = (valuesToDecode?.slice(0, -3) || []).map(
-    (abiItem, i) => ({
+  // Varen override. TODO: Refactor to make overriding tidier.
+  if (Ox(to.toLowerCase()) === "0xa9975b1c616b4841a1cc299bc6f684b4d1e23a61") {
+    parameters = [
+      {
+        name: "sender",
+        type: "address",
+        value: Ox(fromHex(payload).slice(12)),
+      },
+      {
+        name: "mintToken",
+        type: "address",
+        value: await (mintChain as EthereumClass).getTokenContractAddress(
+          asset
+        ),
+        notInPayload: true,
+      },
+      {
+        name: "burnToken",
+        type: "address",
+        value: Ox("00".repeat(20)),
+        notInPayload: true,
+      },
+      { name: "burnAmount", type: "uint256", value: 0, notInPayload: true },
+      {
+        name: "burnSendTo",
+        type: "bytes",
+        value: Buffer.from([]),
+        notInPayload: true,
+      },
+      {
+        name: "swapVars",
+        type: "tuple(address,uint256,address,bytes)",
+        value: [Ox("00".repeat(20)), 0, Ox("00".repeat(20)), Buffer.from([])],
+        notInPayload: true,
+      },
+    ];
+  } else {
+    const abiValues = ethers.utils.defaultAbiCoder.decode(
+      (valuesToDecode?.slice(0, -3) || []).map((x) => x.type),
+      fromHex(payload)
+    );
+
+    parameters = (valuesToDecode?.slice(0, -3) || []).map((abiItem, i) => ({
       name: abiItem.name,
       type: abiItem.type,
       value: abiValues[i],
-    })
-  );
+    }));
 
-  if (abi.name === "mintThenSwap") {
-    parameters = [
-      ...parameters.slice(0, 1),
-      { ...parameters[0], notInPayload: true, name: "_newMinExchangeRate" },
-      ...parameters.slice(1),
-      {
-        name: "_msgSender",
-        type: "address",
-        value: parameters[2].value,
-        onlyInPayload: true,
-      },
-    ];
+    if (abi.name === "mintThenSwap") {
+      parameters = [
+        ...parameters.slice(0, 1),
+        { ...parameters[0], notInPayload: true, name: "_newMinExchangeRate" },
+        ...parameters.slice(1),
+        {
+          name: "_msgSender",
+          type: "address",
+          value: parameters[2].value,
+          onlyInPayload: true,
+        },
+      ];
+    }
   }
 
   return (mintChain as EthereumClass).Contract({
