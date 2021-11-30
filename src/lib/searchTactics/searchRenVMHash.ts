@@ -90,17 +90,21 @@ export const summarizeTransaction = async (
     chain = toChain;
   }
 
-  if (amountInRaw && chain) {
-    amountIn = toReadable(amountInRaw, await chain.assetDecimals(asset));
-    if (
-      searchDetails.out &&
-      (searchDetails.out.revert === undefined ||
-        searchDetails.out.revert.length === 0) &&
-      (searchDetails.out as any).amount
-    ) {
-      amountOutRaw = new BigNumber((searchDetails.out as any).amount);
-      amountOut = toReadable(amountOutRaw, await chain.assetDecimals(asset));
+  try {
+    if (amountInRaw && chain) {
+      amountIn = toReadable(amountInRaw, await chain.assetDecimals(asset));
+      if (
+        searchDetails.out &&
+        (searchDetails.out.revert === undefined ||
+          searchDetails.out.revert.length === 0) &&
+        (searchDetails.out as any).amount
+      ) {
+        amountOutRaw = new BigNumber((searchDetails.out as any).amount);
+        amountOut = toReadable(amountOutRaw, await chain.assetDecimals(asset));
+      }
     }
+  } catch (error) {
+    // Ignore error.
   }
 
   return {
