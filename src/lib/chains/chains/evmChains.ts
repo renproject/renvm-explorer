@@ -301,7 +301,11 @@ export const getEthereumMintParams = async (
   let parameters: EthArgs;
 
   // Varen override. TODO: Refactor to make overriding tidier.
-  if (Ox(to.toLowerCase()) === "0xa9975b1c616b4841a1cc299bc6f684b4d1e23a61") {
+  if (
+    Ox(to.toLowerCase()) === "0xa9975b1c616b4841a1cc299bc6f684b4d1e23a61" ||
+    Ox(to.toLowerCase()) === "0x82f2e6c57b7fde0ebb42f22bfc6b4a297e7d9be8" ||
+    Ox(to.toLowerCase()) === "0xf0a8feacb869477954ab2f7f6ba0b35db235a2a9"
+  ) {
     parameters = [
       {
         name: "sender",
