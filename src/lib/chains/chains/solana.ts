@@ -1,15 +1,14 @@
-import { Solana, SolanaProvider } from "@renproject/chains";
-import { MintChain, RenNetwork } from "@renproject/interfaces";
-import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
-import { resolveNetwork } from "@renproject/chains-solana/build/main/networks";
-// import { Connection } from "@solana/web3.js";
-
-import { Icons } from "../icons/wallets";
-import { ChainDetails } from "./types";
 import { AbiCoder } from "ethers/lib/utils";
 
-import Wallet from "@project-serum/sol-wallet-adapter/dist/esm/index";
-import { Connection, clusterApiUrl } from "@solana/web3.js";
+import { Solana, SolanaProvider } from "@renproject/chains";
+import { resolveNetwork } from "@renproject/chains-solana/build/main/networks";
+import { MintChain, RenNetwork } from "@renproject/interfaces";
+import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
+import { Connection } from "@solana/web3.js";
+
+// import { Connection } from "@solana/web3.js";
+import { Icons } from "../icons/wallets";
+import { ChainDetails } from "./types";
 
 export const SolanaDetails: ChainDetails<Solana> = {
   chain: Solana.chain,

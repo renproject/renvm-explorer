@@ -2,7 +2,6 @@ import React from "react";
 import { Table } from "react-bootstrap";
 
 import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
-import { Ox } from "@renproject/utils";
 
 import { NETWORK } from "../../../../environmentVariables";
 import {

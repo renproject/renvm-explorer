@@ -60,7 +60,7 @@ export const LunaDetails: ChainDetails<Terra> = {
     return Terra(
       network === RenNetwork.Mainnet
         ? TerraNetwork.Columbus
-        : TerraNetwork.Tequila
+        : TerraNetwork.Bombay
     );
   },
 };

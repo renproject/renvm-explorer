@@ -1,17 +1,19 @@
-import { Button } from "react-bootstrap";
 import React, { useState } from "react";
-import {
-  DepositStatus,
-  LockAndMintDeposit,
-} from "@renproject/ren/build/main/lockAndMint";
+import { Button } from "react-bootstrap";
+
 import { DepositCommon, TxStatus } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
-import { ConnectWallet } from "../../../Multiwallet";
+import {
+    DepositStatus,
+    LockAndMintDeposit,
+} from "@renproject/ren/build/main/lockAndMint";
+
 import { NETWORK } from "../../../../environmentVariables";
 import {
-  SummarizedTransaction,
-  TransactionType,
+    SummarizedTransaction,
+    TransactionType,
 } from "../../../../lib/searchResult";
+import { ConnectWallet } from "../../../Multiwallet";
 
 interface Props {
   queryTx: SummarizedTransaction;
@@ -83,7 +85,7 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
           setSubmitError(String(error.message || error));
         }
       });
-  }, [mintChainProvider, deposit]);
+  }, [mintChainProvider, deposit, queryTx.summary.to]);
 
   return (
     <>

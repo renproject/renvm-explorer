@@ -1,5 +1,6 @@
 import { ethers } from "ethers";
 
+import { EthereumClass } from "@renproject/chains";
 import {
     ChainCommon,
     EthArgs,
@@ -99,16 +100,62 @@ export const getLegacyTransactionDepositInstance = async (
         abi = abis.filter((abi) => abi.name === "mintThenSwap")[0];
       }
 
-      const abiValues = ethers.utils.defaultAbiCoder.decode(
-        (abi.inputs?.slice(0, -3) || []).map((x) => x.type),
-        Ox(inputs.p.value)
-      );
+      // Varen override. TODO: Refactor to make overriding tidier.
+      if (
+        Ox(inputs.to.toLowerCase()) ===
+        "0xa9975b1c616b4841a1cc299bc6f684b4d1e23a61"
+      ) {
+        parameters = [
+          {
+            name: "sender",
+            type: "address",
+            value: Ox(searchDetails.in.p.value.slice(12)),
+          },
+          {
+            name: "mintToken",
+            type: "address",
+            value: await (
+              summary.toChain as EthereumClass
+            ).getTokenContractAddress(summary.asset),
+            notInPayload: true,
+          },
+          {
+            name: "burnToken",
+            type: "address",
+            value: Ox("00".repeat(20)),
+            notInPayload: true,
+          },
+          { name: "burnAmount", type: "uint256", value: 0, notInPayload: true },
+          {
+            name: "burnSendTo",
+            type: "bytes",
+            value: Buffer.from([]),
+            notInPayload: true,
+          },
+          {
+            name: "swapVars",
+            type: "tuple(address,uint256,address,bytes)",
+            value: [
+              Ox("00".repeat(20)),
+              0,
+              Ox("00".repeat(20)),
+              Buffer.from([]),
+            ],
+            notInPayload: true,
+          },
+        ];
+      } else {
+        const abiValues = ethers.utils.defaultAbiCoder.decode(
+          (abi.inputs?.slice(0, -3) || []).map((x) => x.type),
+          Ox(inputs.p.value)
+        );
 
-      parameters = (abi.inputs?.slice(0, -3) || []).map((abiItem, i) => ({
-        name: abiItem.name,
-        type: abiItem.type,
-        value: abiValues[i],
-      }));
+        parameters = (abi.inputs?.slice(0, -3) || []).map((abiItem, i) => ({
+          name: abiItem.name,
+          type: abiItem.type,
+          value: abiValues[i],
+        }));
+      }
 
       functionName = abi.name || "";
     }

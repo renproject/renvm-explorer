@@ -1,6 +1,12 @@
 import Axios from "axios";
 
-import { Fantom, Polygon } from "@renproject/chains";
+import {
+    Arbitrum,
+    Avalanche,
+    Fantom,
+    Goerli,
+    Polygon,
+} from "@renproject/chains";
 import { BinanceSmartChain, Ethereum } from "@renproject/chains-ethereum";
 import { AbiItem, ChainCommon, RenNetwork } from "@renproject/interfaces";
 import { Ox } from "@renproject/utils";
@@ -54,6 +60,20 @@ export const etherscanAPIMap: {
     [RenNetwork.Mainnet]: "https://api.polygonscan.com/api",
     [RenNetwork.Testnet]: "https://api-testnet.polygonscan.com/api",
     [RenNetwork.DevnetVDot3]: "https://api-testnet.polygonscan.com/api",
+  },
+  [Arbitrum.chain]: {
+    [RenNetwork.Mainnet]: "https://api.arbiscan.io/api",
+    [RenNetwork.Testnet]: "https://api-testnet.arbiscan.io/api",
+    [RenNetwork.DevnetVDot3]: "https://api-testnet.arbiscan.io/api",
+  },
+  [Avalanche.chain]: {
+    [RenNetwork.Mainnet]: "https://api.snowtrace.io/api",
+    [RenNetwork.Testnet]: "https://api-testnet.snowtrace.io/api",
+    [RenNetwork.DevnetVDot3]: "https://api-testnet.snowtrace.io/api",
+  },
+  [Goerli.chain]: {
+    [RenNetwork.Testnet]: "https://api-goerli.etherscan.io/api",
+    [RenNetwork.DevnetVDot3]: "https://api-goerli.etherscan.io/api",
   },
 };
 
