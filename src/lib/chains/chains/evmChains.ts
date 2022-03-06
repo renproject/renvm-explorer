@@ -254,9 +254,12 @@ export const getPublicEthereumProvider = <
       `No network configuration for ${network} and ${Class.chain}.`
     );
   }
-  const provider = new ethers.providers.JsonRpcProvider(
-    config?.publicProvider({ infura: INFURA_KEY })
-  );
+  const publicEndpoint =
+    // Temporary override.
+    Class.chain === "Polygon" && network === RenNetwork.Mainnet
+      ? "https://polygon-rpc.com"
+      : config?.publicProvider({ infura: INFURA_KEY });
+  const provider = new ethers.providers.JsonRpcProvider(publicEndpoint);
   const signer = provider.getSigner();
   return new Class({ provider, signer }, network) as any as T;
 };
