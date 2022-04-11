@@ -1,27 +1,25 @@
 import React, { useState } from "react";
 import { Button } from "react-bootstrap";
 
-import { DepositCommon, TxStatus } from "@renproject/interfaces";
 import { useMultiwallet } from "@renproject/multiwallet-ui";
+import { GatewayTransaction } from "@renproject/ren";
 import {
-    DepositStatus,
-    LockAndMintDeposit,
-} from "@renproject/ren/build/main/lockAndMint";
+  ChainTransactionStatus,
+  TxStatus,
+  TxSubmitter,
+  TxWaiter,
+} from "@renproject/utils";
 
 import { NETWORK } from "../../../../environmentVariables";
 import {
-    SummarizedTransaction,
-    TransactionType,
+  SummarizedTransaction,
+  TransactionType,
 } from "../../../../lib/searchResult";
 import { ConnectWallet } from "../../../Multiwallet";
 
 interface Props {
   queryTx: SummarizedTransaction;
-  deposit:
-    | LockAndMintDeposit<any, DepositCommon<any>, any, any, any>
-    | Error
-    | undefined
-    | null;
+  deposit: GatewayTransaction | Error | undefined | null;
 }
 
 export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
@@ -39,9 +37,9 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
   const [submitError, setSubmitError] = useState<String | null>(null);
 
   const mintChain =
-    deposit && !(deposit instanceof Error) && deposit.params.to.name;
+    deposit && !(deposit instanceof Error) && deposit.params.to.chain;
 
-  const connectMintChain = React.useCallback(() => {
+  const connectContractChain = React.useCallback(() => {
     if (!mintChain) {
       return;
     }
@@ -60,10 +58,11 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
       setSubmitting(true);
       setSubmitError(null);
 
-      if (deposit.params.to.withProvider) {
-        await deposit.params.to.withProvider(mintChainProvider);
+      if (deposit.toChain.withProvider) {
+        await deposit.toChain.withProvider(mintChainProvider);
       }
-      await deposit.mint();
+      await deposit.out.submit?.();
+      await deposit.out.wait();
     })()
       .finally(() => {
         setSubmitting(false);
@@ -75,11 +74,7 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
           String(error.message || error).match(/AccountNotFound/)
         ) {
           setSubmitError(
-            `Can only submit from ${
-              deposit && !(deposit instanceof Error)
-                ? deposit.params.contractCalls?.[0]?.sendTo
-                : "the recipient account"
-            }.`
+            `Can only submit from the account that initiated transaction.`
           );
         } else {
           setSubmitError(String(error.message || error));
@@ -116,9 +111,13 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
 
                 {deposit && !(deposit instanceof Error) ? (
                   <>
-                    <RenderDepositStatus status={deposit.status} />
+                    <RenderDepositStatus
+                      inTx={deposit.in}
+                      renVMTx={deposit.renVM}
+                      outTx={deposit.out}
+                    />
 
-                    {deposit &&
+                    {/* {deposit &&
                     !(deposit instanceof Error) &&
                     deposit.status === DepositStatus.Signed ? (
                       mintChainProvider ? (
@@ -138,13 +137,13 @@ export const StatusRow: React.FC<Props> = ({ queryTx, deposit }) => {
                       ) : (
                         <Button
                           variant="outline-success"
-                          onClick={connectMintChain}
+                          onClick={connectContractChain}
                           style={{ marginLeft: 5 }}
                         >
                           Connect wallet
                         </Button>
                       )
-                    ) : null}
+                    ) : null} */}
                   </>
                 ) : (
                   <div
@@ -206,19 +205,62 @@ const RenderRenVMStatus: React.FC<{
   }
 };
 
-const RenderDepositStatus: React.FC<{ status: DepositStatus }> = ({
-  status,
-}) => {
-  switch (status) {
-    case DepositStatus.Detected:
-      return <>Confirming</>;
-    case DepositStatus.Confirmed:
-      return <>Submitting to RenVM</>;
-    case DepositStatus.Signed:
-      return <span style={{ color: "#97b85d" }}>Ready for minting</span>;
-    case DepositStatus.Reverted:
-      return <span style={{ color: "#e33e33" }}>Reverted</span>;
-    case DepositStatus.Submitted:
-      return <span style={{ color: "#97b85d" }}>Complete</span>;
+const RenderDepositStatus: React.FC<{
+  inTx: TxWaiter | TxSubmitter;
+  renVMTx: TxWaiter | TxSubmitter;
+  outTx: TxWaiter | TxSubmitter;
+}> = ({ inTx, renVMTx, outTx }) => {
+  if (outTx.progress.status === ChainTransactionStatus.Ready) {
+    return (
+      <span style={{ color: "#97b85d" }}>{outTx.chain} transaction ready</span>
+    );
   }
+  if (outTx.progress.status === ChainTransactionStatus.Confirming) {
+    return <span>{outTx.chain} transaction confirming</span>;
+  }
+  if (outTx.progress.status === ChainTransactionStatus.Reverted) {
+    return (
+      <span style={{ color: "#e33e33" }}>
+        {outTx.chain} transaction reverted
+      </span>
+    );
+  }
+  if (outTx.progress.status === ChainTransactionStatus.Done) {
+    return <span style={{ color: "#97b85d" }}>Complete</span>;
+  }
+
+  if (renVMTx.progress.status === ChainTransactionStatus.Ready) {
+    return (
+      <span style={{ color: "#97b85d" }}>
+        {renVMTx.chain} transaction ready
+      </span>
+    );
+  }
+  if (renVMTx.progress.status === ChainTransactionStatus.Confirming) {
+    return <span>{renVMTx.chain} transaction confirming</span>;
+  }
+  if (renVMTx.progress.status === ChainTransactionStatus.Reverted) {
+    return (
+      <span style={{ color: "#e33e33" }}>
+        {renVMTx.chain} transaction reverted
+      </span>
+    );
+  }
+
+  if (inTx.progress.status === ChainTransactionStatus.Ready) {
+    return (
+      <span style={{ color: "#97b85d" }}>{inTx.chain} transaction ready</span>
+    );
+  }
+  if (inTx.progress.status === ChainTransactionStatus.Confirming) {
+    return <span>{inTx.chain} transaction confirming</span>;
+  }
+  if (inTx.progress.status === ChainTransactionStatus.Reverted) {
+    return (
+      <span style={{ color: "#e33e33" }}>
+        {inTx.chain} transaction reverted
+      </span>
+    );
+  }
+  return <></>;
 };

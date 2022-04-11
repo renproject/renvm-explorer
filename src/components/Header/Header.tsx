@@ -3,7 +3,7 @@ import { Container, Form, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { LinkContainer } from "react-router-bootstrap";
 import { titleCase } from "title-case";
 
-import { RenNetwork } from "@renproject/interfaces";
+import { RenNetwork } from "@renproject/utils";
 
 import { UIContainer } from "../../containers/UIContainer";
 import { NETWORK } from "../../environmentVariables";

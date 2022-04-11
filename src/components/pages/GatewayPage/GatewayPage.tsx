@@ -1,27 +1,30 @@
+import { useEffect, useState } from "react";
+import { Card, Spinner, Table } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+
+import { Gateway } from "@renproject/ren";
+
+import { UIContainer } from "../../../containers/UIContainer";
+import { LoadAdditionalDetails } from "../TransactionPage/LoadAdditionalDetails";
+import { RecipientRow } from "../TransactionPage/rows/RecipientRow";
+import { SearchForDepositsToGateway } from "../TransactionPage/SearchForDepositsToGateway";
+import { TransactionDiagram } from "../TransactionPage/TransactionDiagram";
+import { TransactionError } from "../TransactionPage/TransactionError";
 import {
   TransactionPageContainer,
   TransactionPageTitle,
   TransactionSpinner,
 } from "../TransactionPage/TransactionPageStyles";
-import { Card, Spinner, Table } from "react-bootstrap";
-import { UIContainer } from "../../../containers/UIContainer";
-import React, { useEffect, useState } from "react";
-import { LockAndMint } from "@renproject/ren/build/main/lockAndMint";
-import { useRouteMatch } from "react-router-dom";
-import { RecipientRow } from "../TransactionPage/rows/RecipientRow";
-import { TransactionDiagram } from "../TransactionPage/TransactionDiagram";
-import { LoadAdditionalDetails } from "../TransactionPage/LoadAdditionalDetails";
-import { TransactionError } from "../TransactionPage/TransactionError";
-import { SearchForDepositsToGateway } from "../TransactionPage/SearchForDepositsToGateway";
 
 export const GatewayPage = () => {
   const { gateway, handleGatewayURL } = UIContainer.useContainer();
 
-  const {
-    params: { address },
-  } = useRouteMatch<{ address: string }>();
+  const { address } = useParams<{ address: string }>();
 
   useEffect(() => {
+    if (!address) {
+      return;
+    }
     handleGatewayURL(address);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address]);
@@ -30,7 +33,7 @@ export const GatewayPage = () => {
     gateway && !(gateway instanceof Error) && gateway.queryGateway;
 
   const [lockAndMint, setLockAndMint] = useState<
-    LockAndMint | Error | null | undefined
+    Gateway | Error | null | undefined
   >(undefined);
 
   const lockAndMintInstance =

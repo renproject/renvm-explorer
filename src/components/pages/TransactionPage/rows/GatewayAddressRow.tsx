@@ -1,14 +1,17 @@
 import React, { useCallback } from "react";
-import { LockAndMint } from "@renproject/ren";
+import { Link, useNavigate } from "react-router-dom";
 
-import { Link, useHistory } from "react-router-dom";
-import { RenVMGateway } from "../../../../lib/searchResult";
+import { Gateway } from "@renproject/ren";
+
 import { UIContainer } from "../../../../containers/UIContainer";
-import { SummarizedTransaction } from "../../../../lib/searchResult";
+import {
+  RenVMGateway,
+  SummarizedTransaction,
+} from "../../../../lib/searchResult";
 
 interface Props {
   queryTx: SummarizedTransaction;
-  lockAndMint: LockAndMint | Error | undefined | null;
+  lockAndMint: Gateway | Error | undefined | null;
 }
 
 export const GatewayAddressRow: React.FC<Props> = ({
@@ -16,7 +19,7 @@ export const GatewayAddressRow: React.FC<Props> = ({
   lockAndMint,
 }) => {
   const { setSearchResult } = UIContainer.useContainer();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const onClick: React.MouseEventHandler<HTMLAnchorElement> = useCallback(
     (e) => {
@@ -44,9 +47,9 @@ export const GatewayAddressRow: React.FC<Props> = ({
         lockAndMint
       );
       setSearchResult(result);
-      history.push(result.resultPath);
+      navigate(result.resultPath);
     },
-    [history, setSearchResult, lockAndMint, queryTx]
+    [navigate, setSearchResult, lockAndMint, queryTx]
   );
 
   if (!lockAndMint || lockAndMint instanceof Error) {

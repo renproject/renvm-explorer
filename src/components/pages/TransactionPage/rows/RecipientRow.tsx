@@ -1,12 +1,13 @@
 import React from "react";
 import { Table } from "react-bootstrap";
 
-import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
+import { Gateway, GatewayTransaction } from "@renproject/ren";
+import { Chain } from "@renproject/utils";
 
 import { NETWORK } from "../../../../environmentVariables";
 import {
-    SummarizedTransaction,
-    TransactionType,
+  SummarizedTransaction,
+  TransactionType,
 } from "../../../../lib/searchResult";
 import { ExternalLink } from "../../../common/ExternalLink";
 import { MaybeLink } from "../../../common/MaybeLink";
@@ -14,12 +15,12 @@ import { TaggedText } from "../../../common/TaggedText";
 
 interface Props {
   queryTx: SummarizedTransaction;
-  deposit: LockAndMint | LockAndMintDeposit | Error | undefined | null;
+  deposit: Gateway | GatewayTransaction | Error | undefined | null;
   legacy: boolean;
 }
 
 export const RecipientRow: React.FC<Props> = ({ queryTx, deposit, legacy }) => {
-  const toChain =
+  const toChain: Chain =
     deposit && !(deposit instanceof Error)
       ? deposit.params.to
       : queryTx.summary.toChain;
@@ -31,18 +32,15 @@ export const RecipientRow: React.FC<Props> = ({ queryTx, deposit, legacy }) => {
         <td>
           <TaggedText
             tag={
-              toChain && toChain.name === "Solana"
+              toChain && toChain.chain === "Solana"
                 ? "Account"
                 : "Smart Contract"
             }
           >
             <MaybeLink
               href={
-                toChain && toChain.utils.addressExplorerLink
-                  ? toChain.utils.addressExplorerLink(
-                      queryTx.result.in.to.toString(),
-                      NETWORK
-                    )
+                toChain
+                  ? toChain.addressExplorerLink(queryTx.result.in.to.toString())
                   : undefined
               }
               noUnderline
@@ -50,7 +48,7 @@ export const RecipientRow: React.FC<Props> = ({ queryTx, deposit, legacy }) => {
               {queryTx.result.in.to.toString()}
             </MaybeLink>
           </TaggedText>
-          {deposit &&
+          {/* {deposit &&
           !(deposit instanceof Error) &&
           deposit.params.contractCalls ? (
             <>
@@ -102,7 +100,7 @@ export const RecipientRow: React.FC<Props> = ({ queryTx, deposit, legacy }) => {
               </Table>
               <p></p>
             </>
-          ) : null}
+          ) : null} */}
         </td>
       </tr>
     </>
@@ -112,12 +110,11 @@ export const RecipientRow: React.FC<Props> = ({ queryTx, deposit, legacy }) => {
       <td>
         <MaybeLink
           href={
-            toChain && toChain.utils.addressExplorerLink
-              ? toChain.utils.addressExplorerLink(
+            toChain
+              ? toChain.addressExplorerLink(
                   legacy
                     ? Buffer.from(queryTx.result.in.to, "base64").toString()
-                    : queryTx.result.in.to.toString(),
-                  NETWORK
+                    : queryTx.result.in.to.toString()
                 )
               : undefined
           }

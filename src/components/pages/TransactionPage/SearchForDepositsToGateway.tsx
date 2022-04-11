@@ -1,39 +1,36 @@
 import { OrderedMap } from "immutable";
 import React, { useCallback, useState } from "react";
 import { Button, Spinner } from "react-bootstrap";
-import { Link, useHistory } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Card } from "@material-ui/core";
-import {
-    LockAndMint,
-    LockAndMintDeposit,
-} from "@renproject/ren/build/main/lockAndMint";
+import { Gateway, GatewayTransaction } from "@renproject/ren";
 
 import { UIContainer } from "../../../containers/UIContainer";
 import {
-    LegacyRenVMTransaction,
-    RenVMTransaction,
+  LegacyRenVMTransaction,
+  RenVMTransaction,
 } from "../../../lib/searchResult";
 
 interface Props {
-  lockAndMint?: LockAndMint | Error | null | undefined;
+  lockAndMint?: Gateway | Error | null | undefined;
 }
 
 export const SearchForDepositsToGateway: React.FC<Props> = ({
   lockAndMint,
 }) => {
   const { setSearchResult } = UIContainer.useContainer();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [fetchingDeposits, setFetchingDeposits] = useState(false);
   const [deposits, setDeposits] = useState(
-    OrderedMap<string, LockAndMintDeposit>()
+    OrderedMap<string, GatewayTransaction>()
   );
 
   const onDeposit = useCallback(
-    (deposit) => {
-      const txHash = deposit.txHash();
-      deposit.signed();
+    (deposit: GatewayTransaction) => {
+      const txHash = deposit.hash;
+      // deposit.signed();
       setDeposits((deposits) => deposits.set(txHash, deposit));
     },
     [setDeposits]
@@ -48,7 +45,7 @@ export const SearchForDepositsToGateway: React.FC<Props> = ({
 
     try {
       await new Promise((_resolve, _reject) => {
-        lockAndMint.on("deposit", onDeposit);
+        lockAndMint.on("transaction", onDeposit);
       });
     } catch (error: any) {
       console.error(error);
@@ -58,21 +55,21 @@ export const SearchForDepositsToGateway: React.FC<Props> = ({
   }, [lockAndMint, onDeposit]);
 
   const onClick = useCallback(
-    (txHash: string, deposit: LockAndMintDeposit) => {
+    (txHash: string, deposit: GatewayTransaction) => {
       let result: RenVMTransaction | LegacyRenVMTransaction;
       let url: string;
-      if (deposit.renVM.version(deposit._state.selector) >= 2) {
-        result = RenVMTransaction(txHash, undefined, deposit);
-        url = `/tx/${encodeURIComponent(txHash)}`;
-      } else {
-        result = LegacyRenVMTransaction(txHash, undefined, deposit);
-        url = `/legacy-tx/${encodeURIComponent(txHash)}`;
-      }
+      // if (deposit.renVM.version(deposit._state.selector) >= 2) {
+      result = RenVMTransaction(txHash, undefined, deposit);
+      url = `/tx/${encodeURIComponent(txHash)}`;
+      // } else {
+      //   result = LegacyRenVMTransaction(txHash, undefined, deposit);
+      //   url = `/legacy-tx/${encodeURIComponent(txHash)}`;
+      // }
 
       setSearchResult(result);
-      history.push(url);
+      navigate(url);
     },
-    [history, setSearchResult]
+    [navigate, setSearchResult]
   );
 
   return (
@@ -119,7 +116,7 @@ export const SearchForDepositsToGateway: React.FC<Props> = ({
                 return (
                   <Link key={txHash} onClick={clickHandler} to={""}>
                     <Card style={{ padding: 20, display: "inline-block" }}>
-                      {txHash} - {deposit.depositDetails.amount}
+                      {txHash} - {deposit.params.fromTx.amount}
                     </Card>
                   </Link>
                 );

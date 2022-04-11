@@ -1,25 +1,21 @@
 import BigNumber from "bignumber.js";
 
 import {
-    BurnAndReleaseTransaction,
-    ChainCommon,
-    LockAndMintTransaction,
-} from "@renproject/interfaces";
-import {
-    RenVMProvider,
-    ResponseQueryTx,
-    unmarshalBurnTx,
-    unmarshalMintTx,
-} from "@renproject/rpc/build/main/v2";
-import { toReadable } from "@renproject/utils";
+  RenVMCrossChainTransaction,
+  RenVMProvider,
+  ResponseQueryTx,
+  RPCMethod,
+  unmarshalRenVMTransaction,
+} from "@renproject/provider";
+import { Chain } from "@renproject/utils";
 
 import { NETWORK } from "../../environmentVariables";
 import {
-    RenVMTransaction,
-    RenVMTransactionError,
-    SummarizedTransaction,
-    TransactionSummary,
-    TransactionType,
+  RenVMTransaction,
+  RenVMTransactionError,
+  SummarizedTransaction,
+  TransactionSummary,
+  TransactionType,
 } from "../searchResult";
 import { errorMatches, TaggedError } from "../taggedError";
 import { unmarshalClaimFeesTx } from "../unmarshalClaimFees";
@@ -61,15 +57,15 @@ export const parseV2Selector = (selector: string) => {
 };
 
 export const summarizeTransaction = async (
-  searchDetails: LockAndMintTransaction | BurnAndReleaseTransaction,
-  getChain: (chainName: string) => ChainCommon | null
+  searchDetails: RenVMCrossChainTransaction,
+  getChain: (chainName: string) => Chain | null
 ): Promise<TransactionSummary> => {
-  let { to, from, asset } = parseV2Selector(searchDetails.to);
+  let { to, from, asset } = parseV2Selector(searchDetails.selector);
 
   const fromChain = getChain(from);
-  from = fromChain ? fromChain.name : from;
+  from = fromChain ? fromChain.chain : from;
   const toChain = getChain(to);
-  to = toChain ? toChain.name : to;
+  to = toChain ? toChain.chain : to;
 
   let amountInRaw: BigNumber | undefined;
   let amountIn: BigNumber | undefined;
@@ -84,7 +80,7 @@ export const summarizeTransaction = async (
   }
 
   let chain;
-  if (fromChain && fromChain.assetIsNative(asset)) {
+  if (fromChain && (await fromChain.isLockAsset(asset))) {
     chain = fromChain;
   } else {
     chain = toChain;
@@ -92,7 +88,7 @@ export const summarizeTransaction = async (
 
   try {
     if (amountInRaw && chain) {
-      amountIn = toReadable(amountInRaw, await chain.assetDecimals(asset));
+      amountIn = amountInRaw.shiftedBy(-(await chain.assetDecimals(asset)));
       if (
         searchDetails.out &&
         (searchDetails.out.revert === undefined ||
@@ -100,7 +96,7 @@ export const summarizeTransaction = async (
         (searchDetails.out as any).amount
       ) {
         amountOutRaw = new BigNumber((searchDetails.out as any).amount);
-        amountOut = toReadable(amountOutRaw, await chain.assetDecimals(asset));
+        amountOut = amountOutRaw.shiftedBy(-(await chain.assetDecimals(asset)));
       }
     }
   } catch (error) {
@@ -125,7 +121,7 @@ export const summarizeTransaction = async (
 
 export const unmarshalTransaction = async (
   response: ResponseQueryTx,
-  getChain: (chainName: string) => ChainCommon | null
+  getChain: (chainName: string) => Chain | null
 ): Promise<SummarizedTransaction> => {
   const isMint = /((\/to)|(To))/.exec(response.tx.selector);
   const isClaim = /\/claimFees/.exec(response.tx.selector);
@@ -138,18 +134,11 @@ export const unmarshalTransaction = async (
       transactionType: TransactionType.ClaimFees as const,
       summary: await summarizeTransaction(unmarshalled, getChain),
     };
-  } else if (isMint) {
-    const unmarshalled = unmarshalMintTx(response);
+  } else {
+    const unmarshalled = unmarshalRenVMTransaction(response.tx);
     return {
       result: unmarshalled,
       transactionType: TransactionType.Mint as const,
-      summary: await summarizeTransaction(unmarshalled, getChain),
-    };
-  } else {
-    const unmarshalled = unmarshalBurnTx(response);
-    return {
-      result: unmarshalled,
-      transactionType: TransactionType.Burn as const,
       summary: await summarizeTransaction(unmarshalled, getChain),
     };
   }
@@ -158,11 +147,13 @@ export const unmarshalTransaction = async (
 export const queryMintOrBurn = async (
   provider: RenVMProvider,
   transactionHash: string,
-  getChain: (chainName: string) => ChainCommon | null
+  getChain: (chainName: string) => Chain | null
 ): Promise<SummarizedTransaction> => {
   let response: ResponseQueryTx;
   try {
-    response = await provider.queryTx(transactionHash, 1);
+    response = await provider.sendMessage(RPCMethod.QueryTx, {
+      txHash: transactionHash,
+    });
   } catch (error: any) {
     if (errorMatches(error, "not found")) {
       throw new TaggedError(error, RenVMTransactionError.TransactionNotFound);
@@ -182,7 +173,7 @@ export const searchRenVMHash: SearchTactic<RenVMTransaction> = {
   search: async (
     searchString: string,
     updateStatus: (status: string) => void,
-    getChain: (chainName: string) => ChainCommon | null
+    getChain: (chainName: string) => Chain | null
   ): Promise<RenVMTransaction> => {
     updateStatus("Looking up RenVM hash...");
 

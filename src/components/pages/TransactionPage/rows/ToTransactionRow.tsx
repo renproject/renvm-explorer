@@ -1,97 +1,68 @@
 import React from "react";
-import { DepositCommon } from "@renproject/interfaces";
-import { LockAndMintDeposit } from "@renproject/ren";
-import { ExternalLink } from "../../../common/ExternalLink";
+
+import { GatewayTransaction } from "@renproject/ren";
+import { utils } from "@renproject/utils";
+
 import {
   SummarizedTransaction,
   TransactionType,
 } from "../../../../lib/searchResult";
+import { ExternalLink } from "../../../common/ExternalLink";
 
 interface Props {
   queryTx: SummarizedTransaction;
-  deposit:
-    | LockAndMintDeposit<any, DepositCommon<any>, any, any, any>
-    | Error
-    | undefined
-    | null;
+  deposit: GatewayTransaction | Error | undefined | null;
 }
 
 export const ToTransactionRow: React.FC<Props> = ({ queryTx, deposit }) => {
-  if (queryTx.transactionType === TransactionType.Mint) {
-    // Mint
-
-    return deposit && !(deposit instanceof Error) && deposit.mintTransaction ? (
+  if (
+    queryTx.result.out &&
+    (queryTx.result.out as any).txid &&
+    (queryTx.result.out as any).txid.length > 0
+  ) {
+    return (
       <tr>
-        <td>{deposit.params.to.name} transaction</td>
         <td>
-          {deposit.params.to.utils.transactionExplorerLink ? (
-            <ExternalLink
-              href={deposit.params.to.utils.transactionExplorerLink(
-                deposit.mintTransaction
+          {queryTx.summary.toChain
+            ? queryTx.summary.toChain.chain
+            : queryTx.summary.to}{" "}
+          transaction
+        </td>
+        <td>
+          {queryTx.summary.toChain ? (
+            <>
+              {queryTx.summary.toChain.transactionExplorerLink({
+                txid: utils.toURLBase64(queryTx.result.out.txid),
+                txindex: queryTx.result.out.txindex.toFixed(),
+              }) ? (
+                <ExternalLink
+                  href={queryTx.summary.toChain.transactionExplorerLink({
+                    txid: utils.toURLBase64(queryTx.result.out.txid),
+                    txindex: queryTx.result.out.txindex.toFixed(),
+                  })}
+                >
+                  {queryTx.summary.toChain.txidToTxidFormatted({
+                    txid: utils.toURLBase64(queryTx.result.out.txid),
+                    txindex: queryTx.result.out.txindex.toFixed(),
+                  })}
+                </ExternalLink>
+              ) : (
+                queryTx.summary.toChain.txidToTxidFormatted({
+                  txid: utils.toURLBase64(queryTx.result.out.txid),
+                  txindex: queryTx.result.out.txindex.toFixed(),
+                })
               )}
-            >
-              {deposit.params.to.transactionID(deposit.mintTransaction)}
-            </ExternalLink>
+            </>
           ) : (
-            deposit.params.to.transactionID(deposit.mintTransaction)
+            <span style={{ opacity: 0.3 }}>
+              {utils.toURLBase64(queryTx.result.out.txid)},{" "}
+              {queryTx.result.out.txindex.toFixed()}
+            </span>
           )}
         </td>
       </tr>
-    ) : null;
+    );
   } else {
-    // Burn
-
-    if (
-      queryTx.result.out &&
-      (queryTx.result.out as any).txid &&
-      (queryTx.result.out as any).txid.length > 0
-    ) {
-      return (
-        <tr>
-          <td>
-            {queryTx.summary.toChain
-              ? queryTx.summary.toChain.name
-              : queryTx.summary.to}{" "}
-            transaction
-          </td>
-          <td>
-            {queryTx.summary.toChain ? (
-              <>
-                {queryTx.summary.toChain.utils.transactionExplorerLink ? (
-                  <ExternalLink
-                    href={queryTx.summary.toChain.utils.transactionExplorerLink(
-                      queryTx.summary.toChain.transactionIDFromRPCFormat(
-                        (queryTx.result.out as any).txid,
-                        (queryTx.result.out as any).txindex,
-                        true
-                      )
-                    )}
-                  >
-                    {queryTx.summary.toChain.transactionIDFromRPCFormat(
-                      (queryTx.result.out as any).txid,
-                      (queryTx.result.out as any).txindex,
-                      true
-                    )}
-                  </ExternalLink>
-                ) : (
-                  queryTx.summary.toChain.transactionIDFromRPCFormat(
-                    (queryTx.result.out as any).txid,
-                    (queryTx.result.out as any).txindex,
-                    true
-                  )
-                )}
-              </>
-            ) : (
-              <span style={{ opacity: 0.3 }}>
-                {(queryTx.result.out as any).txid.toString("hex")},{" "}
-                {(queryTx.result.out as any).txindex.toString()}
-              </span>
-            )}
-          </td>
-        </tr>
-      );
-    } else {
-      return null;
-    }
+    return null;
   }
 };

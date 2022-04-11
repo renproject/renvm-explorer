@@ -1,14 +1,11 @@
 import React, { useCallback, useState } from "react";
 import { Button, Spinner } from "react-bootstrap";
 
-import {
-    LockAndMint,
-    LockAndMintDeposit,
-} from "@renproject/ren/build/main/lockAndMint";
+import { Gateway, GatewayTransaction } from "@renproject/ren";
 
 import { NETWORK } from "../../../environmentVariables";
-import { getGatewayInstance } from "../../../lib/searchGateway";
-import { getLegacyTransactionDepositInstance } from "../../../lib/searchLegacyTransaction";
+// import { getGatewayInstance } from "../../../lib/searchGateway";
+// import { getLegacyTransactionDepositInstance } from "../../../lib/searchLegacyTransaction";
 import {
     SummarizedTransaction,
     TransactionType,
@@ -20,9 +17,9 @@ interface Props {
   gateway: boolean;
   queryTx: SummarizedTransaction;
 
-  deposit: LockAndMint | LockAndMintDeposit | Error | null | undefined;
-  setDeposit?(deposit: LockAndMintDeposit | Error | null | undefined): void;
-  setLockAndMint?(deposit: LockAndMint | Error | null | undefined): void;
+  deposit: Gateway | GatewayTransaction | Error | null | undefined;
+  setDeposit?(deposit: GatewayTransaction | Error | null | undefined): void;
+  setLockAndMint?(deposit: Gateway | Error | null | undefined): void;
 }
 
 export const LoadAdditionalDetails: React.FC<Props> = ({
@@ -43,39 +40,40 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
       queryTx.transactionType === TransactionType.Mint
     ) {
       if (gateway && setLockAndMint && !setDeposit) {
-        setLockAndMint(undefined);
-        try {
-          const deposit = await getGatewayInstance(
-            queryTx.result,
-            NETWORK,
-            queryTx.summary
-          );
-          setLockAndMint(deposit);
-        } catch (error: any) {
-          console.error(error);
-          setLockAndMint(error instanceof Error ? error : new Error(error));
-        }
+        throw new Error("Not implemented.");
+        // setLockAndMint(undefined);
+        // try {
+        //   const deposit = await getGatewayInstance(
+        //     queryTx.result,
+        //     NETWORK,
+        //     queryTx.summary
+        //   );
+        //   setLockAndMint(deposit);
+        // } catch (error: any) {
+        //   console.error(error);
+        //   setLockAndMint(error instanceof Error ? error : new Error(error));
+        // }
       } else if (setDeposit && setLockAndMint) {
         setDeposit(undefined);
         try {
           if (legacy) {
-            const { deposit, lockAndMint } =
-              await getLegacyTransactionDepositInstance(
-                queryTx.result,
-                NETWORK,
-                queryTx.summary
-              );
-            setDeposit(deposit);
-            setLockAndMint(lockAndMint);
+            throw new Error("Not implemented.");
+            // const { deposit, lockAndMint } =
+            //   await getLegacyTransactionDepositInstance(
+            //     queryTx.result,
+            //     NETWORK,
+            //     queryTx.summary
+            //   );
+            // setDeposit(deposit);
+            // setLockAndMint(lockAndMint);
           } else {
-            const { deposit, lockAndMint } =
-              await getTransactionDepositInstance(
-                queryTx.result,
-                NETWORK,
-                queryTx.summary
-              );
+            const { deposit } = await getTransactionDepositInstance(
+              queryTx.result,
+              NETWORK,
+              queryTx.summary
+            );
             setDeposit(deposit);
-            setLockAndMint(lockAndMint);
+            // setLockAndMint(lockAndMint);
           }
         } catch (error: any) {
           console.error(error);

@@ -1,24 +1,25 @@
-import { ChainCommon, MintChain, RenNetwork } from "@renproject/interfaces";
-import {
-  BitcoinDetails,
-  ZcashDetails,
-  BitcoinCashDetails,
-  DibiByteDetails,
-  FilecoinDetails,
-  LunaDetails,
-  DogecoinDetails,
-} from "./chains/lockChains";
-import {
-  ArbitrumDetails,
-  AvalancheDetails,
-  BinanceSmartChainDetails,
-  EthereumDetails,
-  FantomDetails,
-  GoerliDetails,
-  PolygonDetails,
-} from "./chains/evmChains";
-import { SolanaDetails } from "./chains/solana";
 import { WalletPickerConfig } from "@renproject/multiwallet-ui";
+import { Chain, ContractChain, RenNetwork } from "@renproject/utils";
+
+import {
+    ArbitrumDetails,
+    AvalancheDetails,
+    BinanceSmartChainDetails,
+    EthereumDetails,
+    FantomDetails,
+    GoerliDetails,
+    PolygonDetails,
+} from "./chains/evmChains";
+import {
+    BitcoinCashDetails,
+    BitcoinDetails,
+    DibiByteDetails,
+    DogecoinDetails,
+    FilecoinDetails,
+    LunaDetails,
+    ZcashDetails,
+} from "./chains/lockChains";
+import { SolanaDetails } from "./chains/solana";
 
 export const mintChains = [
   EthereumDetails,
@@ -62,7 +63,7 @@ export const multiwalletOptions = (
 export const ChainMapper = (
   chainName: string,
   network: RenNetwork
-): ChainCommon | null => {
+): Chain | null => {
   for (const chain of mintChains) {
     if (chain.chainPattern.exec(chainName)) {
       return chain.usePublicProvider(network);
@@ -80,23 +81,23 @@ export const ChainMapper = (
   return null;
 };
 
-export const getMintChainParams = async (
-  mintChain: MintChain,
+export const getContractChainParams = async (
+  mintChain: ContractChain,
   to: string,
   payload: string,
   asset: string
-): Promise<MintChain> => {
+): Promise<ContractChain> => {
   for (const chainDetails of mintChains) {
-    if (chainDetails.chainPattern.exec(mintChain.name)) {
+    if (chainDetails.chainPattern.exec(mintChain.chain)) {
       if (chainDetails && chainDetails.getMintParams) {
         return chainDetails.getMintParams(mintChain, to, payload, asset);
       } else {
         throw new Error(
-          `Reconstructing mint parameters for ${mintChain.name} is not supported yet.`
+          `Reconstructing mint parameters for ${mintChain.chain} is not supported yet.`
         );
       }
     }
   }
 
-  throw new Error(`Unable to get parameters for ${mintChain.name}`);
+  throw new Error(`Unable to get parameters for ${mintChain.chain}`);
 };

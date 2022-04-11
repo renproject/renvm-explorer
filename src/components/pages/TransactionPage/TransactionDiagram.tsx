@@ -1,4 +1,5 @@
 import React from "react";
+
 import { SummarizedTransaction } from "../../../lib/searchResult";
 import { ChainIcon } from "../../common/ChainIcon";
 
@@ -8,11 +9,11 @@ interface Props {
 
 export const TransactionDiagram: React.FC<Props> = ({ queryTx }) => {
   const from = queryTx.summary.fromChain
-    ? queryTx.summary.fromChain.name
+    ? queryTx.summary.fromChain.chain
     : queryTx.summary.from;
 
   const to = queryTx.summary.toChain
-    ? queryTx.summary.toChain.name
+    ? queryTx.summary.toChain.chain
     : queryTx.summary.to;
 
   return (
@@ -50,7 +51,9 @@ export const TransactionDiagram: React.FC<Props> = ({ queryTx }) => {
           flex: "1",
         }}
       >
-        {queryTx.summary.amountIn && !queryTx.summary.amountIn.isNaN() && !queryTx.summary.amountIn.isZero()
+        {queryTx.summary.amountIn &&
+        !queryTx.summary.amountIn.isNaN() &&
+        !queryTx.summary.amountIn.isZero()
           ? queryTx.summary.amountIn.toFixed()
           : ""}{" "}
         {queryTx.summary.asset}

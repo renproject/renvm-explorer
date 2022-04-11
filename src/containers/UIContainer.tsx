@@ -1,27 +1,28 @@
 import { OrderedMap } from "immutable";
 import { useCallback, useMemo, useState } from "react";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { createContainer } from "unstated-next";
 
-import { ChainCommon } from "@renproject/interfaces";
+import RenJS from "@renproject/ren";
+import { Chain } from "@renproject/utils";
 
 import { NETWORK } from "../environmentVariables";
 import { allChains, ChainMapper } from "../lib/chains/chains";
 import { search, SearchErrors } from "../lib/search";
-import { searchGateway } from "../lib/searchGateway";
-import { searchLegacyTransaction } from "../lib/searchLegacyTransaction";
+// import { searchGateway } from "../lib/searchGateway";
+// import { searchLegacyTransaction } from "../lib/searchLegacyTransaction";
 import {
-    LegacyRenVMTransaction,
-    RenVMGateway,
-    RenVMTransaction,
-    Searching,
-    SearchResult,
+  LegacyRenVMTransaction,
+  RenVMGateway,
+  RenVMTransaction,
+  Searching,
+  SearchResult,
 } from "../lib/searchResult";
 import { searchTransaction } from "../lib/searchTransaction";
 import { TaggedError } from "../lib/taggedError";
 
 function useUIContainer() {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
 
@@ -35,14 +36,23 @@ function useUIContainer() {
     return allChains.reduce((acc, chainDetails) => {
       try {
         const chain = ChainMapper(chainDetails.chain, NETWORK);
-        chain?.initialize(NETWORK);
         return acc.set(chainDetails.chain, chain || null);
       } catch (error: any) {
         console.error(error);
         return acc.set(chainDetails.chain, null);
       }
-    }, OrderedMap<string, ChainCommon | null>());
+    }, OrderedMap<string, Chain | null>());
   }, []);
+  const renJS = useMemo(
+    () =>
+      new RenJS(NETWORK).withChains(
+        ...(chains
+          .valueSeq()
+          .filter((x) => x !== null)
+          .toArray() as Chain[])
+      ),
+    [chains]
+  );
 
   const getChainDetails = useCallback((chainName: string) => {
     for (const chain of allChains) {
@@ -63,7 +73,7 @@ function useUIContainer() {
 
   // handleSearchURL is called when the search parameter in the URL changes.
   const handleSearchURL = useCallback(
-    (encodedSearchInput) => {
+    (encodedSearchInput: string) => {
       setSearchResult(null);
       const searchInput = decodeURIComponent(encodedSearchInput);
 
@@ -88,7 +98,7 @@ function useUIContainer() {
           }
 
           setSearchResult(result);
-          history.replace(result.resultPath);
+          navigate(result.resultPath, { replace: true });
         })
         .catch((error) => {
           if ((error as TaggedError)._tag === SearchErrors.NO_RESULTS) {
@@ -100,15 +110,15 @@ function useUIContainer() {
           }
         });
     },
-    [history, getChain]
+    [navigate, getChain]
   );
 
   const handleSelectResult = useCallback(
     (result: SearchResult) => {
       setSearchResult(result);
-      history.replace(result.resultPath);
+      navigate(result.resultPath, { replace: true });
     },
-    [history]
+    [navigate]
   );
 
   // handleSearchForm is called when the user submits a new search.
@@ -118,13 +128,13 @@ function useUIContainer() {
       // a new history entry.
       // Changing the path will trigger `handleSearchURL` to be called.
       const encodedSearchInput = encodeURIComponent(searchInput);
-      history.push(`/search/` + encodedSearchInput);
+      navigate(`/search/` + encodedSearchInput);
     },
-    [history]
+    [navigate]
   );
 
   const handleTransactionURL = useCallback(
-    (encodedTransactionInput) => {
+    (encodedTransactionInput: string) => {
       const transactionInput = decodeURIComponent(encodedTransactionInput);
 
       let transaction: RenVMTransaction = RenVMTransaction(transactionInput);
@@ -154,7 +164,7 @@ function useUIContainer() {
   );
 
   const handleGatewayURL = useCallback(
-    (encodedGatewayInput) => {
+    (encodedGatewayInput: string) => {
       const gatewayInput = decodeURIComponent(encodedGatewayInput);
 
       let gateway: RenVMGateway = RenVMGateway(gatewayInput);
@@ -169,53 +179,54 @@ function useUIContainer() {
       setGateway(gateway);
       setUpdatedCount((count) => count + 1);
 
-      searchGateway(gateway, getChain)
-        .then((gateway) => {
-          setGateway(gateway);
-          setUpdatedCount((count) => count + 1);
-        })
-        .catch((error) =>
-          setGateway({
-            ...gateway,
-            queryGateway: error,
-          })
-        );
+      // searchGateway(gateway, getChain)
+      //   .then((gateway) => {
+      //     setGateway(gateway);
+      //     setUpdatedCount((count) => count + 1);
+      //   })
+      //   .catch((error) =>
+      //     setGateway({
+      //       ...gateway,
+      //       queryGateway: error,
+      //     })
+      //   );
     },
-    [searchResult, setGateway, getChain]
+    [searchResult, getChain]
   );
 
-  const handleLegacyTransactionURL = useCallback(
-    (encodedTransactionInput) => {
-      const transactionInput = decodeURIComponent(encodedTransactionInput);
+  // const handleLegacyTransactionURL = useCallback(
+  //   (encodedTransactionInput) => {
+  //     const transactionInput = decodeURIComponent(encodedTransactionInput);
 
-      let transaction: LegacyRenVMTransaction =
-        LegacyRenVMTransaction(transactionInput);
-      if (
-        searchResult &&
-        !Array.isArray(searchResult) &&
-        searchResult.resultPath === transaction.resultPath
-      ) {
-        transaction = searchResult as LegacyRenVMTransaction;
-      }
+  //     let transaction: LegacyRenVMTransaction =
+  //       LegacyRenVMTransaction(transactionInput);
+  //     if (
+  //       searchResult &&
+  //       !Array.isArray(searchResult) &&
+  //       searchResult.resultPath === transaction.resultPath
+  //     ) {
+  //       transaction = searchResult as LegacyRenVMTransaction;
+  //     }
 
-      setTransaction(transaction);
+  //     setTransaction(transaction);
 
-      searchLegacyTransaction(transaction, getChain)
-        .then((transaction) => {
-          setTransaction(transaction);
-          setUpdatedCount((count) => count + 1);
-        })
-        .catch((error) =>
-          setTransaction({
-            ...transaction,
-            queryTx: error,
-          })
-        );
-    },
-    [searchResult, setTransaction, getChain]
-  );
+  //     searchLegacyTransaction(transaction, getChain)
+  //       .then((transaction) => {
+  //         setTransaction(transaction);
+  //         setUpdatedCount((count) => count + 1);
+  //       })
+  //       .catch((error) =>
+  //         setTransaction({
+  //           ...transaction,
+  //           queryTx: error,
+  //         })
+  //       );
+  //   },
+  //   [searchResult, setTransaction, getChain]
+  // );
 
   return {
+    renJS,
     searchResult,
     transaction,
     gateway,
@@ -224,7 +235,7 @@ function useUIContainer() {
     handleSearchURL,
     handleSearchForm,
     handleTransactionURL,
-    handleLegacyTransactionURL,
+    // handleLegacyTransactionURL,
     handleGatewayURL,
     getChainDetails,
     getChain,

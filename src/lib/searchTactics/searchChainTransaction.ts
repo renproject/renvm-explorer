@@ -1,19 +1,17 @@
-import { ChainCommon, TxStatus } from "@renproject/interfaces";
 import {
-    RenVMProvider,
-    RenVMResponses,
-    RPCMethod,
-    unmarshalBurnTx,
-    unmarshalMintTx,
-} from "@renproject/rpc/build/main/v2";
-import { doesntError, toURLBase64 } from "@renproject/utils";
+  RenVMProvider,
+  RPCMethod,
+  RPCResponses,
+  unmarshalRenVMTransaction,
+} from "@renproject/provider";
+import { Chain, ChainCommon, utils } from "@renproject/utils";
 
 import { NETWORK } from "../../environmentVariables";
 import { allChains } from "../chains/chains";
 import {
-    RenVMTransaction,
-    SummarizedTransaction,
-    TransactionType,
+  RenVMTransaction,
+  SummarizedTransaction,
+  TransactionType,
 } from "../searchResult";
 import { summarizeTransaction } from "./searchRenVMHash";
 import { SearchTactic } from "./searchTactic";
@@ -21,12 +19,12 @@ import { SearchTactic } from "./searchTactic";
 export const queryTxsByTxid = async (
   provider: RenVMProvider,
   txid: Buffer,
-  getChain: (chainName: string) => ChainCommon | null
+  getChain: (chainName: string) => Chain | null
 ): Promise<Array<SummarizedTransaction>> => {
-  const response: { txs: Array<RenVMResponses[RPCMethod.QueryTx]["tx"]> } =
+  const response: { txs: Array<RPCResponses[RPCMethod.QueryTx]["tx"]> } =
     await provider.sendMessage(
       "ren_queryTxsByTxid" as any,
-      { txid: toURLBase64(txid) },
+      { txid: utils.toURLBase64(txid) },
       1
     );
 
@@ -36,23 +34,18 @@ export const queryTxsByTxid = async (
 
   return await Promise.all(
     response.txs.map(async (tx) => {
-      const response = {
-        tx,
-        txStatus: TxStatus.TxStatusNil,
-      };
-
-      const isMint = /((\/to)|(To))/.exec(response.tx.selector);
+      const isMint = /((\/to)|(To))/.exec(tx.selector);
 
       // Unmarshal transaction.
       if (isMint) {
-        const unmarshalled = unmarshalMintTx(response);
+        const unmarshalled = unmarshalRenVMTransaction(tx);
         return {
           result: unmarshalled,
           transactionType: TransactionType.Mint as const,
           summary: await summarizeTransaction(unmarshalled, getChain),
         };
       } else {
-        const unmarshalled = unmarshalBurnTx(response);
+        const unmarshalled = unmarshalRenVMTransaction(tx);
         return {
           result: unmarshalled,
           transactionType: TransactionType.Burn as const,
@@ -68,20 +61,22 @@ const OR = (left: boolean, right: boolean) => left || right;
 export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
   match: (
     searchString: string,
-    getChain: (chainName: string) => ChainCommon | null
+    getChain: (chainName: string) => Chain | null
   ) =>
     allChains
       .map((chain) => getChain(chain.chain))
       .map((chain) =>
-        doesntError(() =>
-          chain ? chain.utils.transactionIsValid(searchString) : false
+        utils.doesntError(() =>
+          chain
+            ? chain.validateTransaction({ txidFormatted: searchString })
+            : false
         )()
       )
       .reduce(OR, false),
   search: async (
     searchString: string,
     updateStatus: (status: string) => void,
-    getChain: (chainName: string) => ChainCommon | null
+    getChain: (chainName: string) => Chain | null
   ): Promise<RenVMTransaction[]> => {
     const formats = Array.from(
       // Remove duplicates.
@@ -89,14 +84,13 @@ export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
         allChains
           .map((chain) => getChain(chain.chain))
           .map((chain) =>
-            chain && chain.utils.transactionIsValid(searchString)
-              ? chain.transactionRPCTxidFromID(searchString, true)
+            chain && chain.validateTransaction({ txidFormatted: searchString })
+              ? chain.txidFormattedToTxid(searchString)
               : null
           )
           .filter((txid) => txid !== null)
-          .map((x) => (x !== null ? x.toString("hex") : null))
       )
-    ).map((x) => (x !== null ? Buffer.from(x, "hex") : null));
+    ).map((x) => (x !== null ? Buffer.from(x, "base64") : null));
 
     if (formats.length) {
       updateStatus(

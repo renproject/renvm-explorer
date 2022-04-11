@@ -8,8 +8,8 @@ import {
     Polygon,
 } from "@renproject/chains";
 import { BinanceSmartChain, Ethereum } from "@renproject/chains-ethereum";
-import { AbiItem, ChainCommon, RenNetwork } from "@renproject/interfaces";
-import { Ox } from "@renproject/utils";
+import { AbiItem } from "@renproject/chains-ethereum/build/main/utils/abi";
+import { ChainCommon, RenNetwork, utils } from "@renproject/utils";
 
 import { NETWORK } from "../../environmentVariables";
 import { TaggedError } from "../taggedError";
@@ -44,36 +44,36 @@ export const etherscanAPIMap: {
   [Ethereum.chain]: {
     [RenNetwork.Mainnet]: "https://api.etherscan.io/api",
     [RenNetwork.Testnet]: "https://api-kovan.etherscan.io/api",
-    [RenNetwork.DevnetVDot3]: "https://api-kovan.etherscan.io/api",
+    [RenNetwork.Devnet]: "https://api-kovan.etherscan.io/api",
   },
   [BinanceSmartChain.chain]: {
     [RenNetwork.Mainnet]: "https://api.bscscan.com/api",
     [RenNetwork.Testnet]: "https://api-testnet.bscscan.com/api",
-    [RenNetwork.DevnetVDot3]: "https://api-testnet.bscscan.com/api",
+    [RenNetwork.Devnet]: "https://api-testnet.bscscan.com/api",
   },
   [Fantom.chain]: {
     [RenNetwork.Mainnet]: "https://api.ftmscan.com/api",
     [RenNetwork.Testnet]: "https://api-testnet.ftmscan.com/api",
-    [RenNetwork.DevnetVDot3]: "https://api-testnet.ftmscan.com/api",
+    [RenNetwork.Devnet]: "https://api-testnet.ftmscan.com/api",
   },
   [Polygon.chain]: {
     [RenNetwork.Mainnet]: "https://api.polygonscan.com/api",
     [RenNetwork.Testnet]: "https://api-testnet.polygonscan.com/api",
-    [RenNetwork.DevnetVDot3]: "https://api-testnet.polygonscan.com/api",
+    [RenNetwork.Devnet]: "https://api-testnet.polygonscan.com/api",
   },
   [Arbitrum.chain]: {
     [RenNetwork.Mainnet]: "https://api.arbiscan.io/api",
     [RenNetwork.Testnet]: "https://api-testnet.arbiscan.io/api",
-    [RenNetwork.DevnetVDot3]: "https://api-testnet.arbiscan.io/api",
+    [RenNetwork.Devnet]: "https://api-testnet.arbiscan.io/api",
   },
   [Avalanche.chain]: {
     [RenNetwork.Mainnet]: "https://api.snowtrace.io/api",
     [RenNetwork.Testnet]: "https://api-testnet.snowtrace.io/api",
-    [RenNetwork.DevnetVDot3]: "https://api-testnet.snowtrace.io/api",
+    [RenNetwork.Devnet]: "https://api-testnet.snowtrace.io/api",
   },
   [Goerli.chain]: {
     [RenNetwork.Testnet]: "https://api-goerli.etherscan.io/api",
-    [RenNetwork.DevnetVDot3]: "https://api-goerli.etherscan.io/api",
+    [RenNetwork.Devnet]: "https://api-goerli.etherscan.io/api",
   },
 };
 
@@ -88,8 +88,8 @@ const getABIFromEtherscan: ABITactic = async (
   chain: ChainCommon,
   to: string
 ): Promise<AbiItem[]> => {
-  if (etherscanAPIMap[chain.name] && etherscanAPIMap[chain.name][NETWORK]) {
-    const api = etherscanAPIMap[chain.name][NETWORK];
+  if (etherscanAPIMap[chain.chain] && etherscanAPIMap[chain.chain][NETWORK]) {
+    const api = etherscanAPIMap[chain.chain][NETWORK];
     const url = `${api}?module=contract&action=getabi&address=${getProxy(to)}`;
     const response = await Axios.get<{
       status: "0" | "1";
@@ -117,7 +117,7 @@ const getABIFromEtherscan: ABITactic = async (
     }
   }
   throw new TaggedError(
-    `Fetching ABI not supported on ${chain.name}.`,
+    `Fetching ABI not supported on ${chain.chain}.`,
     ABIError.ChainNotSupported
   );
 };
@@ -137,7 +137,7 @@ export const getEvmABI = async (
   chain: ChainCommon,
   to: Buffer | string
 ): Promise<AbiItem[]> => {
-  to = Ox(to.toString()).toLowerCase();
+  to = utils.Ox(to.toString()).toLowerCase();
 
   const hardcodedABI = hardcodedABIs(chain, to);
   if (hardcodedABI) {
@@ -158,7 +158,7 @@ export const getEvmABI = async (
   }
 
   throw new TaggedError(
-    `Fetching ABI not supported on ${chain.name}.`,
+    `Fetching ABI not supported on ${chain.chain}.`,
     ABIError.ChainNotSupported
   );
 };

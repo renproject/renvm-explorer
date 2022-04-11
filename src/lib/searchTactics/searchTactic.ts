@@ -1,4 +1,5 @@
-import { ChainCommon } from "@renproject/interfaces";
+import { Chain } from "@renproject/utils";
+
 import { SearchResult } from "../searchResult";
 
 export interface SearchTactic<
@@ -6,11 +7,11 @@ export interface SearchTactic<
 > {
   match: (
     searchString: string,
-    getChain: (chainName: string) => ChainCommon | null
+    getChain: (chainName: string) => Chain | null
   ) => boolean;
   search: (
     searchString: string,
     updateStatus: (status: string) => void,
-    getChain: (chainName: string) => ChainCommon | null
+    getChain: (chainName: string) => Chain | null
   ) => Promise<GenericResult | GenericResult[] | null>;
 }

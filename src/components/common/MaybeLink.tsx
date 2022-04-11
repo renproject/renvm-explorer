@@ -1,3 +1,5 @@
+import { PropsWithChildren } from "react";
+
 import { ExternalLink } from "./ExternalLink";
 
 interface Props {
@@ -5,7 +7,11 @@ interface Props {
   noUnderline?: boolean;
 }
 
-export const MaybeLink: React.FC<Props> = ({ href, noUnderline, children }) =>
+export const MaybeLink: React.FC<PropsWithChildren<Props>> = ({
+  href,
+  noUnderline,
+  children,
+}) =>
   href ? (
     <ExternalLink
       style={{ textDecoration: noUnderline ? "none" : "underline" }}

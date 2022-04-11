@@ -1,4 +1,4 @@
-import { ChainCommon } from "@renproject/interfaces";
+import { Chain, ChainCommon } from "@renproject/utils";
 
 import { DEBUG } from "../environmentVariables";
 import { SearchResult } from "./searchResult";
@@ -19,7 +19,7 @@ export enum SearchErrors {
 export const search = async (
   searchString: string,
   updateStatus: (status: string) => void,
-  getChain: (chainName: string) => ChainCommon | null
+  getChain: (chainName: string) => Chain | null
 ): Promise<SearchResult | SearchResult[]> => {
   for (const tactic of searchTactics) {
     try {

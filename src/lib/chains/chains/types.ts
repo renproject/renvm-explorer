@@ -1,9 +1,7 @@
-import { LockChain, MintChain, RenNetwork } from "@renproject/interfaces";
 import { ConnectorConfig } from "@renproject/multiwallet-ui";
+import { Chain, ContractChain, RenNetwork } from "@renproject/utils";
 
-export interface ChainDetails<
-  ChainType extends MintChain | LockChain = MintChain | LockChain
-> {
+export interface ChainDetails<ChainType extends Chain = Chain> {
   chain: string;
   chainPattern: RegExp;
 
@@ -17,16 +15,19 @@ export interface ChainDetails<
   multiwalletConfig?: (network: RenNetwork) => Array<ConnectorConfig<any, any>>;
 
   getMintParams?: (
-    mintChain: MintChain,
+    mintChain: ContractChain,
     to: string,
     payload: string,
     asset: string
-  ) => Promise<MintChain>;
+  ) => Promise<any>;
 
   getTokenAccount?: (
-    mintChain: MintChain,
+    mintChain: ContractChain,
     asset: string
   ) => Promise<string | null>;
 
-  createTokenAccount?: (mintChain: MintChain, asset: string) => Promise<string>;
+  createTokenAccount?: (
+    mintChain: ContractChain,
+    asset: string
+  ) => Promise<string>;
 }

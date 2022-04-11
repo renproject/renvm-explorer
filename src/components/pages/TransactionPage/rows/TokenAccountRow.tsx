@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 
-import { MintChain } from "@renproject/interfaces";
-import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
+import { Gateway, GatewayTransaction } from "@renproject/ren";
+import { ContractChain } from "@renproject/utils";
 
 import { UIContainer } from "../../../../containers/UIContainer";
-import { getMintChainParams } from "../../../../lib/chains/chains";
+import { getContractChainParams } from "../../../../lib/chains/chains";
 import { SummarizedTransaction } from "../../../../lib/searchResult";
 
 interface Props {
   queryTx: SummarizedTransaction;
-  deposit: LockAndMint | LockAndMintDeposit | Error | undefined | null;
+  deposit: Gateway | GatewayTransaction | Error | undefined | null;
 }
 
 export const TokenAccountRow: React.FC<Props> = ({ queryTx, deposit }) => {
@@ -33,7 +33,7 @@ export const TokenAccountRow: React.FC<Props> = ({ queryTx, deposit }) => {
     if (toChain && toChainDetails && toChainDetails.getTokenAccount) {
       try {
         const maybeTokenAccount = await toChainDetails?.getTokenAccount(
-          toChain as MintChain,
+          toChain as ContractChain,
           asset
         );
 
@@ -63,7 +63,7 @@ export const TokenAccountRow: React.FC<Props> = ({ queryTx, deposit }) => {
         return;
       }
       await toChainDetails.createTokenAccount(
-        toChain as MintChain,
+        toChain as ContractChain,
         queryTx.summary.asset
       );
     })().catch(console.error);

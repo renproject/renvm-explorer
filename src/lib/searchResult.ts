@@ -1,11 +1,9 @@
-import {
-  LockAndMintTransaction,
-  BurnAndReleaseTransaction,
-  ChainCommon,
-} from "@renproject/interfaces";
-import { LockAndMint, LockAndMintDeposit } from "@renproject/ren";
 import BigNumber from "bignumber.js";
 import { v4 as uuid } from "uuid";
+
+import { RenVMCrossChainTransaction } from "@renproject/provider";
+import { Gateway, GatewayTransaction } from "@renproject/ren";
+import { ChainCommon } from "@renproject/utils";
 
 export enum SearchResultType {
   Searching,
@@ -93,12 +91,12 @@ export enum TransactionType {
 
 export type SummarizedTransaction =
   | {
-      result: LockAndMintTransaction;
+      result: RenVMCrossChainTransaction;
       summary: TransactionSummary;
       transactionType: TransactionType.Mint;
     }
   | {
-      result: BurnAndReleaseTransaction;
+      result: RenVMCrossChainTransaction;
       summary: TransactionSummary;
       transactionType: TransactionType.Burn;
     }
@@ -113,13 +111,13 @@ export interface RenVMTransaction extends SearchResultCommon {
   resultPath: string;
   txHash: string;
   queryTx?: SummarizedTransaction | Error;
-  deposit?: LockAndMintDeposit;
+  deposit?: GatewayTransaction;
 }
 
 export const RenVMTransaction = (
   transactionHash: string,
   queryTx?: SummarizedTransaction | Error,
-  deposit?: LockAndMintDeposit
+  deposit?: GatewayTransaction
 ): RenVMTransaction => {
   return {
     uuid: uuid(),
@@ -131,20 +129,20 @@ export const RenVMTransaction = (
   };
 };
 
-// LegacyRenVMTransaction //////////////////////////////////////////////////////
+// // LegacyRenVMTransaction //////////////////////////////////////////////////////
 
 export interface LegacyRenVMTransaction extends SearchResultCommon {
   type: SearchResultType.LegacyRenVMTransaction;
   resultPath: string;
   txHash: string;
   queryTx?: SummarizedTransaction | Error;
-  deposit?: LockAndMintDeposit;
+  deposit?: GatewayTransaction;
 }
 
 export const LegacyRenVMTransaction = (
   transactionHash: string,
   queryTx?: SummarizedTransaction | Error,
-  deposit?: LockAndMintDeposit
+  deposit?: GatewayTransaction
 ): LegacyRenVMTransaction => {
   return {
     uuid: uuid(),
@@ -156,28 +154,28 @@ export const LegacyRenVMTransaction = (
   };
 };
 
-// RenVMGateway ////////////////////////////////////////////////////////////
+// // RenVMGateway ////////////////////////////////////////////////////////////
 
 export interface RenVMGateway extends SearchResultCommon {
   type: SearchResultType.RenVMGateway;
   resultPath: string;
   address: string;
   queryGateway?: {
-    result: LockAndMintTransaction;
+    result: RenVMCrossChainTransaction;
     transactionType: TransactionType.Mint;
     summary: TransactionSummary;
   };
-  lockAndMint?: LockAndMint;
+  lockAndMint?: Gateway;
 }
 
 export const RenVMGateway = (
   address: string,
   queryGateway?: {
-    result: LockAndMintTransaction;
+    result: RenVMCrossChainTransaction;
     transactionType: TransactionType.Mint;
     summary: TransactionSummary;
   },
-  lockAndMint?: LockAndMint
+  lockAndMint?: Gateway
 ): RenVMGateway => {
   return {
     uuid: uuid(),

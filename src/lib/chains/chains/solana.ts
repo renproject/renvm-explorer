@@ -1,9 +1,9 @@
 import { AbiCoder } from "ethers/lib/utils";
 
-import { Solana, SolanaProvider } from "@renproject/chains";
+import { Solana } from "@renproject/chains";
 import { resolveNetwork } from "@renproject/chains-solana/build/main/networks";
-import { MintChain, RenNetwork } from "@renproject/interfaces";
 import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
+import { ContractChain, RenNetwork } from "@renproject/utils";
 import { Connection } from "@solana/web3.js";
 
 // import { Connection } from "@solana/web3.js";
@@ -44,36 +44,44 @@ export const SolanaDetails: ChainDetails<Solana> = {
   nativeAssets: [],
 
   getMintParams: async (
-    mintChain: MintChain,
+    mintChain: ContractChain,
     to: string,
     payload: string,
     asset: string
-  ): Promise<MintChain> =>
-    getSolanaMintParams(mintChain as Solana, to, payload, asset),
+  ): Promise<any> => {
+    const decoded =
+      payload.length > 0
+        ? new AbiCoder().decode(["string"], Buffer.from(payload, "hex"))[0]
+        : undefined;
+
+    return (mintChain as Solana).Address(decoded);
+  },
 
   getTokenAccount: async (
-    mintChain: MintChain,
+    mintChain: ContractChain,
     asset: string
   ): Promise<string | null> => {
-    const mintParameters = await (mintChain as Solana).getMintParams(asset);
-    const address = mintParameters?.contractCalls?.[0].sendTo;
-    const tokenAccount = await (mintChain as Solana).getAssociatedTokenAccount(
-      asset,
-      address
-    );
-    return tokenAccount?.toString();
+    throw new Error("Not implemented");
+    // const mintParameters = await (mintChain as Solana).getMintParams(asset);
+    // const address = mintParameters?.contractCalls?.[0].sendTo;
+    // const tokenAccount = await (mintChain as Solana).getAssociatedTokenAccount(
+    //   asset,
+    //   address
+    // );
+    // return tokenAccount?.toString();
   },
 
   createTokenAccount: async (
-    mintChain: MintChain,
+    mintChain: ContractChain,
     asset: string
   ): Promise<string> => {
-    const mintParameters = await (mintChain as Solana).getMintParams(asset);
-    const address = mintParameters?.contractCalls?.[0].sendTo;
-    const tokenAccount = await (
-      mintChain as Solana
-    ).createAssociatedTokenAccount(asset, address);
-    return tokenAccount?.toString();
+    throw new Error("Not implemented");
+    // const mintParameters = await (mintChain as Solana).getOutputPayload(asset);
+    // const address = mintParameters?.contractCalls?.[0].sendTo;
+    // const tokenAccount = await (
+    //   mintChain as Solana
+    // ).createAssociatedTokenAccount(asset, address);
+    // return tokenAccount?.toString();
   },
 };
 
@@ -88,42 +96,9 @@ export const getPublicSolanaProvider = <T extends Solana>(
     );
   }
 
-  const provider: SolanaProvider = {
-    connection: new Connection(config.endpoint),
-    wallet: {} as any,
-  };
-
-  const c = new Class(provider, network) as any as T;
+  const c = new Class({
+    network,
+    provider: new Connection(config.endpoint),
+  }) as any as T;
   return c;
-};
-
-export const getSolanaMintParams = async (
-  mintChain: Solana,
-  to: string,
-  payload: string,
-  asset: string
-): Promise<MintChain> => {
-  const decoded =
-    payload.length > 0
-      ? new AbiCoder().decode(["string"], Buffer.from(payload, "hex"))[0]
-      : undefined;
-
-  const chain = mintChain.Params({
-    contractCalls: [
-      {
-        sendTo: to,
-        contractFn: "mint",
-        contractParams: decoded
-          ? [
-              {
-                name: "recipient",
-                type: "string",
-                value: decoded,
-              },
-            ]
-          : [],
-      },
-    ],
-  });
-  return chain as any as MintChain<any, any, any>;
 };

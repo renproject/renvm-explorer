@@ -1,4 +1,4 @@
-import { toURLBase64 } from "@renproject/utils";
+import { utils } from "@renproject/utils";
 
 import { DEBUG } from "../../environmentVariables";
 
@@ -44,7 +44,7 @@ export const isURLBase64 = doesntError(
   ) => {
     const buffer = Buffer.from(input, "base64");
     assert(options.length === undefined || buffer.length === options.length);
-    assert(toURLBase64(buffer) === input);
+    assert(utils.toURLBase64(buffer) === input);
   }
 );
 

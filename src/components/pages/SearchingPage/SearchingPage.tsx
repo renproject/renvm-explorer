@@ -1,20 +1,22 @@
-import { useRouteMatch } from "react-router-dom";
-import { SearchingPageOuter } from "./SearchingPageStyles";
-import { Container, Card, Spinner } from "react-bootstrap";
-import { Monospaced } from "../../common/Monospaced";
 import { useEffect } from "react";
+import { Card, Container, Spinner } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+
 import { UIContainer } from "../../../containers/UIContainer";
 import { SearchResultType } from "../../../lib/searchResult";
+import { Monospaced } from "../../common/Monospaced";
+import { SearchingPageOuter } from "./SearchingPageStyles";
 
 export const SearchingPage = () => {
   const { searchResult, handleSearchURL, handleSelectResult } =
     UIContainer.useContainer();
 
-  const {
-    params: { search },
-  } = useRouteMatch<{ search: string }>();
+  const { search } = useParams<{ search: string }>();
 
   useEffect(() => {
+    if (!search) {
+      return;
+    }
     handleSearchURL(search);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);

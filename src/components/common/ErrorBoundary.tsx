@@ -58,14 +58,21 @@ export class ErrorBoundary extends React.Component<Props, typeof defaultState> {
       // Error path
       return (
         <div defaultValue={defaultValue as string[]} {...props}>
+          <br />
           <div className="error-boundary--header">
             <h2>Something went wrong.</h2>
           </div>
           <div className="summary-content">
-            Error details
-            {this.state.error && String(this.state.error)}
-            <br />
-            {this.state.errorInfo.componentStack}
+            <pre>
+              <code>{this.state.error && String(this.state.error)}</code>
+            </pre>
+            <details>
+              <summary>Stack trace</summary>
+              <br />
+              <pre>
+                <code>{this.state.errorInfo.componentStack}</code>
+              </pre>
+            </details>
           </div>
         </div>
       );

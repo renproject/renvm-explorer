@@ -1,12 +1,8 @@
-/* make the customizations */
-$blue: #001732;
-$success: $blue;
-
 input.form-control:focus {
-  border-color: $success !important;
+  border-color: #001732 !important;
 }
 
-@import "~bootstrap/scss/bootstrap";
+@import "~bootstrap/dist/css/bootstrap.css";
 
 body {
   margin: 0;

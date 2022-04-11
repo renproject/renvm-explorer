@@ -1,6 +1,7 @@
-import { RenNetwork } from "@renproject/interfaces";
-import { WalletPickerModal } from "@renproject/multiwallet-ui";
 import React from "react";
+
+import { WalletPickerModal } from "@renproject/multiwallet-ui";
+import { RenNetwork } from "@renproject/utils";
 
 import { multiwalletOptions } from "../lib/chains/chains";
 

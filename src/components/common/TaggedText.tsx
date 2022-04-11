@@ -1,3 +1,4 @@
+import React, { PropsWithChildren } from "react";
 import styled from "styled-components";
 
 const TaggedTextOuter = styled.div`
@@ -17,7 +18,10 @@ const TaggedTextTag = styled.span`
   background: #001732;
 `;
 
-export const TaggedText: React.FC<{ tag: string }> = ({ tag, children }) => {
+export const TaggedText: React.FC<PropsWithChildren<{ tag: string }>> = ({
+  tag,
+  children,
+}) => {
   return (
     <TaggedTextOuter>
       <TaggedTextTag>{tag}</TaggedTextTag>

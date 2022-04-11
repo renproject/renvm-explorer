@@ -1,18 +1,19 @@
-import { ChainCommon, LockAndMintTransaction } from "@renproject/interfaces";
 import {
-    RenVMProvider,
-    ResponseQueryTx,
-    unmarshalMintTx,
-} from "@renproject/rpc/build/main/v2";
-import { doesntError } from "@renproject/utils";
+  RenVMProvider,
+  RenVMTransaction,
+  ResponseQueryTx,
+  unmarshalRenVMTransaction,
+} from "@renproject/provider/build/main";
+import { GatewayTransaction } from "@renproject/ren";
+import { Chain, ChainCommon, utils } from "@renproject/utils";
 
 import { NETWORK } from "../../environmentVariables";
 import { allChains } from "../chains/chains";
 import {
-    RenVMGateway,
-    RenVMTransactionError,
-    TransactionSummary,
-    TransactionType,
+  RenVMGateway,
+  RenVMTransactionError,
+  TransactionSummary,
+  TransactionType,
 } from "../searchResult";
 import { errorMatches, TaggedError } from "../taggedError";
 import { summarizeTransaction } from "./searchRenVMHash";
@@ -21,9 +22,9 @@ import { SearchTactic } from "./searchTactic";
 export const queryGateway = async (
   provider: RenVMProvider,
   gatewayAddress: string,
-  getChain: (chainName: string) => ChainCommon | null
+  getChain: (chainName: string) => Chain | null
 ): Promise<{
-  result: LockAndMintTransaction;
+  result: RenVMTransaction;
   transactionType: TransactionType.Mint;
   summary: TransactionSummary;
 }> => {
@@ -42,7 +43,7 @@ export const queryGateway = async (
   }
 
   // Unmarshal transaction.
-  const unmarshalled = unmarshalMintTx(response);
+  const unmarshalled = unmarshalRenVMTransaction(response.tx);
   return {
     result: unmarshalled,
     transactionType: TransactionType.Mint as const,
@@ -55,13 +56,13 @@ const OR = (left: boolean, right: boolean) => left || right;
 export const searchGateway: SearchTactic<RenVMGateway> = {
   match: (
     searchString: string,
-    getChain: (chainName: string) => ChainCommon | null
+    getChain: (chainName: string) => Chain | null
   ) =>
     allChains
       .map((chain) => getChain(chain.chain))
       .map((chain) =>
-        doesntError(() =>
-          chain ? chain.utils.addressIsValid(searchString) : false
+        utils.doesntError(() =>
+          chain ? chain.validateAddress(searchString) : false
         )()
       )
       .reduce(OR, false),
@@ -69,7 +70,7 @@ export const searchGateway: SearchTactic<RenVMGateway> = {
   search: async (
     searchString: string,
     updateStatus: (status: string) => void,
-    getChain: (chainName: string) => ChainCommon | null
+    getChain: (chainName: string) => Chain | null
   ): Promise<RenVMGateway> => {
     updateStatus("Looking up Gateway...");
 

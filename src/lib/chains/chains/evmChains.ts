@@ -1,43 +1,52 @@
 import { ethers } from "ethers";
 
 import {
-    Arbitrum,
-    Avalanche,
-    BinanceSmartChain,
-    Ethereum,
-    EthereumClass,
-    EthereumConfig,
-    Fantom,
-    Goerli,
-    Polygon,
+  Arbitrum,
+  Avalanche,
+  BinanceSmartChain,
+  Ethereum,
+  EVMNetworkConfig,
+  Fantom,
+  Goerli,
+  Polygon,
 } from "@renproject/chains";
-import { EthArgs, MintChain, RenNetwork } from "@renproject/interfaces";
+import { EthArgs } from "@renproject/chains-ethereum/build/main/utils/abi";
+import { EVMPayload } from "@renproject/chains-ethereum/build/main/utils/payloads/evmPayloadHandlers";
 import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
 import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
-import { fromHex, Ox } from "@renproject/utils";
+import { ContractChain, RenNetwork, utils } from "@renproject/utils";
 
 import { INFURA_KEY } from "../../../environmentVariables";
 import { getEvmABI } from "../getABI";
 import { Icons } from "../icons/wallets";
 import { ChainDetails } from "./types";
 
+type EthereumClass =
+  | Arbitrum
+  | Avalanche
+  | BinanceSmartChain
+  | Ethereum
+  | Fantom
+  | Goerli
+  | Polygon;
+
 export const networkMapper =
   (map: {
-    [RenNetwork.Mainnet]?: { networkID: number };
-    [RenNetwork.Testnet]?: { networkID: number };
-    [RenNetwork.Devnet]?: { networkID: number };
+    [RenNetwork.Mainnet]?: EVMNetworkConfig;
+    [RenNetwork.Testnet]?: EVMNetworkConfig;
+    [RenNetwork.Devnet]?: EVMNetworkConfig;
   }) =>
   (id: string | number): RenNetwork => {
     const devnet = map[RenNetwork.Devnet];
     return {
-      [map[RenNetwork.Mainnet]!.networkID]: RenNetwork.Mainnet,
-      [map[RenNetwork.Testnet]!.networkID]: RenNetwork.Testnet,
-      [devnet ? devnet.networkID : -1]: RenNetwork.Devnet,
+      [parseInt(map[RenNetwork.Mainnet]!.config.chainId)]: RenNetwork.Mainnet,
+      [parseInt(map[RenNetwork.Testnet]!.config.chainId)]: RenNetwork.Testnet,
+      [devnet ? parseInt(devnet.config.chainId) : -1]: RenNetwork.Devnet,
     }[parseInt(id as string)] as RenNetwork; // tslint:disable-line: radix
   };
 
 export const injectedConnectorFactory = (map: {
-  [network in RenNetwork]?: EthereumConfig;
+  [network in RenNetwork]?: EVMNetworkConfig;
 }) => {
   return {
     name: "Metamask",
@@ -77,11 +86,11 @@ export const EthereumDetails: ChainDetails<Ethereum> = {
   nativeAssets: [],
 
   getMintParams: async (
-    mintChain: MintChain,
+    mintChain: ContractChain,
     to: string,
     payload: string,
     asset: string
-  ): Promise<MintChain> =>
+  ): Promise<EVMPayload> =>
     getEthereumMintParams(mintChain as EthereumClass, to, payload, asset),
 };
 
@@ -100,11 +109,11 @@ export const BinanceSmartChainDetails: ChainDetails<BinanceSmartChain> = {
   nativeAssets: [],
 
   getMintParams: async (
-    mintChain: MintChain,
+    mintChain: ContractChain,
     to: string,
     payload: string,
     asset: string
-  ): Promise<MintChain> =>
+  ): Promise<EVMPayload> =>
     getEthereumMintParams(mintChain as BinanceSmartChain, to, payload, asset),
 };
 
@@ -123,11 +132,11 @@ export const FantomDetails: ChainDetails<Fantom> = {
   nativeAssets: [],
 
   getMintParams: async (
-    mintChain: MintChain,
+    mintChain: ContractChain,
     to: string,
     payload: string,
     asset: string
-  ): Promise<MintChain> =>
+  ): Promise<EVMPayload> =>
     getEthereumMintParams(mintChain as Fantom, to, payload, asset),
 };
 
@@ -146,11 +155,11 @@ export const PolygonDetails: ChainDetails<Polygon> = {
   nativeAssets: [],
 
   getMintParams: async (
-    mintChain: MintChain,
+    mintChain: ContractChain,
     to: string,
     payload: string,
     asset: string
-  ): Promise<MintChain> =>
+  ): Promise<EVMPayload> =>
     getEthereumMintParams(mintChain as Polygon, to, payload, asset),
 };
 
@@ -169,11 +178,11 @@ export const AvalancheDetails: ChainDetails<Avalanche> = {
   nativeAssets: [],
 
   getMintParams: async (
-    mintChain: MintChain,
+    mintChain: ContractChain,
     to: string,
     payload: string,
     asset: string
-  ): Promise<MintChain> =>
+  ): Promise<EVMPayload> =>
     getEthereumMintParams(mintChain as Avalanche, to, payload, asset),
 };
 
@@ -197,11 +206,11 @@ export const GoerliDetails: ChainDetails<Goerli> = {
   nativeAssets: [],
 
   getMintParams: async (
-    mintChain: MintChain,
+    mintChain: ContractChain,
     to: string,
     payload: string,
     asset: string
-  ): Promise<MintChain> =>
+  ): Promise<EVMPayload> =>
     getEthereumMintParams(mintChain as Goerli, to, payload, asset),
 };
 
@@ -220,11 +229,11 @@ export const ArbitrumDetails: ChainDetails<Arbitrum> = {
   nativeAssets: [],
 
   getMintParams: async (
-    mintChain: MintChain,
+    mintChain: ContractChain,
     to: string,
     payload: string,
     asset: string
-  ): Promise<MintChain> =>
+  ): Promise<EVMPayload> =>
     getEthereumMintParams(mintChain as Arbitrum, to, payload, asset),
 };
 
@@ -236,7 +245,6 @@ export const getPublicEthereumProvider = <
     | Avalanche
     | BinanceSmartChain
     | Ethereum
-    | EthereumClass
     | Fantom
     | Goerli
     | Polygon
@@ -244,7 +252,7 @@ export const getPublicEthereumProvider = <
   Class: {
     chain: string;
     new (...p: any[]): T;
-    configMap: { [network: string]: EthereumConfig };
+    configMap: { [network: string]: EVMNetworkConfig };
   },
   network: RenNetwork
 ): T => {
@@ -254,12 +262,18 @@ export const getPublicEthereumProvider = <
       `No network configuration for ${network} and ${Class.chain}.`
     );
   }
-  const publicEndpoint =
-    // Temporary override.
-    Class.chain === "Polygon" && network === RenNetwork.Mainnet
-      ? "https://polygon-rpc.com"
-      : config?.publicProvider({ infura: INFURA_KEY });
-  const provider = new ethers.providers.JsonRpcProvider(publicEndpoint);
+  const urls = config.config.rpcUrls;
+  let rpcUrl = urls[0];
+  if (process.env.INFURA_KEY) {
+    const infuraRegEx = /^https:\/\/.*\$\{INFURA_API_KEY\}/;
+    for (const url of urls) {
+      if (infuraRegEx.exec(url)) {
+        rpcUrl = url.replace(/\$\{INFURA_API_KEY\}/, process.env.INFURA_KEY);
+        break;
+      }
+    }
+  }
+  const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
   const signer = provider.getSigner();
   return new Class({ provider, signer }, network) as any as T;
 };
@@ -269,7 +283,7 @@ export const getEthereumMintParams = async (
   to: string,
   payload: string,
   asset: string
-) => {
+): Promise<EVMPayload> => {
   const abiFull = await getEvmABI(mintChain, to);
   if (!Array.isArray(abiFull)) {
     throw new Error(abiFull);
@@ -305,28 +319,28 @@ export const getEthereumMintParams = async (
 
   // Varen override. TODO: Refactor to make overriding tidier.
   if (
-    Ox(to.toLowerCase()) === "0xa9975b1c616b4841a1cc299bc6f684b4d1e23a61" ||
-    Ox(to.toLowerCase()) === "0x82f2e6c57b7fde0ebb42f22bfc6b4a297e7d9be8" ||
-    Ox(to.toLowerCase()) === "0xf0a8feacb869477954ab2f7f6ba0b35db235a2a9"
+    utils.Ox(to.toLowerCase()) ===
+      "0xa9975b1c616b4841a1cc299bc6f684b4d1e23a61" ||
+    utils.Ox(to.toLowerCase()) ===
+      "0x82f2e6c57b7fde0ebb42f22bfc6b4a297e7d9be8" ||
+    utils.Ox(to.toLowerCase()) === "0xf0a8feacb869477954ab2f7f6ba0b35db235a2a9"
   ) {
     parameters = [
       {
         name: "sender",
         type: "address",
-        value: Ox(fromHex(payload).slice(12)),
+        value: utils.Ox(utils.fromHex(payload).slice(12)),
       },
       {
         name: "mintToken",
         type: "address",
-        value: await (mintChain as EthereumClass).getTokenContractAddress(
-          asset
-        ),
+        value: await (mintChain as EthereumClass).getMintAsset(asset),
         notInPayload: true,
       },
       {
         name: "burnToken",
         type: "address",
-        value: Ox("00".repeat(20)),
+        value: utils.Ox("00".repeat(20)),
         notInPayload: true,
       },
       { name: "burnAmount", type: "uint256", value: 0, notInPayload: true },
@@ -339,14 +353,19 @@ export const getEthereumMintParams = async (
       {
         name: "swapVars",
         type: "tuple(address,uint256,address,bytes)",
-        value: [Ox("00".repeat(20)), 0, Ox("00".repeat(20)), Buffer.from([])],
+        value: [
+          utils.Ox("00".repeat(20)),
+          0,
+          utils.Ox("00".repeat(20)),
+          Buffer.from([]),
+        ],
         notInPayload: true,
       },
     ];
   } else {
     const abiValues = ethers.utils.defaultAbiCoder.decode(
       (valuesToDecode?.slice(0, -3) || []).map((x) => x.type),
-      fromHex(payload)
+      utils.fromHex(payload)
     );
 
     parameters = (valuesToDecode?.slice(0, -3) || []).map((abiItem, i) => ({
@@ -371,8 +390,9 @@ export const getEthereumMintParams = async (
   }
 
   return (mintChain as EthereumClass).Contract({
-    sendTo: Ox(to.toString()),
-    contractFn: abi.name || "",
-    contractParams: parameters,
+    to: utils.Ox(to.toString()),
+    method: abi.name || "",
+    params: parameters,
+    withRenParams: true,
   });
 };

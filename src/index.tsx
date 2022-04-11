@@ -1,12 +1,15 @@
+import "./index.css";
+
 import React from "react";
 import ReactDOM from "react-dom";
 import { HashRouter as Router } from "react-router-dom";
-import "./index.scss";
-import { App } from "./components/App/App";
-import reportWebVitals from "./reportWebVitals";
-import { UIContainer } from "./containers/UIContainer";
+
 import { MultiwalletProvider } from "@renproject/multiwallet-ui";
+
+import { App } from "./components/App/App";
 import { LatestTransactionsContainer } from "./containers/LatestTransactionsContainer";
+import { UIContainer } from "./containers/UIContainer";
+import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>

@@ -1,15 +1,18 @@
 import {
+  RenVMCrossChainTransaction,
   ResponseQueryTx,
-  unmarshalTypedPackValue,
-} from "@renproject/rpc/build/main/v2";
+} from "@renproject/provider";
+import { pack } from "@renproject/utils";
 
-export const unmarshalClaimFeesTx = (response: ResponseQueryTx) => {
+export const unmarshalClaimFeesTx = (
+  response: ResponseQueryTx
+): RenVMCrossChainTransaction => {
   let out;
 
-  const inValue = unmarshalTypedPackValue(response.tx.in);
+  const inValue = pack.unmarshal.unmarshalTypedPackValue(response.tx.in);
 
   if (response.tx.out) {
-    out = unmarshalTypedPackValue(response.tx.out);
+    out = pack.unmarshal.unmarshalTypedPackValue(response.tx.out);
 
     // Temporary fix to support v0.4.
     if (out.revert && out.revert.length === 0) {
@@ -18,10 +21,9 @@ export const unmarshalClaimFeesTx = (response: ResponseQueryTx) => {
   }
 
   return {
-    version: response.tx.version ? parseInt(response.tx.version) : undefined,
+    version: response.tx.version ? parseInt(response.tx.version) : 1,
     hash: response.tx.hash,
-    txStatus: response.txStatus,
-    to: response.tx.selector,
+    selector: response.tx.selector,
     in: inValue,
     out,
   };

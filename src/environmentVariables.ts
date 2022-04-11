@@ -1,8 +1,4 @@
-import { config } from "dotenv";
-
-import { RenNetwork } from "@renproject/interfaces";
-
-config();
+import { RenNetwork } from "@renproject/utils";
 
 export const NETWORK: RenNetwork =
   (process.env.REACT_APP_NETWORK as RenNetwork) || RenNetwork.Mainnet;

@@ -1,6 +1,6 @@
-import React, { useCallback, useState } from "react";
-import { useEffect } from "react";
-import { Link, useHistory } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
 import { UIContainer } from "../../containers/UIContainer";
 import {
   RenVMTransaction,
@@ -15,7 +15,7 @@ interface Props {
 
 export const TransactionPreview: React.FC<Props> = ({ queryTx, refreshed }) => {
   const { setSearchResult } = UIContainer.useContainer();
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const txHash = queryTx.result.hash;
 
@@ -29,18 +29,18 @@ export const TransactionPreview: React.FC<Props> = ({ queryTx, refreshed }) => {
       // To reproduce: set the timeout to 0 and then on the recent txs page,
       // click one tx, go back and then click another tx.
       setTimeout(() => {
-        history.push(`/tx/${encodeURIComponent(txHash)}`);
+        navigate(`/tx/${encodeURIComponent(txHash)}`);
       }, 100);
     },
-    [history, setSearchResult, queryTx, txHash]
+    [navigate, setSearchResult, queryTx, txHash]
   );
 
   const from = queryTx.summary.fromChain
-    ? queryTx.summary.fromChain.name
+    ? queryTx.summary.fromChain.chain
     : queryTx.summary.from;
 
   const to = queryTx.summary.toChain
-    ? queryTx.summary.toChain.name
+    ? queryTx.summary.toChain.chain
     : queryTx.summary.to;
 
   const [newlyAdded, setNewlyAdded] = useState(false);

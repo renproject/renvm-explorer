@@ -1,7 +1,9 @@
-import { RenNetwork } from "@renproject/interfaces";
 import { useEffect } from "react";
-import { Route, Switch } from "react-router";
+import { Route, Routes } from "react-router-dom";
 import { titleCase } from "title-case";
+
+import { RenNetwork } from "@renproject/utils";
+
 import { NETWORK } from "../../environmentVariables";
 import { ErrorBoundary } from "../common/ErrorBoundary";
 import { Header } from "../Header/Header";
@@ -27,17 +29,20 @@ export const App = () => {
       <Header />
       <ErrorBoundary>
         <div style={{ marginTop: 20 }}>
-          <Switch>
-            <Route path="/search/:search" component={SearchingPage} />
+          <Routes>
+            <Route path="/search/:search" element={<SearchingPage />} />
 
-            <Route path="/tx/:hash" component={TransactionPage} />
-            <Route path="/legacy-tx/:legacyHash" component={TransactionPage} />
-            <Route path="/gateway/:address" component={GatewayPage} />
+            <Route path="/tx/:hash" element={<TransactionPage />} />
+            <Route
+              path="/legacy-tx/:legacyHash"
+              element={<TransactionPage />}
+            />
+            <Route path="/gateway/:address" element={<GatewayPage />} />
 
-            <Route path="/tools" component={ToolsPage} />
-            <Route path="/" exact component={Homepage} />
-            <Route path="/" component={NotFound} />
-          </Switch>
+            <Route path="/tools" element={<ToolsPage />} />
+            <Route path="/" element={<Homepage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </div>
       </ErrorBoundary>
     </AppOuter>

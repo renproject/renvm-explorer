@@ -1,34 +1,34 @@
+import React, { useEffect, useState } from "react";
+import { Card, Spinner, Table } from "react-bootstrap";
+import { useParams } from "react-router-dom";
+
+import { RenVMCrossChainTransaction } from "@renproject/provider";
+import { Gateway, GatewayTransaction } from "@renproject/ren";
+
+import { UIContainer } from "../../../containers/UIContainer";
+import {
+  SearchResultType,
+  SummarizedTransaction,
+} from "../../../lib/searchResult";
+import { LoadAdditionalDetails } from "./LoadAdditionalDetails";
+import { AmountRows } from "./rows/AmountRows";
+import { FromTransactionRow } from "./rows/FromTransactionRow";
+import { GatewayAddressRow } from "./rows/GatewayAddressRow";
+import { RecipientRow } from "./rows/RecipientRow";
+import { StatusRow } from "./rows/StatusRow";
+import { ToTransactionRow } from "./rows/ToTransactionRow";
+import { TransactionDiagram } from "./TransactionDiagram";
+import { TransactionError } from "./TransactionError";
 import {
   TransactionPageContainer,
   TransactionPageTitle,
   TransactionSpinner,
 } from "./TransactionPageStyles";
-import { Card, Spinner, Table } from "react-bootstrap";
-import { UIContainer } from "../../../containers/UIContainer";
-import React, { useEffect, useState } from "react";
-import {
-  LockAndMint,
-  LockAndMintDeposit,
-} from "@renproject/ren/build/main/lockAndMint";
-import { useRouteMatch } from "react-router-dom";
-import { FromTransactionRow } from "./rows/FromTransactionRow";
-import { RecipientRow } from "./rows/RecipientRow";
-import { StatusRow } from "./rows/StatusRow";
-import { GatewayAddressRow } from "./rows/GatewayAddressRow";
-import { ToTransactionRow } from "./rows/ToTransactionRow";
-import { AmountRows } from "./rows/AmountRows";
-import { TransactionDiagram } from "./TransactionDiagram";
-import { LoadAdditionalDetails } from "./LoadAdditionalDetails";
-import { TransactionError } from "./TransactionError";
-import { SearchResultType } from "../../../lib/searchResult";
 
 export const TransactionPage = () => {
-  const { transaction, handleTransactionURL, handleLegacyTransactionURL } =
-    UIContainer.useContainer();
+  const { transaction, handleTransactionURL } = UIContainer.useContainer();
 
-  const {
-    params: { hash, legacyHash },
-  } = useRouteMatch<
+  const { hash, legacyHash } = useParams<
     | { hash: string; legacyHash: undefined }
     | { hash: undefined; legacyHash: string }
   >();
@@ -37,19 +37,22 @@ export const TransactionPage = () => {
     if (hash) {
       handleTransactionURL(hash);
     } else {
-      handleLegacyTransactionURL(legacyHash);
+      throw new Error(`Not implemented - legacy tx: ${legacyHash}`);
+      // handleLegacyTransactionURL(legacyHash);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hash]);
 
-  const queryTx =
-    transaction && !(transaction instanceof Error) && transaction.queryTx;
+  const queryTx: SummarizedTransaction | undefined =
+    transaction && !(transaction instanceof Error) && transaction.queryTx
+      ? (transaction.queryTx as SummarizedTransaction)
+      : undefined;
 
   const [deposit, setDeposit] = useState<
-    LockAndMintDeposit | Error | null | undefined
+    GatewayTransaction | Error | null | undefined
   >(undefined);
   const [lockAndMint, setLockAndMint] = useState<
-    LockAndMint | Error | null | undefined
+    Gateway | Error | null | undefined
   >(undefined);
 
   return (
@@ -79,11 +82,21 @@ export const TransactionPage = () => {
                       <tbody>
                         <tr>
                           <td>RenVM Hash</td>
-                          <td>{queryTx.result.hash}</td>
+                          <td>
+                            {
+                              (queryTx.result as RenVMCrossChainTransaction)
+                                .hash
+                            }
+                          </td>
                         </tr>
                         <tr>
                           <td>Selector</td>
-                          <td>{queryTx.result.to}</td>
+                          <td>
+                            {
+                              (queryTx.result as RenVMCrossChainTransaction)
+                                .selector
+                            }
+                          </td>
                         </tr>
                         <GatewayAddressRow
                           lockAndMint={lockAndMint}
