@@ -1,246 +1,274 @@
+import RenJS from "@renproject/ren";
+import { Chain } from "@renproject/utils";
 import { OrderedMap } from "immutable";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createContainer } from "unstated-next";
 
-import RenJS from "@renproject/ren";
-import { Chain } from "@renproject/utils";
-
 import { NETWORK } from "../environmentVariables";
 import { allChains, ChainMapper } from "../lib/chains/chains";
 import { search, SearchErrors } from "../lib/search";
+import { searchGateway } from "../lib/searchGateway";
 // import { searchGateway } from "../lib/searchGateway";
 // import { searchLegacyTransaction } from "../lib/searchLegacyTransaction";
 import {
-  LegacyRenVMTransaction,
-  RenVMGateway,
-  RenVMTransaction,
-  Searching,
-  SearchResult,
+    LegacyRenVMTransaction,
+    RenVMGateway,
+    RenVMTransaction,
+    Searching,
+    SearchResult,
 } from "../lib/searchResult";
 import { searchTransaction } from "../lib/searchTransaction";
 import { TaggedError } from "../lib/taggedError";
 
 function useUIContainer() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
 
-  const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
+    const [searchResult, setSearchResult] = useState<SearchResult | null>(null);
 
-  const [transaction, setTransaction] = useState<
-    RenVMTransaction | LegacyRenVMTransaction | null | Error
-  >(null);
-  const [gateway, setGateway] = useState<RenVMGateway | null | Error>(null);
-  const [updatedCount, setUpdatedCount] = useState(0);
+    const [transaction, setTransaction] = useState<
+        RenVMTransaction | LegacyRenVMTransaction | null | Error
+    >(null);
+    const [gateway, setGateway] = useState<RenVMGateway | null | Error>(null);
+    const [updatedCount, setUpdatedCount] = useState(0);
 
-  const chains = useMemo(() => {
-    return allChains.reduce((acc, chainDetails) => {
-      try {
-        const chain = ChainMapper(chainDetails.chain, NETWORK);
-        return acc.set(chainDetails.chain, chain || null);
-      } catch (error: any) {
-        console.error(error);
-        return acc.set(chainDetails.chain, null);
-      }
-    }, OrderedMap<string, Chain | null>());
-  }, []);
-  const renJS = useMemo(
-    () =>
-      new RenJS(NETWORK).withChains(
-        ...(chains
-          .valueSeq()
-          .filter((x) => x !== null)
-          .toArray() as Chain[])
-      ),
-    [chains]
-  );
+    const renJS = useMemo(() => new RenJS(NETWORK), []);
 
-  const getChainDetails = useCallback((chainName: string) => {
-    for (const chain of allChains) {
-      if (chain.chainPattern.exec(chainName)) {
-        return chain;
-      }
-    }
-    return null;
-  }, []);
-
-  const getChain = useCallback(
-    (chainName: string) => {
-      const chainDetails = getChainDetails(chainName);
-      return chainDetails ? chains.get(chainDetails.chain, null) : null;
-    },
-    [chains, getChainDetails]
-  );
-
-  // handleSearchURL is called when the search parameter in the URL changes.
-  const handleSearchURL = useCallback(
-    (encodedSearchInput: string) => {
-      setSearchResult(null);
-      const searchInput = decodeURIComponent(encodedSearchInput);
-
-      setSearchResult(Searching(searchInput));
-
-      search(searchInput, console.log, getChain)
-        .then((result) => {
-          if (result && Array.isArray(result)) {
-            if (result.length === 0) {
-              setSearchResult(Searching(searchInput, { noResult: true }));
-              setUpdatedCount((count) => count + 1);
-              return;
-            } else if (result.length === 1) {
-              result = result[0];
-            } else {
-              setSearchResult(
-                Searching(searchInput, { multipleResults: result })
-              );
-              setUpdatedCount((count) => count + 1);
-              return;
+    const getChainDetails = useCallback((chainName: string) => {
+        for (const chain of allChains) {
+            if (
+                chain.chainPattern.exec(chainName) ||
+                Object.values(chain.assets).includes(chainName)
+            ) {
+                return chain;
             }
-          }
+        }
+        return null;
+    }, []);
 
-          setSearchResult(result);
-          navigate(result.resultPath, { replace: true });
-        })
-        .catch((error) => {
-          if ((error as TaggedError)._tag === SearchErrors.NO_RESULTS) {
-            setSearchResult(Searching(searchInput, { noResult: true }));
+    const getChain = useCallback(
+        (chain: string) => {
+            const chainName = getChainDetails(chain)?.chain || chain;
+
+            const chains = renJS.chains;
+
+            const chainDetails = getChainDetails(chain);
+
+            const existingChain =
+                chains[chainName] ||
+                (chainDetails && chains[chainDetails.chain]);
+            Object.values(chains).find((chain) =>
+                Object.values(chain?.assets || {}).includes(chainName),
+            );
+            if (existingChain) {
+                return existingChain;
+            }
+
+            if (!chainDetails) {
+                return null;
+            }
+
+            try {
+                const chain = ChainMapper(chainDetails.chain, NETWORK);
+                if (chain) {
+                    renJS.withChain(chain);
+                }
+                return chain;
+            } catch (error: any) {
+                console.error(error);
+                return null;
+            }
+        },
+        [renJS, getChainDetails],
+    );
+
+    // handleSearchURL is called when the search parameter in the URL changes.
+    const handleSearchURL = useCallback(
+        (encodedSearchInput: string) => {
+            setSearchResult(null);
+            const searchInput = decodeURIComponent(encodedSearchInput);
+
+            setSearchResult(Searching(searchInput));
+
+            search(searchInput, console.log, getChain)
+                .then((result) => {
+                    if (result && Array.isArray(result)) {
+                        if (result.length === 0) {
+                            setSearchResult(
+                                Searching(searchInput, { noResult: true }),
+                            );
+                            setUpdatedCount((count) => count + 1);
+                            return;
+                        } else if (result.length === 1) {
+                            result = result[0];
+                        } else {
+                            setSearchResult(
+                                Searching(searchInput, {
+                                    multipleResults: result,
+                                }),
+                            );
+                            setUpdatedCount((count) => count + 1);
+                            return;
+                        }
+                    }
+
+                    if (result.resultPath.match(/^https:\/\//)) {
+                        window.location.replace(result.resultPath);
+                    } else {
+                        setSearchResult(result);
+                        navigate(result.resultPath, { replace: true });
+                    }
+                })
+                .catch((error) => {
+                    if (
+                        (error as TaggedError)._tag === SearchErrors.NO_RESULTS
+                    ) {
+                        setSearchResult(
+                            Searching(searchInput, { noResult: true }),
+                        );
+                        setUpdatedCount((count) => count + 1);
+                    } else {
+                        setSearchResult(
+                            Searching(searchInput, { errorSearching: error }),
+                        );
+                        setUpdatedCount((count) => count + 1);
+                    }
+                });
+        },
+        [navigate, getChain],
+    );
+
+    const handleSelectResult = useCallback(
+        (result: SearchResult) => {
+            setSearchResult(result);
+            navigate(result.resultPath, { replace: true });
+        },
+        [navigate],
+    );
+
+    // handleSearchForm is called when the user submits a new search.
+    const handleSearchForm = useCallback(
+        (searchInput: string) => {
+            // Update current path, using `push` instead of `replace` to create
+            // a new history entry.
+            // Changing the path will trigger `handleSearchURL` to be called.
+            const encodedSearchInput = encodeURIComponent(searchInput);
+            navigate(`/search/` + encodedSearchInput);
+        },
+        [navigate],
+    );
+
+    const handleTransactionURL = useCallback(
+        (encodedTransactionInput: string) => {
+            const transactionInput = decodeURIComponent(
+                encodedTransactionInput,
+            );
+
+            let transaction: RenVMTransaction =
+                RenVMTransaction(transactionInput);
+            if (
+                searchResult &&
+                !Array.isArray(searchResult) &&
+                searchResult.resultPath === transaction.resultPath
+            ) {
+                transaction = searchResult as RenVMTransaction;
+            }
+
+            setTransaction(transaction);
+
+            searchTransaction(transaction, getChain)
+                .then((transaction) => {
+                    setTransaction(transaction);
+                    setUpdatedCount((count) => count + 1);
+                })
+                .catch((error) =>
+                    setTransaction({
+                        ...transaction,
+                        queryTx: error,
+                    }),
+                );
+        },
+        [searchResult, setTransaction, getChain],
+    );
+
+    const handleGatewayURL = useCallback(
+        (encodedGatewayInput: string) => {
+            const gatewayInput = decodeURIComponent(encodedGatewayInput);
+
+            let gateway: RenVMGateway = RenVMGateway(gatewayInput);
+            if (
+                searchResult &&
+                !Array.isArray(searchResult) &&
+                searchResult.resultPath === gateway.resultPath
+            ) {
+                gateway = searchResult as RenVMGateway;
+            }
+
+            setGateway(gateway);
             setUpdatedCount((count) => count + 1);
-          } else {
-            setSearchResult(Searching(searchInput, { errorSearching: error }));
-            setUpdatedCount((count) => count + 1);
-          }
-        });
-    },
-    [navigate, getChain]
-  );
 
-  const handleSelectResult = useCallback(
-    (result: SearchResult) => {
-      setSearchResult(result);
-      navigate(result.resultPath, { replace: true });
-    },
-    [navigate]
-  );
+            searchGateway(gateway, getChain)
+                .then((gateway) => {
+                    setGateway(gateway);
+                    setUpdatedCount((count) => count + 1);
+                })
+                .catch((error) =>
+                    setGateway({
+                        ...gateway,
+                        queryGateway: error,
+                    }),
+                );
+        },
+        [searchResult, getChain],
+    );
 
-  // handleSearchForm is called when the user submits a new search.
-  const handleSearchForm = useCallback(
-    (searchInput: string) => {
-      // Update current path, using `push` instead of `replace` to create
-      // a new history entry.
-      // Changing the path will trigger `handleSearchURL` to be called.
-      const encodedSearchInput = encodeURIComponent(searchInput);
-      navigate(`/search/` + encodedSearchInput);
-    },
-    [navigate]
-  );
+    // const handleLegacyTransactionURL = useCallback(
+    //   (encodedTransactionInput) => {
+    //     const transactionInput = decodeURIComponent(encodedTransactionInput);
 
-  const handleTransactionURL = useCallback(
-    (encodedTransactionInput: string) => {
-      const transactionInput = decodeURIComponent(encodedTransactionInput);
+    //     let transaction: LegacyRenVMTransaction =
+    //       LegacyRenVMTransaction(transactionInput);
+    //     if (
+    //       searchResult &&
+    //       !Array.isArray(searchResult) &&
+    //       searchResult.resultPath === transaction.resultPath
+    //     ) {
+    //       transaction = searchResult as LegacyRenVMTransaction;
+    //     }
 
-      let transaction: RenVMTransaction = RenVMTransaction(transactionInput);
-      if (
-        searchResult &&
-        !Array.isArray(searchResult) &&
-        searchResult.resultPath === transaction.resultPath
-      ) {
-        transaction = searchResult as RenVMTransaction;
-      }
+    //     setTransaction(transaction);
 
-      setTransaction(transaction);
+    //     searchLegacyTransaction(transaction, getChain)
+    //       .then((transaction) => {
+    //         setTransaction(transaction);
+    //         setUpdatedCount((count) => count + 1);
+    //       })
+    //       .catch((error) =>
+    //         setTransaction({
+    //           ...transaction,
+    //           queryTx: error,
+    //         })
+    //       );
+    //   },
+    //   [searchResult, setTransaction, getChain]
+    // );
 
-      searchTransaction(transaction, getChain)
-        .then((transaction) => {
-          setTransaction(transaction);
-          setUpdatedCount((count) => count + 1);
-        })
-        .catch((error) =>
-          setTransaction({
-            ...transaction,
-            queryTx: error,
-          })
-        );
-    },
-    [searchResult, setTransaction, getChain]
-  );
-
-  const handleGatewayURL = useCallback(
-    (encodedGatewayInput: string) => {
-      const gatewayInput = decodeURIComponent(encodedGatewayInput);
-
-      let gateway: RenVMGateway = RenVMGateway(gatewayInput);
-      if (
-        searchResult &&
-        !Array.isArray(searchResult) &&
-        searchResult.resultPath === gateway.resultPath
-      ) {
-        gateway = searchResult as RenVMGateway;
-      }
-
-      setGateway(gateway);
-      setUpdatedCount((count) => count + 1);
-
-      // searchGateway(gateway, getChain)
-      //   .then((gateway) => {
-      //     setGateway(gateway);
-      //     setUpdatedCount((count) => count + 1);
-      //   })
-      //   .catch((error) =>
-      //     setGateway({
-      //       ...gateway,
-      //       queryGateway: error,
-      //     })
-      //   );
-    },
-    [searchResult, getChain]
-  );
-
-  // const handleLegacyTransactionURL = useCallback(
-  //   (encodedTransactionInput) => {
-  //     const transactionInput = decodeURIComponent(encodedTransactionInput);
-
-  //     let transaction: LegacyRenVMTransaction =
-  //       LegacyRenVMTransaction(transactionInput);
-  //     if (
-  //       searchResult &&
-  //       !Array.isArray(searchResult) &&
-  //       searchResult.resultPath === transaction.resultPath
-  //     ) {
-  //       transaction = searchResult as LegacyRenVMTransaction;
-  //     }
-
-  //     setTransaction(transaction);
-
-  //     searchLegacyTransaction(transaction, getChain)
-  //       .then((transaction) => {
-  //         setTransaction(transaction);
-  //         setUpdatedCount((count) => count + 1);
-  //       })
-  //       .catch((error) =>
-  //         setTransaction({
-  //           ...transaction,
-  //           queryTx: error,
-  //         })
-  //       );
-  //   },
-  //   [searchResult, setTransaction, getChain]
-  // );
-
-  return {
-    renJS,
-    searchResult,
-    transaction,
-    gateway,
-    updatedCount,
-    setSearchResult,
-    handleSearchURL,
-    handleSearchForm,
-    handleTransactionURL,
-    // handleLegacyTransactionURL,
-    handleGatewayURL,
-    getChainDetails,
-    getChain,
-    handleSelectResult,
-  };
+    return {
+        renJS,
+        searchResult,
+        transaction,
+        gateway,
+        updatedCount,
+        setSearchResult,
+        handleSearchURL,
+        handleSearchForm,
+        handleTransactionURL,
+        // handleLegacyTransactionURL,
+        handleGatewayURL,
+        getChainDetails,
+        getChain,
+        handleSelectResult,
+    };
 }
 
 export const UIContainer = createContainer(useUIContainer);

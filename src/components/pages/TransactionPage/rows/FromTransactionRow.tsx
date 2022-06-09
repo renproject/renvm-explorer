@@ -1,10 +1,9 @@
+import { utils } from "@renproject/utils";
 import React from "react";
 
-import { utils } from "@renproject/utils";
-
 import {
-  SummarizedTransaction,
-  TransactionType,
+    SummarizedTransaction,
+    TransactionType,
 } from "../../../../lib/searchResult";
 import { ExternalLink } from "../../../common/ExternalLink";
 
@@ -50,7 +49,7 @@ export const FromTransactionRow: React.FC<Props> = ({ queryTx }) => {
               {txHash && queryTx.summary.fromChain.transactionExplorerLink ? (
                 <ExternalLink
                   href={queryTx.summary.fromChain.transactionExplorerLink({
-                    txidFormatted: txHash,
+                    txHash,
                   })}
                 >
                   {txHash}

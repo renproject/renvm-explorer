@@ -1,13 +1,17 @@
-import BSC from "./bsc.png";
-import Metamask from "./metamask.png";
-import WalletConnect from "./walletconnect.png";
-import Phantom from "./phantom.svg";
-import Sollet from "./sollet.svg";
+import React from "react";
 
-export const Icons = {
-  BSC,
-  Metamask,
-  WalletConnect,
-  Phantom,
-  Sollet,
+import MetaMask from "./metamask.png";
+import { ReactComponent as Phantom } from "./phantom.svg";
+
+export const Icons: {
+    [key: string]:
+        | React.FunctionComponent<
+              React.SVGProps<SVGSVGElement> & {
+                  title?: string | undefined;
+              }
+          >
+        | string;
+} = {
+    MetaMask,
+    Phantom,
 };

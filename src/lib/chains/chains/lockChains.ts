@@ -7,55 +7,118 @@ import {
     Terra,
     Zcash,
 } from "@renproject/chains";
-import { RenNetwork } from "@renproject/utils";
+import { Chain, RenNetwork } from "@renproject/utils";
 
-import { ChainDetails } from "./types";
+import { ChainDetails, ChainType } from "./types";
 
 export const BitcoinDetails: ChainDetails<Bitcoin> = {
-  chain: "Bitcoin",
-  nativeAssets: [{ symbol: "BTC", name: "Bitcoin" }],
-  chainPattern: /^(bitcoin|btc)$/i,
-  usePublicProvider: (network: RenNetwork) => new Bitcoin({ network }),
+    chain: Bitcoin.chain,
+    assets: Bitcoin.assets,
+    chainPattern: /^(bitcoin|btc)$/i,
+    type: ChainType.LockChain,
+    usePublicProvider: (network: RenNetwork) => new Bitcoin({ network }),
+    getOutputParams: async (
+        mintChain: Chain,
+        to: string,
+        payload: string,
+        asset: string,
+    ): Promise<any> => {
+        return (mintChain as Bitcoin).Address(to);
+    },
 };
 
 export const ZcashDetails: ChainDetails<Zcash> = {
-  chain: "Zcash",
-  nativeAssets: [{ symbol: "ZEC", name: "Zcash" }],
-  chainPattern: /^(zcash|zec)$/i,
-  usePublicProvider: (network: RenNetwork) => new Zcash({ network }),
+    chain: Zcash.chain,
+    assets: Zcash.assets,
+    chainPattern: /^(zcash|zec)$/i,
+    type: ChainType.LockChain,
+    usePublicProvider: (network: RenNetwork) => new Zcash({ network }),
+    getOutputParams: async (
+        mintChain: Chain,
+        to: string,
+        payload: string,
+        asset: string,
+    ): Promise<any> => {
+        return (mintChain as Bitcoin).Address(to);
+    },
 };
 
 export const BitcoinCashDetails: ChainDetails<BitcoinCash> = {
-  chain: "BitcoinCash",
-  nativeAssets: [{ symbol: "BCH", name: "BitcoinCash" }],
-  chainPattern: /^(bitcoincash|bch)$/i,
-  usePublicProvider: (network: RenNetwork) => new BitcoinCash({ network }),
+    chain: BitcoinCash.chain,
+    assets: BitcoinCash.assets,
+    chainPattern: /^(bitcoincash|bch)$/i,
+    type: ChainType.LockChain,
+    usePublicProvider: (network: RenNetwork) => new BitcoinCash({ network }),
+    getOutputParams: async (
+        mintChain: Chain,
+        to: string,
+        payload: string,
+        asset: string,
+    ): Promise<any> => {
+        return (mintChain as Bitcoin).Address(to);
+    },
 };
 
 export const DibiByteDetails: ChainDetails<DigiByte> = {
-  chain: "DibiByte",
-  nativeAssets: [{ symbol: "DGB", name: "DibiByte" }],
-  chainPattern: /^(dibibyte|dgb)$/i,
-  usePublicProvider: (network: RenNetwork) => new DigiByte({ network }),
+    chain: DigiByte.chain,
+    assets: DigiByte.assets,
+    chainPattern: /^(dibibyte|dgb)$/i,
+    type: ChainType.LockChain,
+    usePublicProvider: (network: RenNetwork) => new DigiByte({ network }),
+    getOutputParams: async (
+        mintChain: Chain,
+        to: string,
+        payload: string,
+        asset: string,
+    ): Promise<any> => {
+        return (mintChain as Bitcoin).Address(to);
+    },
 };
 
 export const FilecoinDetails: ChainDetails<Filecoin> = {
-  chain: "Filecoin",
-  nativeAssets: [{ symbol: "FIL", name: "Filecoin" }],
-  chainPattern: /^(filecoin|fil)$/i,
-  usePublicProvider: (network: RenNetwork) => new Filecoin({ network }),
+    chain: Filecoin.chain,
+    assets: Filecoin.assets,
+    chainPattern: /^(filecoin|fil)$/i,
+    type: ChainType.LockChain,
+    usePublicProvider: (network: RenNetwork) => new Filecoin({ network }),
+    getOutputParams: async (
+        mintChain: Chain,
+        to: string,
+        payload: string,
+        asset: string,
+    ): Promise<any> => {
+        return (mintChain as Bitcoin).Address(to);
+    },
 };
 
 export const LunaDetails: ChainDetails<Terra> = {
-  chain: "Luna",
-  nativeAssets: [{ symbol: "LUNA", name: "Luna" }],
-  chainPattern: /^(luna|terra)$/i,
-  usePublicProvider: (network: RenNetwork) => new Terra({ network }),
+    chain: Terra.chain,
+    assets: Terra.assets,
+    chainPattern: /^(luna|terra)$/i,
+    type: ChainType.LockChain,
+    usePublicProvider: (network: RenNetwork) => new Terra({ network }),
+    getOutputParams: async (
+        mintChain: Chain,
+        to: string,
+        payload: string,
+        asset: string,
+    ): Promise<any> => {
+        return (mintChain as Bitcoin).Address(to);
+    },
 };
 
 export const DogecoinDetails: ChainDetails<Dogecoin> = {
-  chain: "Dogecoin",
-  nativeAssets: [{ symbol: "DOGE", name: "Dogecoin" }],
-  chainPattern: /^(dogecoin|doge)$/i,
-  usePublicProvider: (network: RenNetwork) => new Dogecoin({ network }),
+    chain: Dogecoin.chain,
+    assets: Dogecoin.assets,
+    chainPattern: /^(dogecoin|doge)$/i,
+    type: ChainType.LockChain,
+    usePublicProvider: (network: RenNetwork) => new Dogecoin({ network }),
+    getOutputParams: async (
+        mintChain: Chain,
+        to: string,
+        payload: string,
+        asset: string,
+    ): Promise<any> => {
+        return (mintChain as Bitcoin).Address(to);
+    },
 };

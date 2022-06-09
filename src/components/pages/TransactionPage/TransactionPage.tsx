@@ -1,149 +1,183 @@
-import React, { useEffect, useState } from "react";
-import { Card, Spinner, Table } from "react-bootstrap";
-import { useParams } from "react-router-dom";
-
-import { RenVMCrossChainTransaction } from "@renproject/provider";
 import { Gateway, GatewayTransaction } from "@renproject/ren";
+import { RenVMCrossChainTxSubmitter } from "@renproject/ren/build/main/renVMTxSubmitter";
+import { useCallback, useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
 
 import { UIContainer } from "../../../containers/UIContainer";
+import { NETWORK } from "../../../environmentVariables";
 import {
-  SearchResultType,
-  SummarizedTransaction,
+    SummarizedTransaction,
+    TransactionType,
 } from "../../../lib/searchResult";
-import { LoadAdditionalDetails } from "./LoadAdditionalDetails";
-import { AmountRows } from "./rows/AmountRows";
-import { FromTransactionRow } from "./rows/FromTransactionRow";
-import { GatewayAddressRow } from "./rows/GatewayAddressRow";
-import { RecipientRow } from "./rows/RecipientRow";
-import { StatusRow } from "./rows/StatusRow";
-import { ToTransactionRow } from "./rows/ToTransactionRow";
-import { TransactionDiagram } from "./TransactionDiagram";
-import { TransactionError } from "./TransactionError";
-import {
-  TransactionPageContainer,
-  TransactionPageTitle,
-  TransactionSpinner,
-} from "./TransactionPageStyles";
+import { getTransactionDepositInstance } from "../../../lib/searchTransaction";
+import { ChainTxSubmitter } from "../../../packages/ChainTxSubmitter";
+import { CrossChainTransaction } from "./CrossChainTransaction";
 
 export const TransactionPage = () => {
-  const { transaction, handleTransactionURL } = UIContainer.useContainer();
+    const { transaction, handleTransactionURL } = UIContainer.useContainer();
+    const { handleChainTransaction } = ChainTxSubmitter.useContainer();
 
-  const { hash, legacyHash } = useParams<
-    | { hash: string; legacyHash: undefined }
-    | { hash: undefined; legacyHash: string }
-  >();
+    const { hash, legacyHash } = useParams<
+        | { hash: string; legacyHash: undefined }
+        | { hash: undefined; legacyHash: string }
+    >();
 
-  useEffect(() => {
-    if (hash) {
-      handleTransactionURL(hash);
-    } else {
-      throw new Error(`Not implemented - legacy tx: ${legacyHash}`);
-      // handleLegacyTransactionURL(legacyHash);
+    useEffect(() => {
+        if (hash) {
+            handleTransactionURL(hash);
+        } else {
+            throw new Error(`Not implemented - legacy tx: ${legacyHash}`);
+            // handleLegacyTransactionURL(legacyHash);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [hash]);
+
+    const queryTx: SummarizedTransaction | undefined =
+        transaction &&
+        !(transaction instanceof Error) &&
+        transaction.queryTx &&
+        transaction.txHash === hash
+            ? (transaction.queryTx as SummarizedTransaction)
+            : undefined;
+
+    const [deposit, setDeposit] = useState<
+        GatewayTransaction | Error | null | undefined
+    >(undefined);
+    const [lockAndMint, setLockAndMint] = useState<
+        Gateway | Error | null | undefined
+    >(undefined);
+
+    const { renJS } = UIContainer.useContainer();
+
+    const loadAdditionalDetails = useCallback(async () => {
+        if (
+            queryTx &&
+            !(queryTx instanceof Error) &&
+            queryTx.transactionType === TransactionType.Mint
+        ) {
+            if (deposit && !setDeposit) {
+                // Gateway
+
+                throw new Error("Not implemented.");
+                // setLockAndMint(undefined);
+                // try {
+                //   const deposit = await getGatewayInstance(
+                //     queryTx.result,
+                //     NETWORK,
+                //     queryTx.summary
+                //   );
+                //   setLockAndMint(deposit);
+                // } catch (error: any) {
+                //   console.error(error);
+                //   setLockAndMint(error instanceof Error ? error : new Error(error));
+                // }
+            } else if (setDeposit) {
+                setDeposit(undefined);
+                const { deposit, gateway } =
+                    await getTransactionDepositInstance(
+                        renJS,
+                        queryTx.result,
+                        NETWORK,
+                        queryTx.summary,
+                    );
+                setDeposit(deposit);
+                setLockAndMint(gateway);
+
+                // Legacy
+                // const { deposit, lockAndMint } =
+                //   await getLegacyTransactionDepositInstance(
+                //     queryTx.result,
+                //     NETWORK,
+                //     queryTx.summary
+                //   );
+                // setDeposit(deposit);
+                // setLockAndMint(lockAndMint);
+            }
+        }
+    }, [renJS, queryTx, setDeposit, deposit, setLockAndMint]);
+
+    const handleOutTx = useCallback(async () => {
+        if (!deposit || deposit instanceof Error) {
+            return;
+        }
+
+        handleChainTransaction(deposit.out, deposit.outSetup);
+    }, [deposit, handleChainTransaction]);
+
+    if (!hash) {
+        return <div>No hash provided.</div>;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hash]);
 
-  const queryTx: SummarizedTransaction | undefined =
-    transaction && !(transaction instanceof Error) && transaction.queryTx
-      ? (transaction.queryTx as SummarizedTransaction)
-      : undefined;
-
-  const [deposit, setDeposit] = useState<
-    GatewayTransaction | Error | null | undefined
-  >(undefined);
-  const [lockAndMint, setLockAndMint] = useState<
-    Gateway | Error | null | undefined
-  >(undefined);
-
-  return (
-    <TransactionPageContainer>
-      {transaction instanceof Error ? (
-        <>Error</>
-      ) : transaction ? (
+    return (
         <>
-          <TransactionPageTitle>
-            <span>Transaction</span>
-            <span style={{ overflow: "ellipsis`" }}>{transaction.txHash}</span>
-          </TransactionPageTitle>
+            <CrossChainTransaction
+                hash={hash}
+                loadAdditionalDetails={loadAdditionalDetails}
+                error={
+                    transaction instanceof Error
+                        ? transaction
+                        : transaction?.queryTx instanceof Error
+                        ? transaction.queryTx
+                        : undefined
+                }
+                details={
+                    queryTx && queryTx.summary
+                        ? {
+                              asset: queryTx.summary.asset,
+                              from: queryTx.summary.from,
+                              to: queryTx.summary.to,
+                              amount: queryTx.summary.amountIn,
+                              status:
+                                  queryTx.result.status ||
+                                  (
+                                      (deposit &&
+                                          !(deposit instanceof Error) &&
+                                          deposit.renVM) as
+                                          | RenVMCrossChainTxSubmitter
+                                          | undefined
+                                  )?.progress?.response?.txStatus,
+                              revertReason: (
+                                  (deposit &&
+                                      !(deposit instanceof Error) &&
+                                      deposit.renVM) as
+                                      | RenVMCrossChainTxSubmitter
+                                      | undefined
+                              )?.progress?.revertReason,
+                              fee:
+                                  queryTx.summary.amountIn &&
+                                  queryTx.summary.amountOut
+                                      ? queryTx.summary.amountIn.minus(
+                                            queryTx.summary.amountOut,
+                                        )
+                                      : undefined,
+                              gatewayAddress:
+                                  (lockAndMint &&
+                                      !(lockAndMint instanceof Error) &&
+                                      lockAndMint.gatewayAddress) ||
+                                  undefined,
+                              inTx:
+                                  (deposit &&
+                                      !(deposit instanceof Error) &&
+                                      deposit.in) ||
+                                  undefined,
+                              renVMTx:
+                                  (deposit &&
+                                      !(deposit instanceof Error) &&
+                                      deposit.renVM) ||
+                                  undefined,
+                              outTx:
+                                  (deposit &&
+                                      !(deposit instanceof Error) &&
+                                      deposit.out) ||
+                                  undefined,
+                              queryTx,
+                              deposit,
 
-          <Card>
-            <Card.Body>
-              {queryTx ? (
-                queryTx instanceof Error ? (
-                  <TransactionError
-                    txHash={transaction.txHash}
-                    error={queryTx}
-                  />
-                ) : (
-                  <>
-                    <TransactionDiagram queryTx={queryTx} />
-
-                    <Table>
-                      <tbody>
-                        <tr>
-                          <td>RenVM Hash</td>
-                          <td>
-                            {
-                              (queryTx.result as RenVMCrossChainTransaction)
-                                .hash
-                            }
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Selector</td>
-                          <td>
-                            {
-                              (queryTx.result as RenVMCrossChainTransaction)
-                                .selector
-                            }
-                          </td>
-                        </tr>
-                        <GatewayAddressRow
-                          lockAndMint={lockAndMint}
-                          queryTx={queryTx}
-                        />
-                        <FromTransactionRow queryTx={queryTx} />
-                        <ToTransactionRow queryTx={queryTx} deposit={deposit} />
-                        <AmountRows queryTx={queryTx} />
-                        <RecipientRow
-                          queryTx={queryTx}
-                          deposit={deposit}
-                          legacy={
-                            transaction.type ===
-                            SearchResultType.LegacyRenVMTransaction
+                              handleOutTx,
                           }
-                        />
-                        {/* <TokenAccountRow queryTx={queryTx} deposit={deposit} /> */}
-                        <StatusRow queryTx={queryTx} deposit={deposit} />
-                      </tbody>
-                    </Table>
-
-                    <LoadAdditionalDetails
-                      legacy={
-                        transaction.type ===
-                        SearchResultType.LegacyRenVMTransaction
-                      }
-                      gateway={false}
-                      queryTx={queryTx}
-                      deposit={deposit}
-                      setDeposit={setDeposit}
-                      setLockAndMint={setLockAndMint}
-                    />
-                  </>
-                )
-              ) : (
-                <TransactionSpinner>
-                  <Spinner
-                    animation="border"
-                    role="status"
-                    variant="success"
-                  ></Spinner>
-                </TransactionSpinner>
-              )}
-            </Card.Body>
-          </Card>
+                        : undefined
+                }
+            />
         </>
-      ) : null}
-    </TransactionPageContainer>
-  );
+    );
 };

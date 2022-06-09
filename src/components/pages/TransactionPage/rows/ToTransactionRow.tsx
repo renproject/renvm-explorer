@@ -1,11 +1,10 @@
-import React from "react";
-
 import { GatewayTransaction } from "@renproject/ren";
 import { utils } from "@renproject/utils";
+import React from "react";
 
 import {
-  SummarizedTransaction,
-  TransactionType,
+    SummarizedTransaction,
+    TransactionType,
 } from "../../../../lib/searchResult";
 import { ExternalLink } from "../../../common/ExternalLink";
 

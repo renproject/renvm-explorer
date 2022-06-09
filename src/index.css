@@ -1,8 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 input.form-control:focus {
   border-color: #001732 !important;
 }
-
-@import "~bootstrap/dist/css/bootstrap.css";
 
 body {
   margin: 0;
