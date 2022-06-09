@@ -112,7 +112,13 @@ export const TransactionPage = () => {
         <>
             <CrossChainTransaction
                 hash={hash}
-                loadAdditionalDetails={loadAdditionalDetails}
+                loadAdditionalDetails={
+                    queryTx &&
+                    !(queryTx instanceof Error) &&
+                    queryTx.transactionType === TransactionType.Mint
+                        ? loadAdditionalDetails
+                        : undefined
+                }
                 error={
                     transaction instanceof Error
                         ? transaction

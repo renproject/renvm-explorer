@@ -24,7 +24,7 @@ import { TransactionDiagram } from "./TransactionDiagram";
 interface Props {
     hash: string;
     error?: Error;
-    loadAdditionalDetails: () => Promise<void>;
+    loadAdditionalDetails?: () => Promise<void>;
 
     details?: {
         asset: string;
@@ -306,27 +306,31 @@ export const CrossChainTransaction = ({
                                     </dd>
                                 </div>
                             ) : null}
-                            {outTx && status === TxStatus.TxStatusDone ? (
+                            {status === TxStatus.TxStatusDone &&
+                            (outTx || queryTx.summary.outTx) ? (
                                 <div className="py-4 sm:py-5 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-6">
                                     <dt className="text-sm font-medium text-gray-500 flex items-center">
                                         <span>{to} Transaction</span>
                                     </dt>
                                     <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-3 truncate">
-                                        {outTx.progress.transaction ? (
+                                        {outTx?.progress.transaction ||
+                                        queryTx.summary.outTx ? (
                                             <ExternalLink
                                                 href={
-                                                    outTx.progress.transaction
-                                                        .explorerLink
+                                                    outTx?.progress.transaction
+                                                        ?.explorerLink ||
+                                                    queryTx.summary.outTx
+                                                        ?.explorerLink
                                                 }
                                             >
-                                                {
-                                                    outTx.progress.transaction
-                                                        .txHash
-                                                }
+                                                {outTx?.progress.transaction
+                                                    ?.txHash ||
+                                                    queryTx.summary.outTx
+                                                        ?.txHash}
                                             </ExternalLink>
                                         ) : (
                                             <>
-                                                {outTx.progress.status ===
+                                                {outTx?.progress.status ===
                                                 ChainTransactionStatus.Ready ? (
                                                     <button
                                                         className="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-1 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:w-auto sm:text-sm"
@@ -340,7 +344,7 @@ export const CrossChainTransaction = ({
                                     </dd>
                                 </div>
                             ) : null}
-                            {!renVMTx ? (
+                            {!renVMTx && loadAdditionalDetails ? (
                                 <div className="py-4 sm:py-5 sm:grid sm:px-6">
                                     <AsyncButton
                                         className="w-fit"

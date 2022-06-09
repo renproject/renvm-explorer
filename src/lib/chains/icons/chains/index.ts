@@ -4,6 +4,7 @@ import {
     BinanceSmartChain,
     Bitcoin,
     BitcoinCash,
+    Catalog,
     DigiByte,
     Dogecoin,
     Ethereum,
@@ -27,6 +28,7 @@ import { ReactComponent as EthereumIcon } from "./ethereum.svg";
 import { ReactComponent as FantomIcon } from "./fantom.svg";
 import { ReactComponent as FilecoinIcon } from "./filecoin.svg";
 import { ReactComponent as PolygonIcon } from "./polygon.svg";
+import { ReactComponent as RenVMIcon } from "./renvm.svg";
 import { ReactComponent as SolanaIcon } from "./solana.svg";
 import { ReactComponent as TerraIcon } from "./terra.svg";
 import { ReactComponent as ZcashIcon } from "./zcash.svg";
@@ -43,7 +45,7 @@ export const Icons: {
     [BinanceSmartChain.chain]: BinanceSmartChainIcon,
     [Bitcoin.chain]: BitcoinIcon,
     [BitcoinCash.chain]: BitcoinCashIcon,
-    Catalog: CatalogIcon,
+    [Catalog.chain]: CatalogIcon,
     [DigiByte.chain]: DigiByteIcon,
     [Dogecoin.chain]: DogecoinIcon,
     [Ethereum.chain]: EthereumIcon,
@@ -53,4 +55,5 @@ export const Icons: {
     [Solana.chain]: SolanaIcon,
     [Terra.chain]: TerraIcon,
     [Zcash.chain]: ZcashIcon,
+    RenVM: RenVMIcon,
 };

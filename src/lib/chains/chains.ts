@@ -14,7 +14,7 @@ import {
 import {
     BitcoinCashDetails,
     BitcoinDetails,
-    DibiByteDetails,
+    DigiByteDetails,
     DogecoinDetails,
     FilecoinDetails,
     LunaDetails,
@@ -38,7 +38,7 @@ export const lockChains = [
     BitcoinDetails,
     ZcashDetails,
     BitcoinCashDetails,
-    DibiByteDetails,
+    DigiByteDetails,
     FilecoinDetails,
     LunaDetails,
     DogecoinDetails,

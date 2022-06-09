@@ -34,24 +34,12 @@ export const queryTxsByTxid = async (
 
     return await Promise.all(
         response.txs.map(async (tx) => {
-            const isMint = /((\/to)|(To))/.exec(tx.selector);
-
-            // Unmarshal transaction.
-            if (isMint) {
-                const unmarshalled = unmarshalRenVMTransaction(tx);
-                return {
-                    result: unmarshalled,
-                    transactionType: TransactionType.Mint as const,
-                    summary: await summarizeTransaction(unmarshalled, getChain),
-                };
-            } else {
-                const unmarshalled = unmarshalRenVMTransaction(tx);
-                return {
-                    result: unmarshalled,
-                    transactionType: TransactionType.Burn as const,
-                    summary: await summarizeTransaction(unmarshalled, getChain),
-                };
-            }
+            const unmarshalled = unmarshalRenVMTransaction(tx);
+            return {
+                result: unmarshalled,
+                transactionType: TransactionType.Mint as const,
+                summary: await summarizeTransaction(unmarshalled, getChain),
+            };
         }),
     );
 };

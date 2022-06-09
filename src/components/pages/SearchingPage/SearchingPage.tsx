@@ -22,105 +22,103 @@ export const SearchingPage = () => {
     }, [search]);
 
     return (
-        <div>
-            <Container>
-                {searchResult &&
-                searchResult.type === SearchResultType.Searching ? (
-                    <>
-                        {searchResult.multipleResults ? (
-                            // Multiple results.
-                            <>
-                                <p>Select one of the following results:</p>
-                                {searchResult.multipleResults.map((result) => {
-                                    const onClick = () =>
-                                        handleSelectResult(result);
-                                    return (
-                                        <div
-                                            style={{ cursor: "pointer" }}
-                                            onClick={onClick}
-                                        >
-                                            {result.resultPath}
-                                        </div>
-                                    );
-                                })}
-                            </>
-                        ) : searchResult.noResult ? (
-                            // No results.
-                            <Card border="0">
-                                <Card.Body>
-                                    <Card.Title>
-                                        {" "}
-                                        <p
-                                            style={{
-                                                fontSize: 70,
-                                                fontWeight: 300,
-                                                color: "#001732",
-                                            }}
-                                        >
-                                            404
-                                        </p>
-                                    </Card.Title>
-                                    <Card.Text style={{ marginTop: "2em" }}>
-                                        No results for{" "}
-                                        <Monospaced>
-                                            {searchResult.searchString}
-                                        </Monospaced>
-                                        .
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card>
-                        ) : searchResult.errorSearching ? (
-                            // Error.
-                            <Card border="0">
-                                <Card.Body>
-                                    <Card.Title>
-                                        {" "}
-                                        <p
-                                            style={{
-                                                fontSize: 70,
-                                                fontWeight: 300,
-                                                color: "#001732",
-                                            }}
-                                        >
-                                            Error
-                                        </p>
-                                    </Card.Title>
-                                    <Card.Text style={{ marginTop: "2em" }}>
-                                        Error searching for{" "}
-                                        <Monospaced>
-                                            {searchResult.searchString}
-                                        </Monospaced>
-                                        . Error:{" "}
-                                        {String(
-                                            searchResult.errorSearching
-                                                .message ||
-                                                searchResult.errorSearching,
-                                        )}
-                                    </Card.Text>
-                                </Card.Body>
-                            </Card>
-                        ) : (
-                            // Searching...
-
-                            <div className="bg-white min-h-full px-4 py-16 sm:px-6 sm:py-24 md:grid md:place-items-center lg:px-8">
-                                <div className="max-w-max mx-auto">
-                                    <main className="flex flex-col sm:flex-row items-center justify-center">
-                                        <Spinner />
-                                        <div className="sm:ml-6">
-                                            <div className="sm:border-l sm:border-gray-200 sm:pl-6">
-                                                <p className="mt-1 text-base text-gray-500">
-                                                    Searching for{" "}
+        <div className="bg-white min-h-full px-4 py-16 sm:px-6 sm:py-24 md:grid md:place-items-center lg:px-8">
+            <div className="max-w-max mx-auto">
+                <main className="flex flex-col sm:flex-row items-center justify-center">
+                    {searchResult &&
+                    searchResult.type === SearchResultType.Searching ? (
+                        <>
+                            {searchResult.multipleResults ? (
+                                // Multiple results.
+                                <>
+                                    <p>Select one of the following results:</p>
+                                    {searchResult.multipleResults.map(
+                                        (result) => {
+                                            const onClick = () =>
+                                                handleSelectResult(result);
+                                            return (
+                                                <div
+                                                    style={{
+                                                        cursor: "pointer",
+                                                    }}
+                                                    onClick={onClick}
+                                                >
+                                                    {result.resultPath}
+                                                </div>
+                                            );
+                                        },
+                                    )}
+                                </>
+                            ) : searchResult.noResult ? (
+                                // No results.
+                                <div className="flex items-center">
+                                    <span className="text-2xl font-light text-black">
+                                        404
+                                    </span>
+                                    <div className="sm:ml-6">
+                                        <div className="sm:border-l sm:border-gray-200 sm:pl-6">
+                                            <p className="mt-1 text-base text-gray-500">
+                                                No results for{" "}
+                                                <Monospaced>
                                                     {searchResult.searchString}
-                                                </p>
-                                            </div>
+                                                </Monospaced>
+                                                .
+                                            </p>
                                         </div>
-                                    </main>
+                                    </div>
                                 </div>
-                            </div>
-                        )}
-                    </>
-                ) : null}
-            </Container>
+                            ) : searchResult.errorSearching ? (
+                                // Error.
+                                <Card border="0">
+                                    <Card.Body>
+                                        <Card.Title>
+                                            {" "}
+                                            <p
+                                                style={{
+                                                    fontSize: 70,
+                                                    fontWeight: 300,
+                                                    color: "#001732",
+                                                }}
+                                            >
+                                                Error
+                                            </p>
+                                        </Card.Title>
+                                        <Card.Text style={{ marginTop: "2em" }}>
+                                            Error searching for{" "}
+                                            <Monospaced>
+                                                {searchResult.searchString}
+                                            </Monospaced>
+                                            . Error:{" "}
+                                            {String(
+                                                searchResult.errorSearching
+                                                    .message ||
+                                                    searchResult.errorSearching,
+                                            )}
+                                        </Card.Text>
+                                    </Card.Body>
+                                </Card>
+                            ) : (
+                                // Searching...
+
+                                <>
+                                    <Spinner />
+                                    <div className="sm:ml-6">
+                                        <div className="sm:border-l sm:border-gray-200 sm:pl-6">
+                                            <p className="mt-1 text-base text-gray-500">
+                                                Searching for{" "}
+                                                <Monospaced>
+                                                    {searchResult.searchString}
+                                                </Monospaced>
+                                                .
+                                            </p>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                        </>
+                    ) : null}
+                </main>
+            </div>
         </div>
     );
 };

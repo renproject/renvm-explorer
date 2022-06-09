@@ -81,6 +81,11 @@ export interface TransactionSummary {
 
     amountOut?: BigNumber;
     amountOutRaw?: BigNumber;
+
+    outTx?: {
+        txHash: string;
+        explorerLink: string;
+    };
 }
 
 export enum TransactionType {
@@ -94,11 +99,6 @@ export type SummarizedTransaction =
           result: RenVMCrossChainTransaction & { status?: TxStatus };
           summary: TransactionSummary;
           transactionType: TransactionType.Mint;
-      }
-    | {
-          result: RenVMCrossChainTransaction & { status?: TxStatus };
-          summary: TransactionSummary;
-          transactionType: TransactionType.Burn;
       }
     | {
           result: any;

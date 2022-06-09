@@ -59,10 +59,10 @@ export const BitcoinCashDetails: ChainDetails<BitcoinCash> = {
     },
 };
 
-export const DibiByteDetails: ChainDetails<DigiByte> = {
+export const DigiByteDetails: ChainDetails<DigiByte> = {
     chain: DigiByte.chain,
     assets: DigiByte.assets,
-    chainPattern: /^(dibibyte|dgb)$/i,
+    chainPattern: /^(digibyte|dgb)$/i,
     type: ChainType.LockChain,
     usePublicProvider: (network: RenNetwork) => new DigiByte({ network }),
     getOutputParams: async (

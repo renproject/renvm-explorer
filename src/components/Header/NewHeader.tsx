@@ -21,6 +21,7 @@ import { Fragment } from "react";
 import { NETWORK } from "../../environmentVariables";
 import { ReactComponent as Logo } from "../../images/logo.svg";
 import { classNames } from "../../lib/utils";
+import { ExternalLink } from "../common/ExternalLink";
 
 const solutions = [
     {
@@ -130,7 +131,7 @@ export function NewHeader() {
                             <MenuIcon className="h-6 w-6" aria-hidden="true" />
                         </Popover.Button>
                     </div>
-                    <Popover.Group
+                    {/* <Popover.Group
                         as="nav"
                         className="hidden md:flex space-x-10"
                     >
@@ -342,14 +343,15 @@ export function NewHeader() {
                                 </>
                             )}
                         </Popover>
-                    </Popover.Group>
+                    </Popover.Group> */}
                     <div className="hidden md:flex items-center justify-end md:flex-1 lg:w-0">
-                        <a
-                            href="#"
+                        <ExternalLink
+                            noUnderline
+                            href="https://bridge.renproject.io"
                             className="ml-8 whitespace-nowrap inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-renblue-600 hover:bg-renblue-700"
                         >
-                            Go to Bridge
-                        </a>
+                            Go to RenBridge
+                        </ExternalLink>
                     </div>
                 </div>
             </div>
@@ -385,7 +387,7 @@ export function NewHeader() {
                                     </Popover.Button>
                                 </div>
                             </div>
-                            <div className="mt-6">
+                            {/* <div className="mt-6">
                                 <nav className="grid gap-y-8">
                                     {solutions.map((item) => (
                                         <a
@@ -403,10 +405,10 @@ export function NewHeader() {
                                         </a>
                                     ))}
                                 </nav>
-                            </div>
+                            </div> */}
                         </div>
                         <div className="py-6 px-5 space-y-6">
-                            <div className="grid grid-cols-2 gap-y-4 gap-x-8">
+                            {/* <div className="grid grid-cols-2 gap-y-4 gap-x-8">
                                 <a
                                     href="#"
                                     className="text-base font-medium text-gray-900 hover:text-gray-700"
@@ -429,15 +431,16 @@ export function NewHeader() {
                                         {item.name}
                                     </a>
                                 ))}
-                            </div>
+                            </div> */}
                             <div>
-                                <a
-                                    href="#"
+                                <ExternalLink
+                                    noUnderline
+                                    href="https://bridge.renproject.io"
                                     className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-renblue-600 hover:bg-renblue-700"
                                 >
-                                    Sign up
-                                </a>
-                                <p className="mt-6 text-center text-base font-medium text-gray-500">
+                                    Go to RenBridge
+                                </ExternalLink>
+                                {/* <p className="mt-6 text-center text-base font-medium text-gray-500">
                                     Existing customer?{" "}
                                     <a
                                         href="#"
@@ -445,7 +448,7 @@ export function NewHeader() {
                                     >
                                         Sign in
                                     </a>
-                                </p>
+                                </p> */}
                             </div>
                         </div>
                     </div>

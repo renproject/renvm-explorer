@@ -103,6 +103,24 @@ export const summarizeTransaction = async (
         // Ignore error.
     }
 
+    let outTx:
+        | {
+              txHash: string;
+              explorerLink: string;
+          }
+        | undefined;
+    if (toChain && searchDetails.out?.txid) {
+        const outTxHash = toChain.txHashFromBytes(searchDetails.out?.txid);
+        outTx = {
+            txHash: outTxHash,
+            explorerLink:
+                toChain.transactionExplorerLink({
+                    txHash: outTxHash,
+                    txindex: searchDetails.out.txindex.toFixed(),
+                }) || "",
+        };
+    }
+
     return {
         asset,
         to,
@@ -117,6 +135,8 @@ export const summarizeTransaction = async (
 
         amountOut,
         amountOutRaw,
+
+        outTx,
     };
 };
 
