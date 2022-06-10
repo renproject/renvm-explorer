@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.f99981d7.css",
-    "main.js": "/static/js/main.bb7dadbd.js",
+    "main.css": "/static/css/main.fe1c0ab0.css",
+    "main.js": "/static/js/main.a0a5cb23.js",
     "static/js/787.5af24c8b.chunk.js": "/static/js/787.5af24c8b.chunk.js",
     "static/media/renCRV.svg": "/static/media/renCRV.029b2b94d3320df6a89d957482e77231.svg",
     "static/media/renUST.svg": "/static/media/renUST.9fcf7a21cd2336fdab2dbb2fc1c857a1.svg",
@@ -54,12 +54,12 @@
     "static/media/dogecoin.svg": "/static/media/dogecoin.92f9f1e5b96d0c23f74640ca22e21faf.svg",
     "static/media/zcash.svg": "/static/media/zcash.eb92606c4f79d9bc29a9fd3913be7c39.svg",
     "static/media/catalog.svg": "/static/media/catalog.f814d35a0c1f39b1a21b1d084995ac72.svg",
-    "main.f99981d7.css.map": "/static/css/main.f99981d7.css.map",
-    "main.bb7dadbd.js.map": "/static/js/main.bb7dadbd.js.map",
+    "main.fe1c0ab0.css.map": "/static/css/main.fe1c0ab0.css.map",
+    "main.a0a5cb23.js.map": "/static/js/main.a0a5cb23.js.map",
     "787.5af24c8b.chunk.js.map": "/static/js/787.5af24c8b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f99981d7.css",
-    "static/js/main.bb7dadbd.js"
+    "static/css/main.fe1c0ab0.css",
+    "static/js/main.a0a5cb23.js"
   ]
 }
