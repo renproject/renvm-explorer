@@ -13,6 +13,7 @@ export const ChainTxController = () => {
         open,
         chainTx,
         setup,
+        chainTxChain,
         chainTxChainDetails,
         cancel,
         fetchChainTxExport,
@@ -60,6 +61,7 @@ export const ChainTxController = () => {
                 setup={setup}
                 details={details}
                 loadDetails={fetchChainTxExport}
+                chain={chainTxChain || undefined}
             ></SubmitTxModal>
         </Modal>
     );

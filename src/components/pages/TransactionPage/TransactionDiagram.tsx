@@ -18,58 +18,50 @@ export const TransactionDiagram: React.FC<Props> = ({
     amount,
 }) => {
     return (
-        <div
-            style={{
-                display: "flex",
-                alignItems: "center",
-            }}
-        >
+        <div className="flex items-center">
             <div
+                className="2xs:border border-gray-200 2xs:px-3 2xs:py-2"
                 style={{
                     fontSize: "16px",
-                    padding: "6px 10px",
                     borderRadius: "5px",
-                    border: "1px solid #E5E7EB",
                     display: "flex",
                     alignItems: "center",
                     flex: "1",
                 }}
             >
-                <ChainIcon style={{ marginRight: 5 }} chainName={from} />
-                {from}
+                <ChainIcon chainName={from} />
+                <span className="hidden xs:inline ml-2">{from}</span>
             </div>
             <span style={{ margin: "0px 10px" }}>{" → "}</span>
             <div
+                className="2xs:border border-gray-200 2xs:px-3 2xs:py-2"
                 style={{
                     fontSize: "16px",
-                    padding: "6px 10px",
                     color: "#001732",
                     borderRadius: "5px",
-                    border: "1px solid #E5E7EB",
                     display: "flex",
                     alignItems: "center",
                 }}
             >
-                <ChainIcon style={{ marginRight: 5 }} chainName={asset} />
-                <span>
+                <ChainIcon chainName={asset} />
+                <span className="hidden 2xs:inline ml-2">
                     {amount ? <>{amount.decimalPlaces(4).toFixed()} </> : null}
                     {asset}
                 </span>
             </div>
             <span style={{ margin: "0px 10px" }}>{" → "}</span>
             <div
+                className="2xs:border border-gray-200 2xs:px-3 2xs:py-2"
                 style={{
                     fontSize: "16px",
-                    padding: "6px 10px",
                     borderRadius: "5px",
-                    border: "1px solid #E5E7EB",
                     display: "flex",
                     alignItems: "center",
                     flex: "1",
                 }}
             >
-                <ChainIcon style={{ marginRight: 5 }} chainName={to} />
-                {to}
+                <ChainIcon chainName={to} />
+                <span className="hidden xs:inline ml-2">{to}</span>
             </div>
         </div>
     );

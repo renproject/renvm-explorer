@@ -64,10 +64,14 @@ export const CrossChainTransaction = ({
                         <div className="flex flex-col">
                             <div className="flex flex-col lg:flex-row lg:items-center justify-between px-4 w-full py-5">
                                 <div className="">
-                                    <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                        <span className="truncate">
-                                            Transaction {hash}
+                                    <h3 className="text-lg leading-6 font-medium text-gray-900 truncate">
+                                        <span className="hidden sm:inline">
+                                            Transaction
                                         </span>
+                                        <span className="inline sm:hidden">
+                                            Tx
+                                        </span>{" "}
+                                        {hash}
                                     </h3>
                                 </div>
                             </div>
@@ -111,10 +115,12 @@ export const CrossChainTransaction = ({
                     <div className="flex flex-col">
                         <div className="flex flex-col lg:flex-row lg:items-center justify-between px-4 w-full py-5">
                             <div className="">
-                                <h3 className="text-lg leading-6 font-medium text-gray-900">
-                                    <span className="truncate">
-                                        Transaction {hash}
+                                <h3 className="text-lg leading-6 font-medium text-gray-900 truncate">
+                                    <span className="hidden sm:inline">
+                                        Transaction
                                     </span>
+                                    <span className="inline sm:hidden">Tx</span>{" "}
+                                    {hash}
                                 </h3>
                             </div>
                             <div className="flex flex-row items-center mt-4 lg:mt-0">
@@ -249,20 +255,6 @@ export const CrossChainTransaction = ({
                                                     TransactionType.Mint
                                                 }
                                             />
-                                            {/* <StatusRow
-                                                    queryTx={queryTx}
-                                                    deposit={deposit}
-                                                />
-                                                <LoadAdditionalDetails
-                                                    legacy={false}
-                                                    gateway={false}
-                                                    queryTx={queryTx}
-                                                    deposit={deposit}
-                                                    setDeposit={setDeposit}
-                                                    setLockAndMint={
-                                                        setLockAndMint
-                                                    }
-                                                /> */}
                                         </>
                                     </dd>
                                 </div>

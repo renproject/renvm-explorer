@@ -311,7 +311,7 @@ export const getPublicEthereumProvider = <
     }
     const urls = resolveRpcEndpoints(config.config.rpcUrls, {
         INFURA_API_KEY: process.env.REACT_APP_INFURA_KEY,
-        ALCHEMY_API_KEY: process.env.REACT_APP_INFURA_KEY,
+        ALCHEMY_API_KEY: process.env.REACT_APP_ALCHEMY_KEY,
     });
 
     const provider = new StaticJsonRpcProvider(

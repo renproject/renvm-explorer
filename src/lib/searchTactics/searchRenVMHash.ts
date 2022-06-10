@@ -109,7 +109,11 @@ export const summarizeTransaction = async (
               explorerLink: string;
           }
         | undefined;
-    if (toChain && searchDetails.out?.txid) {
+    if (
+        toChain &&
+        searchDetails.out?.txid &&
+        searchDetails.out?.txid.length > 0
+    ) {
         const outTxHash = toChain.txHashFromBytes(searchDetails.out?.txid);
         outTx = {
             txHash: outTxHash,

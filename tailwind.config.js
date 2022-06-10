@@ -2,6 +2,10 @@ module.exports = {
     content: ["./src/**/*.{js,jsx,ts,tsx}"],
     theme: {
         extend: {
+            screens: {
+                xs: "512px",
+                "2xs": "384px",
+            },
             colors: {
                 renblue: {
                     50: "#508cff",

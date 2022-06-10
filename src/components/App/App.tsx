@@ -29,7 +29,7 @@ export const App = () => {
 
     return (
         <div className="h-screen flex flex-col">
-            <ReactTooltip className="max-w-sm" effect="solid" />
+            <ReactTooltip className="max-w-xs sm:max-w-sm" effect="solid" />
             <NewHeader />
             <ErrorBoundary className="bg-white shadow-lg sm:rounded-lg border border-gray-200 p-5 mt-5">
                 <div className="mt-4 flex-grow">

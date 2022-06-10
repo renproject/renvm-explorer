@@ -42,6 +42,7 @@ const metamaskOption: WalletOption = {
         });
         const web3Provider = new ethers.providers.Web3Provider(
             (window as any).ethereum,
+            "any",
         );
         const signer = web3Provider.getSigner();
         const address = await signer.getAddress();

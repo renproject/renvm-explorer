@@ -88,7 +88,7 @@ export const LatestTransactions = ({ title }: { title: string }) => {
                                 </th>
                                 <th
                                     scope="col"
-                                    className="px-6 py-3 text-middle text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    className="px-6 py-3 text-middle text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell"
                                 >
                                     From
                                 </th>
@@ -100,7 +100,7 @@ export const LatestTransactions = ({ title }: { title: string }) => {
                                 </th>
                                 <th
                                     scope="col"
-                                    className="px-6 py-3 text-middle text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                    className="px-6 py-3 text-middle text-xs font-medium text-gray-500 uppercase tracking-wider hidden sm:table-cell"
                                 >
                                     Chains
                                 </th>

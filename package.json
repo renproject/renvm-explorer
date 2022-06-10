@@ -2,7 +2,7 @@
     "name": "renvm-explorer",
     "version": "0.1.0",
     "private": true,
-    "homepage": "https://explorer.renproject.io",
+    "homepage": "https://explorer-testnet.renproject.io",
     "dependencies": {
         "@headlessui/react": "^1.6.4",
         "@material-ui/core": "^4.12.4",
@@ -72,8 +72,8 @@
         "build": "craco build",
         "test": "craco test",
         "eject": "react-scripts eject",
-        "deploy": "sed -i 's/https:\\/\\/explorer-testnet.renproject.io\\//https:\\/\\/explorer.renproject.io\\//' package.json; echo \"explorer.renproject.io\" > CNAME; REACT_APP_NETWORK=\"mainnet\" yarn build && gh-pages -d build --repo git@github.com:renproject/dev-tools.git",
-        "deploy:testnet": "sed -i 's/https:\\/\\/explorer.renproject.io\\//https:\\/\\/explorer-testnet.renproject.io\\//' package.json; echo \"explorer-testnet.renproject.io\" > CNAME; REACT_APP_NETWORK=\"testnet\" yarn build && gh-pages -d build --repo git@github.com:renproject/dev-tools-testnet.git; sed -i 's/https:\\/\\/explorer-testnet.renproject.io\\//https:\\/\\/explorer.renproject.io\\//' package.json; echo \"explorer.renproject.io\" > CNAME; "
+        "deploy": "sed -i '' 's/https:\\/\\/explorer-testnet.renproject.io/https:\\/\\/explorer.renproject.io/' package.json && REACT_APP_NETWORK=\"mainnet\" yarn build && echo \"explorer.renproject.io\" > ./build/CNAME && gh-pages -d build --repo git@github.com:renproject/renvm-explorer.git",
+        "deploy:testnet": "sed -i '' 's/https:\\/\\/explorer.renproject.io/https:\\/\\/explorer-testnet.renproject.io/' package.json && REACT_APP_NETWORK=\"testnet\" yarn build && echo \"explorer-testnet.renproject.io\" > ./build/CNAME && gh-pages -d build --repo git@github.com:renproject/renvm-explorer-testnet.git; sed -i '' 's/https:\\/\\/explorer-testnet.renproject.io\\//https:\\/\\/explorer.renproject.io\\//' package.json; echo \"explorer.renproject.io\" > CNAME; "
     },
     "eslintConfig": {
         "extends": [

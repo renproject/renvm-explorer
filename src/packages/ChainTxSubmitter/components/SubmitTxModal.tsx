@@ -3,6 +3,7 @@ import { disconnect } from "process";
 import { Dialog } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/solid";
 import {
+    Chain,
     ChainTransactionProgress,
     TxSubmitter,
     TxWaiter,
@@ -30,6 +31,7 @@ interface Props {
     };
     details?: Array<{ label: React.ReactNode; value: React.ReactNode }>;
     loadDetails: () => Promise<void>;
+    chain?: Chain;
 }
 
 export const SubmitTxModal: React.FC<Props> = ({
@@ -40,6 +42,7 @@ export const SubmitTxModal: React.FC<Props> = ({
     disconnect,
     details,
     loadDetails,
+    chain,
 }) => {
     return (
         <div className="sm:flex sm:items-start flex-col">
@@ -123,6 +126,7 @@ export const SubmitTxModal: React.FC<Props> = ({
                         <div className="w-full px-4 py-4 border-b flex items-center">
                             <span className="mr-2">{sentenceCase(key)}:</span>
                             <ChainTxButton
+                                chain={chain}
                                 className="w-full"
                                 chainTx={setup[key]}
                                 disabled={wallet === undefined}
@@ -133,6 +137,7 @@ export const SubmitTxModal: React.FC<Props> = ({
             <div className="w-full px-4 py-4">
                 {chainTx ? (
                     <ChainTxButton
+                        chain={chain}
                         className="w-full"
                         chainTx={chainTx}
                         disabled={wallet === undefined}
