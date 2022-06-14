@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState } from "react";
 
 import { UIContainer } from "../../../containers/UIContainer";
 import { NETWORK } from "../../../environmentVariables";
-// import { getGatewayInstance } from "../../../lib/searchGateway";
+import { getGatewayInstance } from "../../../lib/searchGateway";
 // import { getLegacyTransactionDepositInstance } from "../../../lib/searchLegacyTransaction";
 import {
     SummarizedTransaction,
@@ -44,15 +44,17 @@ export const LoadAdditionalDetails: React.FC<Props> = ({
                 throw new Error("Not implemented.");
                 // setLockAndMint(undefined);
                 // try {
-                //   const deposit = await getGatewayInstance(
-                //     queryTx.result,
-                //     NETWORK,
-                //     queryTx.summary
-                //   );
-                //   setLockAndMint(deposit);
+                //     const deposit = await getGatewayInstance(
+                //         queryTx.result,
+                //         NETWORK,
+                //         queryTx.summary,
+                //     );
+                //     setLockAndMint(deposit);
                 // } catch (error: any) {
-                //   console.error(error);
-                //   setLockAndMint(error instanceof Error ? error : new Error(error));
+                //     console.error(error);
+                //     setLockAndMint(
+                //         error instanceof Error ? error : new Error(error),
+                //     );
                 // }
             } else if (setDeposit && setLockAndMint) {
                 setDeposit(undefined);

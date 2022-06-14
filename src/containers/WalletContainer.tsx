@@ -10,7 +10,7 @@ import { createContainer } from "unstated-next";
 import { ChainIcon } from "../components/common/ChainIcon";
 import { Modal } from "../packages/ChainTxSubmitter/components/Modal";
 
-export interface WalletOption {
+interface WalletOption {
     name: string;
     chains: string[];
     connector: () => Promise<Wallet>;

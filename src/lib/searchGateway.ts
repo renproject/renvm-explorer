@@ -30,6 +30,7 @@ export const searchGateway = async (
 };
 
 export const getGatewayInstance = async (
+    renJS: RenJS,
     searchDetails: RenVMCrossChainTransaction,
     _network: RenNetwork,
     summary: TransactionSummary,
@@ -68,14 +69,13 @@ export const getGatewayInstance = async (
             inputs.payload,
             summary.asset,
         ),
-        nonce: utils.Ox(inputs.nonce),
+        nonce: inputs.nonce,
         shard: {
             gPubKey: utils.toBase64(searchDetails.in.gpubkey),
         },
     };
 
-    const provider = new RenVMProvider(NETWORK);
-    const lockAndMint = await new RenJS(provider as any).gateway(params);
+    const gatewayInstance = await renJS.gateway(params);
 
-    return lockAndMint;
+    return gatewayInstance;
 };

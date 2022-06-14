@@ -1,10 +1,8 @@
 import { useEffect } from "react";
-import { Card, Container } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 
 import { UIContainer } from "../../../containers/UIContainer";
 import { SearchResultType } from "../../../lib/searchResult";
-import { Monospaced } from "../../common/Monospaced";
 import { Spinner } from "../../Spinner";
 
 export const SearchingPage = () => {
@@ -51,27 +49,25 @@ export const SearchingPage = () => {
                                 </>
                             ) : searchResult.noResult ? (
                                 // No results.
-                                <div className="flex items-center">
+                                <div className="flex items-center flex-col lg:flex-row">
                                     <span className="text-2xl font-light text-black">
                                         404
                                     </span>
-                                    <div className="sm:ml-6">
-                                        <div className="sm:border-l sm:border-gray-200 sm:pl-6">
-                                            <p className="mt-1 text-base text-gray-500">
-                                                No results for{" "}
-                                                <Monospaced>
-                                                    {searchResult.searchString}
-                                                </Monospaced>
-                                                .
-                                            </p>
-                                        </div>
+                                    <div className="mt-3 lg:mt-0 lg:border-l lg:border-gray-200 lg:ml-6 lg:pl-6">
+                                        <p className="mt-1 text-base text-gray-500 break-all text-center">
+                                            No results for{" "}
+                                            <span className="font-mono">
+                                                {searchResult.searchString}
+                                            </span>
+                                            .
+                                        </p>
                                     </div>
                                 </div>
                             ) : searchResult.errorSearching ? (
                                 // Error.
-                                <Card border="0">
-                                    <Card.Body>
-                                        <Card.Title>
+                                <div>
+                                    <div>
+                                        <div>
                                             {" "}
                                             <p
                                                 style={{
@@ -82,36 +78,34 @@ export const SearchingPage = () => {
                                             >
                                                 Error
                                             </p>
-                                        </Card.Title>
-                                        <Card.Text style={{ marginTop: "2em" }}>
+                                        </div>
+                                        <div style={{ marginTop: "2em" }}>
                                             Error searching for{" "}
-                                            <Monospaced>
+                                            <span className="font-mono">
                                                 {searchResult.searchString}
-                                            </Monospaced>
+                                            </span>
                                             . Error:{" "}
                                             {String(
                                                 searchResult.errorSearching
                                                     .message ||
                                                     searchResult.errorSearching,
                                             )}
-                                        </Card.Text>
-                                    </Card.Body>
-                                </Card>
+                                        </div>
+                                    </div>
+                                </div>
                             ) : (
                                 // Searching...
 
                                 <>
                                     <Spinner />
-                                    <div className="sm:ml-6">
-                                        <div className="sm:border-l sm:border-gray-200 sm:pl-6">
-                                            <p className="mt-1 text-base text-gray-500">
-                                                Searching for{" "}
-                                                <Monospaced>
-                                                    {searchResult.searchString}
-                                                </Monospaced>
-                                                .
-                                            </p>
-                                        </div>
+                                    <div className="mt-3 lg:mt-0 lg:border-l lg:border-gray-200 lg:ml-6 lg:pl-6">
+                                        <p className="mt-1 text-base text-gray-500 break-all text-center">
+                                            Searching for{" "}
+                                            <span className="font-mono">
+                                                {searchResult.searchString}
+                                            </span>
+                                            .
+                                        </p>
                                     </div>
                                 </>
                             )}

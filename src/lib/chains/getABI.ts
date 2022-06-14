@@ -143,7 +143,10 @@ const getABIFromEtherscan: ABITactic = async (
         } = response;
         if (status === "0") {
             if (result === "Contract source code not verified") {
-                throw new TaggedError(result, ABIError.ContractNotVerified);
+                throw new TaggedError(
+                    `${chain.chain} contract source code not verified: ${to}`,
+                    ABIError.ContractNotVerified,
+                );
             }
             if (
                 result ===

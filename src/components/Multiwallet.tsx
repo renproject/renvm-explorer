@@ -1,19 +1,7 @@
 import { Dialog, Transition } from "@headlessui/react";
-import {
-    CreditCardIcon,
-    DotsVerticalIcon,
-    ExclamationIcon,
-} from "@heroicons/react/outline";
-// import { WalletPickerModal } from "@renproject/multiwallet-ui";
-import { RenNetwork } from "@renproject/utils";
+import { CreditCardIcon } from "@heroicons/react/outline";
 import { ethers } from "ethers";
-import React, {
-    Fragment,
-    useCallback,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import React, { Fragment, useCallback, useRef, useState } from "react";
 
 import { ReactComponent as MetaMaskLogo } from "../lib/chains/icons/wallets/metamask-white.svg";
 import { classNames } from "../lib/utils";

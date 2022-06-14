@@ -1,12 +1,9 @@
-import { ResponseQueryTx } from "@renproject/provider";
 import {
-    ChainTransaction,
     ChainTransactionProgress,
-    TxStatus,
     TxSubmitter,
     TxWaiter,
 } from "@renproject/utils";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { createContainer } from "unstated-next";
 
 import { UIContainer } from "../../containers/UIContainer";

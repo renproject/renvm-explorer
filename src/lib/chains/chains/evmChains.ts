@@ -20,6 +20,7 @@ import {
 import { Chain, RenNetwork, utils } from "@renproject/utils";
 import { ethers } from "ethers";
 
+import { ALCHEMY_KEY, INFURA_KEY } from "../../../environmentVariables";
 import { getEvmABI } from "../getABI";
 import { Icons } from "../icons/wallets";
 import { ChainDetails, ChainType } from "./types";
@@ -310,8 +311,8 @@ export const getPublicEthereumProvider = <
         );
     }
     const urls = resolveRpcEndpoints(config.config.rpcUrls, {
-        INFURA_API_KEY: process.env.REACT_APP_INFURA_KEY,
-        ALCHEMY_API_KEY: process.env.REACT_APP_ALCHEMY_KEY,
+        INFURA_API_KEY: INFURA_KEY,
+        ALCHEMY_API_KEY: ALCHEMY_KEY,
     });
 
     const provider = new StaticJsonRpcProvider(
@@ -452,7 +453,7 @@ export const getEthereumMintParams = async (
     }
 
     return (mintChain as EthereumClass).Contract({
-        to: utils.Ox(to.toString()),
+        to,
         method: abi.name || "",
         params: parameters,
         withRenParams: true,

@@ -1,8 +1,8 @@
 import { RenNetwork } from "@renproject/utils";
+import { headerCase } from "change-case";
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import ReactTooltip from "react-tooltip";
-import { titleCase } from "title-case";
 
 import { NETWORK } from "../../environmentVariables";
 import { ErrorBoundary } from "../common/ErrorBoundary";
@@ -24,15 +24,16 @@ export const App = () => {
         document.title =
             NETWORK === RenNetwork.Mainnet
                 ? `RenVM Explorer`
-                : `RenVM ${titleCase(NETWORK)} Explorer`;
+                : `RenVM ${headerCase(NETWORK)} Explorer`;
     }, []);
 
     return (
+        // The outer div has `h-screen` so that the footer is always at the bottom.
         <div className="h-screen flex flex-col">
             <ReactTooltip className="max-w-xs sm:max-w-sm" effect="solid" />
             <NewHeader />
-            <ErrorBoundary className="bg-white shadow-lg sm:rounded-lg border border-gray-200 p-5 mt-5">
-                <div className="mt-4 flex-grow">
+            <ErrorBoundary>
+                <div className="mt-4 flex-grow mb-10">
                     <Routes>
                         <Route
                             path="/search/:search"
@@ -53,9 +54,6 @@ export const App = () => {
                     </Routes>
                 </div>
             </ErrorBoundary>
-            <br />
-            <br />
-            <br />
             <Footer />
         </div>
     );

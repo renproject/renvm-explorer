@@ -49,8 +49,6 @@ export const parseV2Selector = (selector: string) => {
         from: burnAndMintFrom || burnFrom || asset,
         to: burnAndMintTo || mintTo || asset,
     };
-
-    throw new Error(`Unable to parse v2 selector ${selector}`);
 };
 
 export const summarizeTransaction = async (
@@ -111,8 +109,10 @@ export const summarizeTransaction = async (
         | undefined;
     if (
         toChain &&
-        searchDetails.out?.txid &&
-        searchDetails.out?.txid.length > 0
+        searchDetails.out &&
+        searchDetails.out.txid?.length > 0 &&
+        // Check that the transaction is a release - signature is empty.
+        searchDetails.out.sig?.length === 0
     ) {
         const outTxHash = toChain.txHashFromBytes(searchDetails.out?.txid);
         outTx = {
@@ -121,6 +121,28 @@ export const summarizeTransaction = async (
                 toChain.transactionExplorerLink({
                     txHash: outTxHash,
                     txindex: searchDetails.out.txindex.toFixed(),
+                }) || "",
+        };
+    }
+
+    let inTx:
+        | {
+              txHash: string;
+              explorerLink: string;
+          }
+        | undefined;
+    if (
+        fromChain &&
+        searchDetails.in?.txid &&
+        searchDetails.in?.txid.length > 0
+    ) {
+        const inTxHash = fromChain.txHashFromBytes(searchDetails.in?.txid);
+        inTx = {
+            txHash: inTxHash,
+            explorerLink:
+                fromChain.transactionExplorerLink({
+                    txHash: inTxHash,
+                    txindex: searchDetails.in.txindex.toFixed(),
                 }) || "",
         };
     }
@@ -141,6 +163,7 @@ export const summarizeTransaction = async (
         amountOutRaw,
 
         outTx,
+        inTx,
     };
 };
 

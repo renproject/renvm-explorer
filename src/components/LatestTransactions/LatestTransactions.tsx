@@ -128,13 +128,18 @@ export const LatestTransactions = ({ title }: { title: string }) => {
                                 </tr>
                             ) : null}
                             {fetchingError ? (
-                                <p>
-                                    Error fetching transactions (
-                                    {String(
-                                        fetchingError.message || fetchingError,
-                                    )}
-                                    )
-                                </p>
+                                <tr>
+                                    <td colSpan={4} className=" col-span-4">
+                                        <div className="w-full p-4 flex items-center justify-center">
+                                            Error fetching transactions: (
+                                            {String(
+                                                fetchingError.message ||
+                                                    fetchingError,
+                                            )}
+                                            )
+                                        </div>
+                                    </td>
+                                </tr>
                             ) : null}
                         </tbody>
                     </table>

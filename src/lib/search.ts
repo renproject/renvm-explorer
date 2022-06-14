@@ -6,7 +6,7 @@ import { searchTactics } from "./searchTactics";
 import { TaggedError } from "./taggedError";
 
 export enum SearchErrors {
-  NO_RESULTS = "No results found.",
+    NO_RESULTS = "No results found.",
 }
 
 /**
@@ -17,28 +17,28 @@ export enum SearchErrors {
  * @param searchString
  */
 export const search = async (
-  searchString: string,
-  updateStatus: (status: string) => void,
-  getChain: (chainName: string) => Chain | null
+    searchString: string,
+    updateStatus: (status: string) => void,
+    getChain: (chainName: string) => Chain | null,
 ): Promise<SearchResult | SearchResult[]> => {
-  for (const tactic of searchTactics) {
-    try {
-      if (tactic.match(searchString, getChain)) {
-        const result = await tactic.search(
-          searchString,
-          updateStatus,
-          getChain
-        );
-        if (result && (!Array.isArray(result) || result.length > 0)) {
-          return result;
+    for (const tactic of searchTactics) {
+        try {
+            if (tactic.match(searchString, getChain)) {
+                const result = await tactic.search(
+                    searchString,
+                    updateStatus,
+                    getChain,
+                );
+                if (result && (!Array.isArray(result) || result.length > 0)) {
+                    return result;
+                }
+            }
+        } catch (error: any) {
+            if (DEBUG) {
+                console.error("DEBUG", error);
+            }
         }
-      }
-    } catch (error: any) {
-      if (DEBUG) {
-        console.error("DEBUG", error);
-      }
     }
-  }
 
-  throw new TaggedError(SearchErrors.NO_RESULTS);
+    throw new TaggedError(SearchErrors.NO_RESULTS);
 };

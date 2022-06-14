@@ -1,10 +1,5 @@
-import { Solana } from "@renproject/chains-solana";
-import { useCallback, useState } from "react";
-
-import { EthereumClass } from "../../lib/chains/chains/evmChains";
 import { ChainType } from "../../lib/chains/chains/types";
 import { ChainTxContainer } from "./ChainTxContainer";
-import { AsyncButton } from "./components/AsyncButton";
 import { Modal } from "./components/Modal";
 import { SubmitTxModal } from "./components/SubmitTxModal";
 

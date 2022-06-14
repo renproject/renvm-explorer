@@ -82,6 +82,10 @@ export interface TransactionSummary {
     amountOut?: BigNumber;
     amountOutRaw?: BigNumber;
 
+    inTx?: {
+        txHash: string;
+        explorerLink: string;
+    };
     outTx?: {
         txHash: string;
         explorerLink: string;

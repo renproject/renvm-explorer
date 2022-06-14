@@ -25,13 +25,14 @@ export const AsyncButton = ({
     className,
     ...props
 }: Props) => {
-    const [calling, setCalling] = useState(false);
+    let [calling, setCalling] = useState(false);
     const [callError, setCallError] = useState<Error>();
     const [done, setDone] = useState(false);
 
     // Here's how we'll keep track of our component's mounted state
     const componentIsMounted = useRef(true);
     useEffect(() => {
+        componentIsMounted.current = true;
         return () => {
             componentIsMounted.current = false;
         };
@@ -56,11 +57,27 @@ export const AsyncButton = ({
         }
     }, [allowOnlyOnce, onClick]);
 
+    const onClickCalled = useRef(false);
     useEffect(() => {
-        if (callOnMount && !disabled && !done && !calling && !callError) {
+        if (
+            callOnMount &&
+            !disabled &&
+            !done &&
+            !callError &&
+            !onClickCalled.current
+        ) {
+            onClickCalled.current = true;
             onClickCallback();
         }
-    }, [callOnMount, disabled, done, calling, onClickCallback, callError]);
+    }, [
+        callOnMount,
+        disabled,
+        done,
+        calling,
+        onClickCallback,
+        callError,
+        onClickCalled,
+    ]);
 
     const [rendered, setRendered] = useState(false);
     useEffect(() => {

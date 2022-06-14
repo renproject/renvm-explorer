@@ -6,7 +6,7 @@ import {
 } from "@renproject/provider";
 import { Chain, ChainCommon, utils } from "@renproject/utils";
 
-import { NETWORK } from "../../environmentVariables";
+import { DEBUG, NETWORK } from "../../environmentVariables";
 import { allChains } from "../chains/chains";
 import {
     RenVMTransaction,
@@ -71,12 +71,21 @@ export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
             new Set(
                 allChains
                     .map((chain) => getChain(chain.chain))
-                    .map((chain) =>
-                        chain &&
-                        chain.validateTransaction({ txHash: searchString })
-                            ? chain.txidFormattedToTxid(searchString)
-                            : null,
-                    )
+                    .map((chain) => {
+                        try {
+                            return chain &&
+                                chain.validateTransaction({
+                                    txHash: searchString,
+                                })
+                                ? chain.txidFormattedToTxid(searchString)
+                                : null;
+                        } catch (error) {
+                            if (DEBUG) {
+                                console.error(error);
+                            }
+                        }
+                        return null;
+                    })
                     .filter((txid) => txid !== null),
             ),
         ).map((x) => (x !== null ? Buffer.from(x, "base64") : null));

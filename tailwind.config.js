@@ -1,5 +1,8 @@
 module.exports = {
     content: ["./src/**/*.{js,jsx,ts,tsx}"],
+    variants: {
+        opacity: ["hover"],
+    },
     theme: {
         extend: {
             screens: {

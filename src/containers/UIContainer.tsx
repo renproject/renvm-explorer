@@ -17,6 +17,8 @@ import {
     RenVMTransaction,
     Searching,
     SearchResult,
+    SummarizedTransaction,
+    TransactionType,
 } from "../lib/searchResult";
 import { searchTransaction } from "../lib/searchTransaction";
 import { TaggedError } from "../lib/taggedError";
@@ -221,37 +223,6 @@ function useUIContainer() {
         },
         [searchResult, getChain],
     );
-
-    // const handleLegacyTransactionURL = useCallback(
-    //   (encodedTransactionInput) => {
-    //     const transactionInput = decodeURIComponent(encodedTransactionInput);
-
-    //     let transaction: LegacyRenVMTransaction =
-    //       LegacyRenVMTransaction(transactionInput);
-    //     if (
-    //       searchResult &&
-    //       !Array.isArray(searchResult) &&
-    //       searchResult.resultPath === transaction.resultPath
-    //     ) {
-    //       transaction = searchResult as LegacyRenVMTransaction;
-    //     }
-
-    //     setTransaction(transaction);
-
-    //     searchLegacyTransaction(transaction, getChain)
-    //       .then((transaction) => {
-    //         setTransaction(transaction);
-    //         setUpdatedCount((count) => count + 1);
-    //       })
-    //       .catch((error) =>
-    //         setTransaction({
-    //           ...transaction,
-    //           queryTx: error,
-    //         })
-    //       );
-    //   },
-    //   [searchResult, setTransaction, getChain]
-    // );
 
     return {
         renJS,

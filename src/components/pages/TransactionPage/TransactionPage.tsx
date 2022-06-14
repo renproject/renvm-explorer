@@ -1,10 +1,11 @@
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { RenVMCrossChainTxSubmitter } from "@renproject/ren/build/main/renVMTxSubmitter";
 import { useCallback, useEffect, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { UIContainer } from "../../../containers/UIContainer";
 import { NETWORK } from "../../../environmentVariables";
+import { getGatewayInstance } from "../../../lib/searchGateway";
 import {
     SummarizedTransaction,
     TransactionType,
@@ -40,10 +41,10 @@ export const TransactionPage = () => {
             ? (transaction.queryTx as SummarizedTransaction)
             : undefined;
 
-    const [deposit, setDeposit] = useState<
+    const [transactionInstance, setTransactionInstance] = useState<
         GatewayTransaction | Error | null | undefined
     >(undefined);
-    const [lockAndMint, setLockAndMint] = useState<
+    const [gatewayInstance, setGatewayInstance] = useState<
         Gateway | Error | null | undefined
     >(undefined);
 
@@ -55,54 +56,28 @@ export const TransactionPage = () => {
             !(queryTx instanceof Error) &&
             queryTx.transactionType === TransactionType.Mint
         ) {
-            if (deposit && !setDeposit) {
-                // Gateway
-
-                throw new Error("Not implemented.");
-                // setLockAndMint(undefined);
-                // try {
-                //   const deposit = await getGatewayInstance(
-                //     queryTx.result,
-                //     NETWORK,
-                //     queryTx.summary
-                //   );
-                //   setLockAndMint(deposit);
-                // } catch (error: any) {
-                //   console.error(error);
-                //   setLockAndMint(error instanceof Error ? error : new Error(error));
-                // }
-            } else if (setDeposit) {
-                setDeposit(undefined);
-                const { deposit, gateway } =
-                    await getTransactionDepositInstance(
-                        renJS,
-                        queryTx.result,
-                        NETWORK,
-                        queryTx.summary,
-                    );
-                setDeposit(deposit);
-                setLockAndMint(gateway);
-
-                // Legacy
-                // const { deposit, lockAndMint } =
-                //   await getLegacyTransactionDepositInstance(
-                //     queryTx.result,
-                //     NETWORK,
-                //     queryTx.summary
-                //   );
-                // setDeposit(deposit);
-                // setLockAndMint(lockAndMint);
-            }
+            setTransactionInstance(undefined);
+            const { deposit, gateway } = await getTransactionDepositInstance(
+                renJS,
+                queryTx.result,
+                NETWORK,
+                queryTx.summary,
+            );
+            setTransactionInstance(deposit);
+            setGatewayInstance(gateway);
         }
-    }, [renJS, queryTx, setDeposit, deposit, setLockAndMint]);
+    }, [renJS, queryTx, setTransactionInstance, setGatewayInstance]);
 
     const handleOutTx = useCallback(async () => {
-        if (!deposit || deposit instanceof Error) {
+        if (!transactionInstance || transactionInstance instanceof Error) {
             return;
         }
 
-        handleChainTransaction(deposit.out, deposit.outSetup);
-    }, [deposit, handleChainTransaction]);
+        handleChainTransaction(
+            transactionInstance.out,
+            transactionInstance.outSetup,
+        );
+    }, [transactionInstance, handleChainTransaction]);
 
     if (!hash) {
         return <div>No hash provided.</div>;
@@ -136,16 +111,19 @@ export const TransactionPage = () => {
                               status:
                                   queryTx.result.status ||
                                   (
-                                      (deposit &&
-                                          !(deposit instanceof Error) &&
-                                          deposit.renVM) as
+                                      (transactionInstance &&
+                                          !(
+                                              transactionInstance instanceof
+                                              Error
+                                          ) &&
+                                          transactionInstance.renVM) as
                                           | RenVMCrossChainTxSubmitter
                                           | undefined
                                   )?.progress?.response?.txStatus,
                               revertReason: (
-                                  (deposit &&
-                                      !(deposit instanceof Error) &&
-                                      deposit.renVM) as
+                                  (transactionInstance &&
+                                      !(transactionInstance instanceof Error) &&
+                                      transactionInstance.renVM) as
                                       | RenVMCrossChainTxSubmitter
                                       | undefined
                               )?.progress?.revertReason,
@@ -157,28 +135,26 @@ export const TransactionPage = () => {
                                         )
                                       : undefined,
                               gatewayAddress:
-                                  (lockAndMint &&
-                                      !(lockAndMint instanceof Error) &&
-                                      lockAndMint.gatewayAddress) ||
+                                  (gatewayInstance &&
+                                      !(gatewayInstance instanceof Error) &&
+                                      gatewayInstance.gatewayAddress) ||
                                   undefined,
                               inTx:
-                                  (deposit &&
-                                      !(deposit instanceof Error) &&
-                                      deposit.in) ||
+                                  (transactionInstance &&
+                                      !(transactionInstance instanceof Error) &&
+                                      transactionInstance.in) ||
                                   undefined,
                               renVMTx:
-                                  (deposit &&
-                                      !(deposit instanceof Error) &&
-                                      deposit.renVM) ||
+                                  (transactionInstance &&
+                                      !(transactionInstance instanceof Error) &&
+                                      transactionInstance.renVM) ||
                                   undefined,
                               outTx:
-                                  (deposit &&
-                                      !(deposit instanceof Error) &&
-                                      deposit.out) ||
+                                  (transactionInstance &&
+                                      !(transactionInstance instanceof Error) &&
+                                      transactionInstance.out) ||
                                   undefined,
                               queryTx,
-                              deposit,
-
                               handleOutTx,
                           }
                         : undefined

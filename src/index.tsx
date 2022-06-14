@@ -1,7 +1,7 @@
 import "./index.css";
 
 import React from "react";
-import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { BrowserRouter as Router } from "react-router-dom";
 
 import { App } from "./components/App/App";
@@ -12,7 +12,9 @@ import { ChainTxSubmitter } from "./packages/ChainTxSubmitter";
 import reportWebVitals from "./reportWebVitals";
 
 const render = () => {
-    ReactDOM.render(
+    const container = document.getElementById("app");
+    const root = createRoot(container!);
+    root.render(
         <React.StrictMode>
             <Router>
                 <WalletContainer.Provider>
@@ -26,7 +28,6 @@ const render = () => {
                 </WalletContainer.Provider>
             </Router>
         </React.StrictMode>,
-        document.getElementById("root"),
     );
 };
 
