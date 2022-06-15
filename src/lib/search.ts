@@ -1,4 +1,5 @@
-import { Chain, ChainCommon } from "@renproject/utils";
+import RenJS from "@renproject/ren";
+import { Chain } from "@renproject/utils";
 
 import { DEBUG } from "../environmentVariables";
 import { SearchResult } from "./searchResult";
@@ -20,6 +21,7 @@ export const search = async (
     searchString: string,
     updateStatus: (status: string) => void,
     getChain: (chainName: string) => Chain | null,
+    renJS: RenJS,
 ): Promise<SearchResult | SearchResult[]> => {
     for (const tactic of searchTactics) {
         try {
@@ -28,6 +30,7 @@ export const search = async (
                     searchString,
                     updateStatus,
                     getChain,
+                    renJS,
                 );
                 if (result && (!Array.isArray(result) || result.length > 0)) {
                     return result;

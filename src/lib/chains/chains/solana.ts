@@ -2,10 +2,7 @@ import { Solana } from "@renproject/chains";
 import { resolveNetwork } from "@renproject/chains-solana/build/main/networks";
 // import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 import { Chain, ContractChain, RenNetwork } from "@renproject/utils";
-import { Connection } from "@solana/web3.js";
-import { AbiCoder } from "ethers/lib/utils";
 
-import { Icons } from "../icons/wallets";
 import { ChainDetails, ChainType } from "./types";
 
 export const SolanaDetails: ChainDetails<Solana> = {
@@ -86,7 +83,7 @@ export const SolanaDetails: ChainDetails<Solana> = {
     },
 };
 
-export const getPublicSolanaProvider = <T extends Solana>(
+const getPublicSolanaProvider = <T extends Solana>(
     Class: typeof Solana,
     network: RenNetwork,
 ): T => {

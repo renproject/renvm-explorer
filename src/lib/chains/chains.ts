@@ -22,7 +22,7 @@ import {
 } from "./chains/lockChains";
 import { SolanaDetails } from "./chains/solana";
 
-export const mintChains = [
+const mintChains = [
     EthereumDetails,
     BinanceSmartChainDetails,
     CatalogDetails,
@@ -34,7 +34,7 @@ export const mintChains = [
     SolanaDetails,
 ];
 
-export const lockChains = [
+const lockChains = [
     BitcoinDetails,
     ZcashDetails,
     BitcoinCashDetails,
@@ -45,22 +45,6 @@ export const lockChains = [
 ];
 
 export const allChains = [...mintChains, ...lockChains];
-
-// export const multiwalletOptions = (
-//   network: RenNetwork
-// ): WalletPickerConfig<any, any> => {
-//   const chains = allChains.reduce((acc, chain) => {
-//     if (chain.multiwalletConfig) {
-//       return {
-//         ...acc,
-//         [chain.chain]: chain.multiwalletConfig(network),
-//       };
-//     } else {
-//       return acc;
-//     }
-//   }, {});
-//   return { chains };
-// };
 
 export const ChainMapper = (
     chainName: string,

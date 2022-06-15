@@ -1,8 +1,7 @@
-import { utils } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import React from "react";
 
-import { ChainIcon } from "../../common/ChainIcon";
+import { ChainIcon } from "./ChainIcon";
 
 interface Props {
     asset: string;

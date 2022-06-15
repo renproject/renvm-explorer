@@ -1,28 +1,17 @@
 import { Gateway, GatewayTransaction } from "@renproject/ren";
-import {
-    ChainTransactionStatus,
-    TxStatus,
-    TxSubmitter,
-    TxWaiter,
-    utils,
-} from "@renproject/utils";
+import { utils } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import { Link } from "react-router-dom";
 
-import {
-    SummarizedTransaction,
-    TransactionType,
-} from "../../../lib/searchResult";
+import { SummarizedTransaction } from "../../../lib/searchResult";
 import { AsyncButton } from "../../../packages/ChainTxSubmitter/components/AsyncButton";
 import { ChainIcon } from "../../common/ChainIcon";
-import { ExternalLink } from "../../common/ExternalLink";
+import { TransactionDiagram } from "../../common/TransactionDiagram";
 import { Spinner } from "../../Spinner";
 import {
     TableHeader,
     TableRow,
 } from "../TransactionPage/CrossChainTransaction";
-import { SearchForDepositsToGateway } from "../TransactionPage/SearchForDepositsToGateway";
-import { TransactionDiagram } from "../TransactionPage/TransactionDiagram";
 
 interface Props {
     address: string;
@@ -167,7 +156,7 @@ export const GatewayTable = ({
                                                 ),
                                             )}
                                             <div className="flex ml-1">
-                                                <Spinner /> Watching for
+                                                <Spinner /> Scanning for
                                                 deposits
                                             </div>
                                         </div>

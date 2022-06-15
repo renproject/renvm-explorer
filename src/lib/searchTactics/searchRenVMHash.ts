@@ -5,10 +5,10 @@ import {
     RPCMethod,
     unmarshalRenVMTransaction,
 } from "@renproject/provider";
-import { Chain, TxStatus, utils } from "@renproject/utils";
+import RenJS from "@renproject/ren";
+import { Chain, isEmptySignature } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 
-import { NETWORK } from "../../environmentVariables";
 import {
     RenVMTransaction,
     RenVMTransactionError,
@@ -23,7 +23,7 @@ import { SearchTactic } from "./searchTactic";
 
 const RenVMChain = "RenVM";
 
-export const parseV2Selector = (selector: string) => {
+const parseV2Selector = (selector: string) => {
     const maybeClaimFees = /(.*)\/claimFees/.exec(selector);
     if (maybeClaimFees) {
         const asset = maybeClaimFees[1];
@@ -38,12 +38,12 @@ export const parseV2Selector = (selector: string) => {
         // Regular Expression to match selectors in the form of
         // ASSET/fromCHAINtoCHAIN, ASSET/fromCHAIN or ASSET/toCHAIN.
         // ^(  ASSET )/[      [from(        CHAIN      ) _   to(   CHAIN  )] OR [from( CHAIN )] OR ( to(  CHAIN  ))]$
-        /^([a-zA-Z]+)\/(?:(?:(?:from([a-zA-Z]+?(?=_to)))\_(?:to([a-zA-Z]+))?)|(?:from([a-zA-Z]+))|(?:to([a-zA-Z]+)))$/;
+        /^([a-zA-Z]+)\/(?:(?:(?:from([a-zA-Z]+?(?=_to)))_(?:to([a-zA-Z]+))?)|(?:from([a-zA-Z]+))|(?:to([a-zA-Z]+)))$/;
     const match = regex.exec(selector);
     if (!match) {
         throw new Error(`Invalid selector format '${selector}'.`);
     }
-    const [_, asset, burnAndMintFrom, burnAndMintTo, burnFrom, mintTo] = match;
+    const [, asset, burnAndMintFrom, burnAndMintTo, burnFrom, mintTo] = match;
     return {
         asset,
         from: burnAndMintFrom || burnFrom || asset,
@@ -112,7 +112,7 @@ export const summarizeTransaction = async (
         searchDetails.out &&
         searchDetails.out.txid?.length > 0 &&
         // Check that the transaction is a release - signature is empty.
-        searchDetails.out.sig?.length === 0
+        (!searchDetails.out.sig || isEmptySignature(searchDetails.out.sig))
     ) {
         const outTxHash = toChain.txHashFromBytes(searchDetails.out?.txid);
         outTx = {
@@ -174,6 +174,7 @@ export const unmarshalTransaction = async (
     getChain: (chainName: string) => Chain | null,
 ): Promise<SummarizedTransaction> => {
     const isMint = /((\/to)|(To))/.exec(response.tx.selector);
+    const isBurn = /((\/from)|(From))/.exec(response.tx.selector);
     const isClaim = /\/claimFees/.exec(response.tx.selector);
 
     // Unmarshal transaction.
@@ -184,13 +185,17 @@ export const unmarshalTransaction = async (
             transactionType: TransactionType.ClaimFees as const,
             summary: await summarizeTransaction(unmarshalled, getChain),
         };
-    } else {
+    } else if (isMint || isBurn) {
         const unmarshalled = unmarshalRenVMTransaction(response.tx);
         return {
             result: { ...unmarshalled, status: response.txStatus },
             transactionType: TransactionType.Mint as const,
             summary: await summarizeTransaction(unmarshalled, getChain),
         };
+    } else {
+        throw new Error(
+            `Unrecognised transaction type ${response.tx.selector}.`,
+        );
     }
 };
 
@@ -227,12 +232,15 @@ export const searchRenVMHash: SearchTactic<RenVMTransaction> = {
         searchString: string,
         updateStatus: (status: string) => void,
         getChain: (chainName: string) => Chain | null,
+        renJS: RenJS,
     ): Promise<RenVMTransaction> => {
         updateStatus("Looking up RenVM hash...");
 
-        const provider = new RenVMProvider(NETWORK);
-
-        let queryTx = await queryMintOrBurn(provider, searchString, getChain);
+        let queryTx = await queryMintOrBurn(
+            renJS.provider,
+            searchString,
+            getChain,
+        );
 
         return RenVMTransaction(searchString, queryTx);
     },

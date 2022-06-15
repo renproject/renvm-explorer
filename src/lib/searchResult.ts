@@ -29,7 +29,7 @@ export enum SearchResultType {
     RenVMGateway,
 }
 
-export interface SearchResultCommon {
+interface SearchResultCommon {
     uuid: string;
 
     type: SearchResultType;

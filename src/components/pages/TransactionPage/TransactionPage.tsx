@@ -1,11 +1,10 @@
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { RenVMCrossChainTxSubmitter } from "@renproject/ren/build/main/renVMTxSubmitter";
+import { ChainTransactionStatus, utils } from "@renproject/utils";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { UIContainer } from "../../../containers/UIContainer";
-import { NETWORK } from "../../../environmentVariables";
-import { getGatewayInstance } from "../../../lib/searchGateway";
 import {
     SummarizedTransaction,
     TransactionType,
@@ -60,7 +59,6 @@ export const TransactionPage = () => {
             const { deposit, gateway } = await getTransactionDepositInstance(
                 renJS,
                 queryTx.result,
-                NETWORK,
                 queryTx.summary,
             );
             setTransactionInstance(deposit);
@@ -83,6 +81,75 @@ export const TransactionPage = () => {
         return <div>No hash provided.</div>;
     }
 
+    let details: Parameters<typeof CrossChainTransaction>[0]["details"];
+    if (queryTx && queryTx.summary) {
+        const inTx:
+            | {
+                  txHash: string;
+                  explorerLink: string;
+              }
+            | undefined =
+            (transactionInstance &&
+                !(transactionInstance instanceof Error) &&
+                transactionInstance.in.progress.transaction) ||
+            queryTx.summary.inTx ||
+            undefined;
+
+        const outTx:
+            | {
+                  txHash: string;
+                  explorerLink: string;
+              }
+            | undefined =
+            (transactionInstance &&
+                !(transactionInstance instanceof Error) &&
+                transactionInstance.out.progress.transaction) ||
+            queryTx.summary.outTx ||
+            undefined;
+
+        details = {
+            asset: queryTx.summary.asset,
+            from: queryTx.summary.from,
+            to: queryTx.summary.to,
+            amount: queryTx.summary.amountIn,
+            status:
+                queryTx.result.status ||
+                (
+                    (transactionInstance &&
+                        !(transactionInstance instanceof Error) &&
+                        transactionInstance.renVM) as
+                        | RenVMCrossChainTxSubmitter
+                        | undefined
+                )?.progress?.response?.txStatus,
+            revertReason: (
+                (transactionInstance &&
+                    !(transactionInstance instanceof Error) &&
+                    transactionInstance.renVM) as
+                    | RenVMCrossChainTxSubmitter
+                    | undefined
+            )?.progress?.revertReason,
+            fee:
+                queryTx.summary.amountIn && queryTx.summary.amountOut
+                    ? queryTx.summary.amountIn.minus(queryTx.summary.amountOut)
+                    : undefined,
+            gatewayAddress:
+                (gatewayInstance &&
+                    !(gatewayInstance instanceof Error) &&
+                    gatewayInstance.gatewayAddress) ||
+                undefined,
+            inTx,
+            outTx,
+            queryTx,
+            handleOutTx:
+                transactionInstance &&
+                !(transactionInstance instanceof Error) &&
+                transactionInstance.out.progress.status ===
+                    ChainTransactionStatus.Ready
+                    ? handleOutTx
+                    : undefined,
+        };
+    }
+
     return (
         <>
             <CrossChainTransaction
@@ -90,7 +157,9 @@ export const TransactionPage = () => {
                 loadAdditionalDetails={
                     queryTx &&
                     !(queryTx instanceof Error) &&
-                    queryTx.transactionType === TransactionType.Mint
+                    queryTx.transactionType === TransactionType.Mint &&
+                    (!utils.isDefined(transactionInstance) ||
+                        transactionInstance instanceof Error)
                         ? loadAdditionalDetails
                         : undefined
                 }
@@ -101,64 +170,7 @@ export const TransactionPage = () => {
                         ? transaction.queryTx
                         : undefined
                 }
-                details={
-                    queryTx && queryTx.summary
-                        ? {
-                              asset: queryTx.summary.asset,
-                              from: queryTx.summary.from,
-                              to: queryTx.summary.to,
-                              amount: queryTx.summary.amountIn,
-                              status:
-                                  queryTx.result.status ||
-                                  (
-                                      (transactionInstance &&
-                                          !(
-                                              transactionInstance instanceof
-                                              Error
-                                          ) &&
-                                          transactionInstance.renVM) as
-                                          | RenVMCrossChainTxSubmitter
-                                          | undefined
-                                  )?.progress?.response?.txStatus,
-                              revertReason: (
-                                  (transactionInstance &&
-                                      !(transactionInstance instanceof Error) &&
-                                      transactionInstance.renVM) as
-                                      | RenVMCrossChainTxSubmitter
-                                      | undefined
-                              )?.progress?.revertReason,
-                              fee:
-                                  queryTx.summary.amountIn &&
-                                  queryTx.summary.amountOut
-                                      ? queryTx.summary.amountIn.minus(
-                                            queryTx.summary.amountOut,
-                                        )
-                                      : undefined,
-                              gatewayAddress:
-                                  (gatewayInstance &&
-                                      !(gatewayInstance instanceof Error) &&
-                                      gatewayInstance.gatewayAddress) ||
-                                  undefined,
-                              inTx:
-                                  (transactionInstance &&
-                                      !(transactionInstance instanceof Error) &&
-                                      transactionInstance.in) ||
-                                  undefined,
-                              renVMTx:
-                                  (transactionInstance &&
-                                      !(transactionInstance instanceof Error) &&
-                                      transactionInstance.renVM) ||
-                                  undefined,
-                              outTx:
-                                  (transactionInstance &&
-                                      !(transactionInstance instanceof Error) &&
-                                      transactionInstance.out) ||
-                                  undefined,
-                              queryTx,
-                              handleOutTx,
-                          }
-                        : undefined
-                }
+                details={details}
             />
         </>
     );

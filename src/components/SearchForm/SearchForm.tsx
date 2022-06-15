@@ -1,5 +1,4 @@
 import React, { useCallback, useRef } from "react";
-import { Container, Form } from "react-bootstrap";
 
 import { UIContainer } from "../../containers/UIContainer";
 
@@ -23,26 +22,6 @@ export const SearchForm = () => {
     );
 
     return (
-        // <div>
-        //     <Container>
-        //         <div>
-        //             <h2>Search RenVM</h2>
-        //             <p>Enter a deposit transaction or a RenVM hash.</p>
-
-        //             <Form onSubmit={searchFormSubmitCallback}>
-        //                 <div>
-        //                     <input
-        //                         type="text"
-        //                         ref={searchFormInputRef}
-        //                         placeholder="Search"
-        //                     />
-        //                     <button type="submit">Search</button>
-        //                 </div>
-        //             </Form>
-        //         </div>
-        //     </Container>
-        // </div>
-        // mb-6
         <div className="relative">
             <div className="sm:max-w-3xl lg:max-w-7xl">
                 <div className="relative rounded-lg px-6 py-10 bg-renblue-900 overflow-hidden shadow-xl border border-gray-200">

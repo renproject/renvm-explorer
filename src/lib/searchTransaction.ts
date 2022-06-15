@@ -1,20 +1,10 @@
 import { Ethereum } from "@renproject/chains-ethereum";
-import {
-    RenVMCrossChainTransaction,
-    RenVMProvider,
-} from "@renproject/provider";
+import { RenVMCrossChainTransaction } from "@renproject/provider";
 import RenJS, { Gateway } from "@renproject/ren";
 import { TransactionParams } from "@renproject/ren/build/main/params";
-import {
-    Chain,
-    ChainCommon,
-    ContractChain,
-    RenNetwork,
-    utils,
-} from "@renproject/utils";
+import { Chain, ContractChain, utils } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 
-import { NETWORK } from "../environmentVariables";
 import { getContractChainParams } from "./chains/chains";
 import { RenVMTransaction, TransactionSummary } from "./searchResult";
 import { queryMintOrBurn } from "./searchTactics/searchRenVMHash";
@@ -22,12 +12,11 @@ import { queryMintOrBurn } from "./searchTactics/searchRenVMHash";
 export const searchTransaction = async (
     transaction: RenVMTransaction,
     getChain: (chainName: string) => Chain | null,
+    renJS: RenJS,
 ): Promise<RenVMTransaction | null> => {
-    const provider = new RenVMProvider(NETWORK);
-
     if (!transaction.queryTx) {
         transaction.queryTx = await queryMintOrBurn(
-            provider,
+            renJS.provider,
             transaction.txHash,
             getChain,
         );
@@ -39,7 +28,6 @@ export const searchTransaction = async (
 export const getTransactionDepositInstance = async (
     renJS: RenJS,
     searchDetails: RenVMCrossChainTransaction,
-    network: RenNetwork,
     summary: TransactionSummary,
 ) => {
     const inputs = searchDetails.in as unknown as {
@@ -67,16 +55,16 @@ export const getTransactionDepositInstance = async (
         );
     }
 
-    const txHash = utils.toURLBase64(searchDetails.in.txid);
+    const txid = utils.toURLBase64(searchDetails.in.txid);
     const txParams: TransactionParams = {
         asset: summary.asset,
         fromTx: {
             asset: summary.asset,
             chain: summary.from,
-            txid: utils.toURLBase64(searchDetails.in.txid),
+            txid,
             explorerLink:
                 (summary.fromChain &&
-                    summary.fromChain.transactionExplorerLink({ txHash })) ||
+                    summary.fromChain.transactionExplorerLink({ txid })) ||
                 "",
             txHash: summary.fromChain.txHashFromBytes(searchDetails.in.txid),
             txidFormatted: summary.fromChain.txHashFromBytes(
@@ -100,8 +88,9 @@ export const getTransactionDepositInstance = async (
         ),
     };
 
-    const provider = new RenVMProvider(network);
     const deposit = await renJS.gatewayTransaction(txParams);
+
+    deposit.renVM.submit().catch(console.error);
 
     let gateway: Gateway | undefined;
 

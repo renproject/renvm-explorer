@@ -1,15 +1,10 @@
 import BigNumber from "bignumber.js";
-import React, { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-import { UIContainer } from "../../containers/UIContainer";
-import {
-    RenVMTransaction,
-    SummarizedTransaction,
-} from "../../lib/searchResult";
+import { SummarizedTransaction } from "../../lib/searchResult";
 import { classNames } from "../../lib/utils";
 import { ChainIcon } from "../common/ChainIcon";
-import { TransactionDiagram } from "../pages/TransactionPage/TransactionDiagram";
 
 interface Props {
     queryTx: SummarizedTransaction;
@@ -17,26 +12,7 @@ interface Props {
 }
 
 export const TransactionPreview: React.FC<Props> = ({ queryTx, refreshed }) => {
-    const { setSearchResult } = UIContainer.useContainer();
-    const navigate = useNavigate();
-
     const txHash = queryTx.result.hash;
-
-    const onClick: React.MouseEventHandler<HTMLAnchorElement> = useCallback(
-        (e) => {
-            e.preventDefault();
-            setSearchResult(RenVMTransaction(txHash, queryTx));
-
-            // TODO: Investigate alternative to using setTimeout to avoid tx page
-            // jumping between transactions.
-            // To reproduce: set the timeout to 0 and then on the recent txs page,
-            // click one tx, go back and then click another tx.
-            setTimeout(() => {
-                navigate(`/tx/${encodeURIComponent(txHash)}`);
-            }, 100);
-        },
-        [navigate, setSearchResult, queryTx, txHash],
-    );
 
     const from = queryTx.summary.fromChain
         ? queryTx.summary.fromChain.chain

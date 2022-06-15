@@ -1,40 +1,38 @@
-import {
-    CursorClickIcon,
-    LinkIcon,
-    MailOpenIcon,
-    UsersIcon,
-} from "@heroicons/react/outline";
-import { ArrowSmDownIcon, ArrowSmUpIcon } from "@heroicons/react/solid";
+// import {
+//     CursorClickIcon,
+//     LinkIcon,
+//     MailOpenIcon,
+// } from "@heroicons/react/outline";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 import { LatestTransactions } from "../../LatestTransactions/LatestTransactions";
 import { SearchForm } from "../../SearchForm/SearchForm";
 
-const stats = [
-    {
-        id: 1,
-        name: "Chains Supported",
-        stat: "15",
-        icon: LinkIcon,
-    },
-    {
-        id: 2,
-        name: "24 Hour Volume",
-        stat: "$1 203 000",
-        icon: MailOpenIcon,
-        change: "10.1%",
-        changeType: "increase",
-    },
-    {
-        id: 3,
-        name: "24 Hour Transaction Count",
-        stat: "123",
-        icon: CursorClickIcon,
-        change: "3.2%",
-        changeType: "decrease",
-    },
-];
+// const stats = [
+//     {
+//         id: 1,
+//         name: "Chains Supported",
+//         stat: "15",
+//         icon: LinkIcon,
+//     },
+//     {
+//         id: 2,
+//         name: "24 Hour Volume",
+//         stat: "$1 203 000",
+//         icon: MailOpenIcon,
+//         change: "10.1%",
+//         changeType: "increase",
+//     },
+//     {
+//         id: 3,
+//         name: "24 Hour Transaction Count",
+//         stat: "123",
+//         icon: CursorClickIcon,
+//         change: "3.2%",
+//         changeType: "decrease",
+//     },
+// ];
 
 export const Homepage = () => {
     const { hash } = useLocation();

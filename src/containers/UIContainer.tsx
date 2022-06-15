@@ -1,24 +1,18 @@
 import RenJS from "@renproject/ren";
-import { Chain } from "@renproject/utils";
-import { OrderedMap } from "immutable";
 import { useCallback, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createContainer } from "unstated-next";
 
-import { NETWORK } from "../environmentVariables";
+import { LIGHTNODE, NETWORK } from "../environmentVariables";
 import { allChains, ChainMapper } from "../lib/chains/chains";
 import { search, SearchErrors } from "../lib/search";
 import { searchGateway } from "../lib/searchGateway";
-// import { searchGateway } from "../lib/searchGateway";
-// import { searchLegacyTransaction } from "../lib/searchLegacyTransaction";
 import {
     LegacyRenVMTransaction,
     RenVMGateway,
     RenVMTransaction,
     Searching,
     SearchResult,
-    SummarizedTransaction,
-    TransactionType,
 } from "../lib/searchResult";
 import { searchTransaction } from "../lib/searchTransaction";
 import { TaggedError } from "../lib/taggedError";
@@ -34,7 +28,7 @@ function useUIContainer() {
     const [gateway, setGateway] = useState<RenVMGateway | null | Error>(null);
     const [updatedCount, setUpdatedCount] = useState(0);
 
-    const renJS = useMemo(() => new RenJS(NETWORK), []);
+    const renJS = useMemo(() => new RenJS(LIGHTNODE), []);
 
     const getChainDetails = useCallback((chainName: string) => {
         for (const chain of allChains) {
@@ -92,7 +86,7 @@ function useUIContainer() {
 
             setSearchResult(Searching(searchInput));
 
-            search(searchInput, console.log, getChain)
+            search(searchInput, console.log, getChain, renJS)
                 .then((result) => {
                     if (result && Array.isArray(result)) {
                         if (result.length === 0) {
@@ -137,7 +131,7 @@ function useUIContainer() {
                     }
                 });
         },
-        [navigate, getChain],
+        [navigate, getChain, renJS],
     );
 
     const handleSelectResult = useCallback(
@@ -178,7 +172,7 @@ function useUIContainer() {
 
             setTransaction(transaction);
 
-            searchTransaction(transaction, getChain)
+            searchTransaction(transaction, getChain, renJS)
                 .then((transaction) => {
                     setTransaction(transaction);
                     setUpdatedCount((count) => count + 1);
@@ -190,7 +184,7 @@ function useUIContainer() {
                     }),
                 );
         },
-        [searchResult, setTransaction, getChain],
+        [searchResult, setTransaction, getChain, renJS],
     );
 
     const handleGatewayURL = useCallback(
@@ -209,7 +203,7 @@ function useUIContainer() {
             setGateway(gateway);
             setUpdatedCount((count) => count + 1);
 
-            searchGateway(gateway, getChain)
+            searchGateway(gateway, getChain, renJS)
                 .then((gateway) => {
                     setGateway(gateway);
                     setUpdatedCount((count) => count + 1);
@@ -221,7 +215,7 @@ function useUIContainer() {
                     }),
                 );
         },
-        [searchResult, getChain],
+        [searchResult, getChain, renJS],
     );
 
     return {

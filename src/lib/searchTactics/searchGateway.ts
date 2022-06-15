@@ -4,10 +4,9 @@ import {
     ResponseQueryTx,
     unmarshalRenVMTransaction,
 } from "@renproject/provider/build/main";
-import { GatewayTransaction } from "@renproject/ren";
-import { Chain, ChainCommon, utils } from "@renproject/utils";
+import RenJS from "@renproject/ren";
+import { Chain, utils } from "@renproject/utils";
 
-import { NETWORK } from "../../environmentVariables";
 import { allChains } from "../chains/chains";
 import {
     RenVMGateway,
@@ -74,12 +73,15 @@ export const searchGateway: SearchTactic<RenVMGateway> = {
         searchString: string,
         updateStatus: (status: string) => void,
         getChain: (chainName: string) => Chain | null,
+        renJS: RenJS,
     ): Promise<RenVMGateway> => {
         updateStatus("Looking up Gateway...");
 
-        const provider = new RenVMProvider(NETWORK);
-
-        let queryTx = await queryGateway(provider, searchString, getChain);
+        let queryTx = await queryGateway(
+            renJS.provider,
+            searchString,
+            getChain,
+        );
 
         return RenVMGateway(searchString, queryTx);
     },

@@ -1,7 +1,5 @@
 import { Dialog } from "@headlessui/react";
-import { CreditCardIcon } from "@heroicons/react/outline";
 import SolanaWallet from "@project-serum/sol-wallet-adapter";
-import { PublicKey } from "@solana/web3.js";
 import { ethers } from "ethers";
 import { Map } from "immutable";
 import React, { useCallback, useEffect, useState } from "react";

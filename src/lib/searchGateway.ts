@@ -1,13 +1,9 @@
-import {
-    RenVMCrossChainTransaction,
-    RenVMProvider,
-} from "@renproject/provider";
+import { RenVMCrossChainTransaction } from "@renproject/provider";
 import RenJS from "@renproject/ren";
 import { GatewayParams } from "@renproject/ren/build/main/params";
-import { Chain, ContractChain, RenNetwork, utils } from "@renproject/utils";
+import { Chain, ContractChain, utils } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 
-import { NETWORK } from "../environmentVariables";
 import { getContractChainParams } from "./chains/chains";
 import { RenVMGateway, TransactionSummary } from "./searchResult";
 import { queryGateway } from "./searchTactics/searchGateway";
@@ -15,12 +11,11 @@ import { queryGateway } from "./searchTactics/searchGateway";
 export const searchGateway = async (
     gateway: RenVMGateway,
     getChain: (chainName: string) => Chain | null,
+    renJS: RenJS,
 ): Promise<RenVMGateway | null> => {
-    const provider = new RenVMProvider(NETWORK);
-
     if (!gateway.queryGateway) {
         gateway.queryGateway = await queryGateway(
-            provider,
+            renJS.provider,
             gateway.address,
             getChain,
         );
@@ -32,7 +27,6 @@ export const searchGateway = async (
 export const getGatewayInstance = async (
     renJS: RenJS,
     searchDetails: RenVMCrossChainTransaction,
-    _network: RenNetwork,
     summary: TransactionSummary,
 ) => {
     const inputs = searchDetails.in as unknown as {

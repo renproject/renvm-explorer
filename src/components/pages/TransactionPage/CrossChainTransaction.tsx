@@ -1,9 +1,4 @@
-import {
-    ChainTransactionStatus,
-    TxStatus,
-    TxSubmitter,
-    TxWaiter,
-} from "@renproject/utils";
+import { TxStatus } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import React, { PropsWithChildren } from "react";
 import { Link } from "react-router-dom";
@@ -13,12 +8,12 @@ import {
     TransactionType,
 } from "../../../lib/searchResult";
 import { AsyncButton } from "../../../packages/ChainTxSubmitter/components/AsyncButton";
+import { AmountWithPrice } from "../../common/AmountWithPrice";
 import { ChainIcon } from "../../common/ChainIcon";
 import { ExternalLink } from "../../common/ExternalLink";
+import { TransactionDiagram } from "../../common/TransactionDiagram";
 import { Spinner } from "../../Spinner";
-import { AmountWithPrice } from "./AmountWithPrice";
-import { RenderRenVMStatus } from "./rows/StatusRow";
-import { TransactionDiagram } from "./TransactionDiagram";
+import { RenderRenVMStatus } from "./StatusRow";
 
 export const TableRow: React.FC<
     PropsWithChildren & { title: React.ReactNode }
@@ -64,9 +59,8 @@ interface Props {
         status: TxStatus | undefined;
         revertReason: string | undefined;
 
-        inTx?: TxWaiter | TxSubmitter;
-        renVMTx?: TxWaiter | TxSubmitter;
-        outTx?: TxWaiter | TxSubmitter;
+        inTx?: { txHash: string; explorerLink: string };
+        outTx?: { txHash: string; explorerLink: string };
 
         queryTx: SummarizedTransaction;
 
@@ -206,71 +200,40 @@ export const CrossChainTransaction = ({
                                         </Link>
                                     </TableRow>
                                 ) : null}
-                                {details.inTx ||
-                                details.queryTx.summary.inTx ? (
+                                {details.inTx ? (
                                     <TableRow
                                         title={<>{details.from} Transaction</>}
                                     >
-                                        {details.inTx?.progress.transaction ||
-                                        details.queryTx.summary.inTx ? (
-                                            <ExternalLink
-                                                href={
-                                                    details.inTx?.progress
-                                                        .transaction
-                                                        ?.explorerLink ||
-                                                    details.queryTx.summary.inTx
-                                                        ?.explorerLink
-                                                }
-                                            >
-                                                {details.inTx?.progress
-                                                    .transaction?.txHash ||
-                                                    details.queryTx.summary.inTx
-                                                        ?.txHash}
-                                            </ExternalLink>
-                                        ) : null}
+                                        <ExternalLink
+                                            href={details.inTx.explorerLink}
+                                        >
+                                            {details.inTx.txHash}
+                                        </ExternalLink>
                                     </TableRow>
                                 ) : null}
-                                {details.status === TxStatus.TxStatusDone &&
-                                (details.outTx ||
-                                    details.queryTx.summary.outTx) ? (
+                                {details.outTx || details.handleOutTx ? (
                                     <TableRow
                                         title={<>{details.to} Transaction</>}
                                     >
-                                        {details.outTx?.progress.transaction ||
-                                        details.queryTx.summary.outTx ? (
+                                        {details.outTx ? (
                                             <ExternalLink
                                                 href={
-                                                    details.outTx?.progress
-                                                        .transaction
-                                                        ?.explorerLink ||
-                                                    details.queryTx.summary
-                                                        .outTx?.explorerLink
+                                                    details.outTx.explorerLink
                                                 }
                                             >
-                                                {details.outTx?.progress
-                                                    .transaction?.txHash ||
-                                                    details.queryTx.summary
-                                                        .outTx?.txHash}
+                                                {details.outTx.txHash}
                                             </ExternalLink>
-                                        ) : (
-                                            <>
-                                                {details.outTx?.progress
-                                                    .status ===
-                                                ChainTransactionStatus.Ready ? (
-                                                    <button
-                                                        className="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-1 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:w-auto sm:text-sm"
-                                                        onClick={
-                                                            details.handleOutTx
-                                                        }
-                                                    >
-                                                        Submit
-                                                    </button>
-                                                ) : null}
-                                            </>
-                                        )}
+                                        ) : details.handleOutTx ? (
+                                            <button
+                                                className="w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-1 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:w-auto sm:text-sm"
+                                                onClick={details.handleOutTx}
+                                            >
+                                                Submit
+                                            </button>
+                                        ) : null}
                                     </TableRow>
                                 ) : null}
-                                {!details.renVMTx && loadAdditionalDetails ? (
+                                {loadAdditionalDetails ? (
                                     <div className="py-4 sm:py-5 sm:grid sm:px-6">
                                         <AsyncButton
                                             className="w-fit"

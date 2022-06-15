@@ -1,18 +1,13 @@
-import {
-    RenVMProvider,
-    RenVMTransaction,
-    RenVMTransactionWithStatus,
-    RPCMethod,
-} from "@renproject/provider";
+import { RenVMProvider, RPCMethod } from "@renproject/provider";
+import RenJS from "@renproject/ren";
 import { Chain } from "@renproject/utils";
 
-import { NETWORK } from "../../environmentVariables";
 import { LegacyRenVMTransaction, RenVMTransactionError } from "../searchResult";
 import { errorMatches, TaggedError } from "../taggedError";
 import { isBase64 } from "./common";
 import { SearchTactic } from "./searchTactic";
 
-export const queryMintOrBurn = async (
+const queryMintOrBurn = async (
     provider: RenVMProvider,
     transactionHash: string,
     getChain: (chainName: string) => Chain | null,
@@ -43,12 +38,11 @@ export const searchLegacyRenVMTransaction: SearchTactic<LegacyRenVMTransaction> 
             searchString: string,
             updateStatus: (status: string) => void,
             getChain: (chainName: string) => Chain | null,
+            renJS: RenJS,
         ): Promise<LegacyRenVMTransaction> => {
             updateStatus("Looking up legacy RenVM hash...");
 
-            const provider = new RenVMProvider(NETWORK);
-
-            await queryMintOrBurn(provider, searchString, getChain);
+            await queryMintOrBurn(renJS.provider, searchString, getChain);
 
             return LegacyRenVMTransaction(searchString);
         },

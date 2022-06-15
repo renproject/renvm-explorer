@@ -4,9 +4,10 @@ import {
     RPCResponses,
     unmarshalRenVMTransaction,
 } from "@renproject/provider";
-import { Chain, ChainCommon, utils } from "@renproject/utils";
+import RenJS from "@renproject/ren";
+import { Chain, utils } from "@renproject/utils";
 
-import { DEBUG, NETWORK } from "../../environmentVariables";
+import { DEBUG } from "../../environmentVariables";
 import { allChains } from "../chains/chains";
 import {
     RenVMTransaction,
@@ -16,7 +17,7 @@ import {
 import { summarizeTransaction } from "./searchRenVMHash";
 import { SearchTactic } from "./searchTactic";
 
-export const queryTxsByTxid = async (
+const queryTxsByTxid = async (
     provider: RenVMProvider,
     txid: Buffer,
     getChain: (chainName: string) => Chain | null,
@@ -65,6 +66,7 @@ export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
         searchString: string,
         updateStatus: (status: string) => void,
         getChain: (chainName: string) => Chain | null,
+        renJS: RenJS,
     ): Promise<RenVMTransaction[]> => {
         const formats = Array.from(
             // Remove duplicates.
@@ -100,12 +102,14 @@ export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
             return [];
         }
 
-        const provider = new RenVMProvider(NETWORK);
-
         let queryTxs;
         for (const format of formats) {
             try {
-                queryTxs = await queryTxsByTxid(provider, format!, getChain);
+                queryTxs = await queryTxsByTxid(
+                    renJS.provider,
+                    format!,
+                    getChain,
+                );
                 break;
             } catch (error: any) {
                 continue;

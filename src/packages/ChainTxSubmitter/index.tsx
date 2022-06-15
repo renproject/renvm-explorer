@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 import { ChainTxContainer } from "./ChainTxContainer";
 import { ChainTxController } from "./ChainTxController";
 
-export const Provider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
+const Provider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     return (
         <>
             <ChainTxContainer.Provider>

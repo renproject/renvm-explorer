@@ -71,14 +71,14 @@ const hardcodedABIs = (chain: ChainCommon, to: string): AbiItem[] | null => {
     return null;
 };
 
-export enum ABIError {
+enum ABIError {
     ContractNotVerified = "Contract not verified.",
     ChainNotSupported = "Fetching ABI not supported on host-chain.",
 }
 
 type ABITactic = (chain: ChainCommon, to: string) => Promise<AbiItem[]>;
 
-export const etherscanAPIMap: {
+const etherscanAPIMap: {
     [chain: string]: { [network: string]: string };
 } = {
     [Ethereum.chain]: {

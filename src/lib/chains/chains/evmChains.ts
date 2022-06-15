@@ -22,10 +22,9 @@ import { ethers } from "ethers";
 
 import { ALCHEMY_KEY, INFURA_KEY } from "../../../environmentVariables";
 import { getEvmABI } from "../getABI";
-import { Icons } from "../icons/wallets";
 import { ChainDetails, ChainType } from "./types";
 
-export type EthereumClass =
+type EthereumClass =
     | Arbitrum
     | Avalanche
     | Catalog
@@ -34,36 +33,6 @@ export type EthereumClass =
     | Fantom
     | Goerli
     | Polygon;
-
-export const networkMapper =
-    (map: {
-        [RenNetwork.Mainnet]?: EVMNetworkConfig;
-        [RenNetwork.Testnet]?: EVMNetworkConfig;
-        [RenNetwork.Devnet]?: EVMNetworkConfig;
-    }) =>
-    (id: string | number): RenNetwork => {
-        const devnet = map[RenNetwork.Devnet];
-        return {
-            [parseInt(map[RenNetwork.Mainnet]!.config.chainId)]:
-                RenNetwork.Mainnet,
-            [parseInt(map[RenNetwork.Testnet]!.config.chainId)]:
-                RenNetwork.Testnet,
-            [devnet ? parseInt(devnet.config.chainId) : -1]: RenNetwork.Devnet,
-        }[parseInt(id as string)] as RenNetwork; // tslint:disable-line: radix
-    };
-
-export const injectedConnectorFactory = (map: {
-    [network in RenNetwork]?: EVMNetworkConfig;
-}) => {
-    return {
-        name: "Metamask",
-        logo: Icons.Metamask,
-        // connector: new EthereumInjectedConnector({
-        //   debug: true,
-        //   networkIdMapper: networkMapper(map),
-        // }),
-    };
-};
 
 export const EthereumDetails: ChainDetails<Ethereum> = {
     chain: Ethereum.chain,
@@ -286,7 +255,7 @@ class StaticJsonRpcProvider extends ethers.providers.JsonRpcProvider {
     }
 }
 
-export const getPublicEthereumProvider = <
+const getPublicEthereumProvider = <
     T extends
         | Arbitrum
         | Avalanche
@@ -322,7 +291,7 @@ export const getPublicEthereumProvider = <
     return new Class({ provider, network }) as any as T;
 };
 
-export const getEthereumMintParams = async (
+const getEthereumMintParams = async (
     mintChain: EthereumClass,
     to: string,
     payload: string,
