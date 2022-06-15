@@ -5,34 +5,35 @@ import BigNumber from "bignumber.js";
 import { v4 as uuid } from "uuid";
 
 export enum SearchResultType {
-    Searching,
+    Searching = "Searching",
 
     /**
      * Redirect represents a generic search result that points to a new url. This
      * URL can be a relative URL or it can point to an external website. Its ID is
      * the URL.
      */
-    Redirect,
+    Redirect = "Redirect",
     /**
      * RenVMTransaction represents a mint or burn. Its ID is a RenVM hash.
      */
-    RenVMTransaction,
+    RenVMTransaction = "Transaction",
 
     /**
      * RenVMTransaction represents a mint or burn. Its ID is a RenVM hash.
      */
-    LegacyRenVMTransaction,
+    LegacyRenVMTransaction = "Legacy Tx",
 
     /**
      * RenVMGateway represents a gateway address. Its ID is the address.
      */
-    RenVMGateway,
+    RenVMGateway = "Gateway",
 }
 
 interface SearchResultCommon {
     uuid: string;
 
     type: SearchResultType;
+    label: string;
     resultPath: string;
 }
 
@@ -40,6 +41,7 @@ interface SearchResultCommon {
 
 export interface Searching extends SearchResultCommon {
     type: SearchResultType.Searching;
+    label: string;
     resultPath: string;
     searchString: string;
 
@@ -56,6 +58,7 @@ export const Searching = (
     uuid: uuid(),
     type: SearchResultType.Searching,
     searchString,
+    label: searchString,
     resultPath: `/search/${encodeURIComponent(searchString)}`,
     ...details,
 });
@@ -112,6 +115,7 @@ export type SummarizedTransaction =
 
 export interface RenVMTransaction extends SearchResultCommon {
     type: SearchResultType.RenVMTransaction;
+    label: string;
     resultPath: string;
     txHash: string;
     queryTx?: SummarizedTransaction | Error;
@@ -126,6 +130,7 @@ export const RenVMTransaction = (
     return {
         uuid: uuid(),
         type: SearchResultType.RenVMTransaction,
+        label: transactionHash,
         resultPath: `/tx/${encodeURIComponent(transactionHash)}`,
         txHash: transactionHash,
         queryTx,
@@ -137,6 +142,7 @@ export const RenVMTransaction = (
 
 export interface LegacyRenVMTransaction extends SearchResultCommon {
     type: SearchResultType.LegacyRenVMTransaction;
+    label: string;
     resultPath: string;
     txHash: string;
     queryTx?: SummarizedTransaction | Error;
@@ -149,6 +155,7 @@ export const LegacyRenVMTransaction = (
     return {
         uuid: uuid(),
         type: SearchResultType.LegacyRenVMTransaction,
+        label: transactionHash,
         resultPath: `https://renproject.github.io/renvm-explorer-legacy/#/legacy-tx/${encodeURIComponent(
             transactionHash,
         )}`,
@@ -160,6 +167,7 @@ export const LegacyRenVMTransaction = (
 
 export interface RenVMGateway extends SearchResultCommon {
     type: SearchResultType.RenVMGateway;
+    label: string;
     resultPath: string;
     address: string;
     queryGateway?: {
@@ -182,6 +190,7 @@ export const RenVMGateway = (
     return {
         uuid: uuid(),
         type: SearchResultType.RenVMGateway,
+        label: address,
         resultPath: `/gateway/${encodeURIComponent(address)}`,
         address,
         queryGateway,

@@ -1,7 +1,7 @@
 import { ResponseQueryTx } from "@renproject/provider";
 import { utils } from "@renproject/utils";
 import { useCallback, useState } from "react";
-import { useLocation, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { createContainer } from "unstated-next";
 
 import { DEBUG } from "../environmentVariables";

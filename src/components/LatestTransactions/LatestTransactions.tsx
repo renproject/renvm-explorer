@@ -1,18 +1,11 @@
 import {
-    ArrowCircleLeftIcon,
-    ArrowCircleRightIcon,
     CheckCircleIcon,
     ChevronDoubleLeftIcon,
     ChevronLeftIcon,
     ChevronRightIcon,
     RefreshIcon,
 } from "@heroicons/react/outline";
-import React, {
-    PropsWithChildren,
-    useCallback,
-    useEffect,
-    useState,
-} from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { LatestTransactionsContainer } from "../../containers/LatestTransactionsContainer";
 import { classNames } from "../../lib/utils";

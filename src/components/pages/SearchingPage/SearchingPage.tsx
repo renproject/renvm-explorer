@@ -6,8 +6,7 @@ import { SearchResultType } from "../../../lib/searchResult";
 import { Spinner } from "../../Spinner";
 
 export const SearchingPage = () => {
-    const { searchResult, handleSearchURL, handleSelectResult } =
-        UIContainer.useContainer();
+    const { searchResult, handleSearchURL } = UIContainer.useContainer();
 
     const { search } = useParams<{ search: string }>();
 
@@ -28,25 +27,26 @@ export const SearchingPage = () => {
                         <>
                             {searchResult.multipleResults ? (
                                 // Multiple results.
-                                <>
-                                    <p>Select one of the following results:</p>
-                                    {searchResult.multipleResults.map(
-                                        (result) => {
-                                            const onClick = () =>
-                                                handleSelectResult(result);
-                                            return (
-                                                <div
+                                <div className="flex flex-col justify-center text-center w-full">
+                                    <p className="mb-2">
+                                        Select one of the following results:
+                                    </p>
+                                    <div className="flex flex-col">
+                                        {searchResult.multipleResults.map(
+                                            (result) => (
+                                                <a
+                                                    className="p-4 bg-gray-50 m-1 border border-gray-200 rounded-lg truncate"
                                                     style={{
                                                         cursor: "pointer",
                                                     }}
-                                                    onClick={onClick}
+                                                    href={result.resultPath}
                                                 >
-                                                    {result.resultPath}
-                                                </div>
-                                            );
-                                        },
-                                    )}
-                                </>
+                                                    {result.type} {result.label}
+                                                </a>
+                                            ),
+                                        )}
+                                    </div>
+                                </div>
                             ) : searchResult.noResult ? (
                                 // No results.
                                 <div className="flex items-center flex-col lg:flex-row">

@@ -134,14 +134,6 @@ function useUIContainer() {
         [navigate, getChain, renJS],
     );
 
-    const handleSelectResult = useCallback(
-        (result: SearchResult) => {
-            setSearchResult(result);
-            navigate(result.resultPath, { replace: true });
-        },
-        [navigate],
-    );
-
     // handleSearchForm is called when the user submits a new search.
     const handleSearchForm = useCallback(
         (searchInput: string) => {
@@ -228,11 +220,9 @@ function useUIContainer() {
         handleSearchURL,
         handleSearchForm,
         handleTransactionURL,
-        // handleLegacyTransactionURL,
         handleGatewayURL,
         getChainDetails,
         getChain,
-        handleSelectResult,
     };
 }
 
