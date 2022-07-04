@@ -3,7 +3,7 @@ import {
     RenVMTransaction,
     ResponseQueryTx,
     unmarshalRenVMTransaction,
-} from "@renproject/provider/build/main";
+} from "@renproject/provider";
 import RenJS from "@renproject/ren";
 import { Chain, utils } from "@renproject/utils";
 

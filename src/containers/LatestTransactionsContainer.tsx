@@ -1,7 +1,7 @@
 import { ResponseQueryTx } from "@renproject/provider";
 import { utils } from "@renproject/utils";
 import { useCallback, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { createContainer } from "unstated-next";
 
 import { DEBUG } from "../environmentVariables";
@@ -14,6 +14,7 @@ const TX_LIMIT = 8;
 function useLatestTransactionsContainer() {
     const { renJS, getChain } = UIContainer.useContainer();
     const [params, setSearchParams] = useSearchParams();
+    const location = useLocation();
 
     const [page, setPage] = useState<number>(
         parseInt(params.get("page") || "0", 10),
@@ -64,10 +65,22 @@ function useLatestTransactionsContainer() {
                     params.set("page", String(newPage));
                 }
             }
-            setSearchParams(params);
+
+            // If the user is still on the same page that called this function,
+            // update the search parameters.
+            if (location.pathname === window.location.pathname) {
+                setSearchParams(params);
+            }
             setLatestTransactions(txsUnmarshalled);
         },
-        [renJS, getChain, setLatestTransactions, params, setSearchParams],
+        [
+            renJS,
+            getChain,
+            setLatestTransactions,
+            params,
+            setSearchParams,
+            location.pathname,
+        ],
     );
 
     return {

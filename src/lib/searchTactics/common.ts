@@ -30,10 +30,11 @@ export const isBase64 = doesntError(
         } = {},
     ) => {
         const buffer = Buffer.from(input, "base64");
-        assert(
-            options.length === undefined || buffer.length === options.length,
+        return (
+            (options.length === undefined ||
+                buffer.length === options.length) &&
+            buffer.toString("base64") === input
         );
-        assert(buffer.toString("base64") === input);
     },
 );
 

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 import { SummarizedTransaction } from "../../../lib/searchResult";
 import { AsyncButton } from "../../../packages/ChainTxSubmitter/components/AsyncButton";
-import { ChainIcon } from "../../common/ChainIcon";
+import { Icon } from "../../common/icons/Icon";
 import { TransactionDiagram } from "../../common/TransactionDiagram";
 import { Spinner } from "../../Spinner";
 import {
@@ -73,7 +73,7 @@ export const GatewayTable = ({
                                             flex: "1",
                                         }}
                                     >
-                                        <ChainIcon
+                                        <Icon
                                             style={{ marginRight: 5 }}
                                             chainName={details.asset}
                                         />
@@ -89,7 +89,7 @@ export const GatewayTable = ({
                                             flex: "1",
                                         }}
                                     >
-                                        <ChainIcon
+                                        <Icon
                                             style={{ marginRight: 5 }}
                                             chainName={details.from}
                                         />
@@ -105,7 +105,7 @@ export const GatewayTable = ({
                                             flex: "1",
                                         }}
                                     >
-                                        <ChainIcon
+                                        <Icon
                                             style={{ marginRight: 5 }}
                                             chainName={details.to}
                                         />
@@ -122,7 +122,7 @@ export const GatewayTable = ({
                                                         to={`/tx/${transaction.hash}`}
                                                         className="border p-4 rounded-lg mb-4 w-fit flex items-center"
                                                     >
-                                                        <ChainIcon
+                                                        <Icon
                                                             chainName={
                                                                 details.asset
                                                             }

@@ -1,7 +1,7 @@
 import { InformationCircleIcon } from "@heroicons/react/outline";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import ReactTooltip from "react-tooltip";
 
+import { Tooltip } from "../../../components/common/Tooltip";
 import { Spinner } from "../../../components/Spinner";
 import { classNames } from "../../../lib/utils";
 
@@ -79,14 +79,6 @@ export const AsyncButton = ({
         onClickCalled,
     ]);
 
-    const [rendered, setRendered] = useState(false);
-    useEffect(() => {
-        setRendered(true);
-        if (rendered) {
-            ReactTooltip.rebuild();
-        }
-    }, [rendered]);
-
     return (
         <>
             <button
@@ -95,7 +87,7 @@ export const AsyncButton = ({
                 disabled={disabled || calling || done}
                 title={callError?.message}
                 className={classNames(
-                    "mt-3 inline-flex justify-center rounded-md border-gray-300 px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-renblue-500 sm:mt-0 sm:text-sm items-center",
+                    "inline-flex justify-center rounded-md border-gray-300 px-4 py-2 bg-white text-base font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-renblue-500 sm:text-sm items-center",
                     calling ? "" : "border shadow-sm hover:bg-gray-50",
                     disabled ? "cursor-not-allowed opacity-75" : "",
                     className,
@@ -104,12 +96,9 @@ export const AsyncButton = ({
                 {done ? <span>Done -&nbsp;</span> : null}
                 <span style={{ display: callError ? "inline" : "none" }}>
                     Error{" "}
-                    <span
-                        // className="text-t-600"
-                        data-tip={callError?.message || "error"}
-                    >
+                    <Tooltip tooltip={callError?.message || "error"}>
                         <InformationCircleIcon className="w-4 -mt-0.5 inline" />
-                    </span>
+                    </Tooltip>
                     &nbsp;-&nbsp;
                 </span>
                 {calling ? <Spinner /> : null}

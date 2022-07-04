@@ -1,7 +1,7 @@
 import BigNumber from "bignumber.js";
 import React from "react";
 
-import { ChainIcon } from "./ChainIcon";
+import { Icon } from "./icons/Icon";
 
 interface Props {
     asset: string;
@@ -28,7 +28,7 @@ export const TransactionDiagram: React.FC<Props> = ({
                     flex: "1",
                 }}
             >
-                <ChainIcon chainName={from} />
+                <Icon chainName={from} />
                 <span className="hidden xs:inline ml-2">{from}</span>
             </div>
             <span style={{ margin: "0px 10px" }}>{" → "}</span>
@@ -42,7 +42,7 @@ export const TransactionDiagram: React.FC<Props> = ({
                     alignItems: "center",
                 }}
             >
-                <ChainIcon chainName={asset} />
+                <Icon chainName={asset} />
                 <span className="hidden 2xs:inline ml-2">
                     {amount ? <>{amount.decimalPlaces(4).toFixed()} </> : null}
                     {asset}
@@ -59,7 +59,7 @@ export const TransactionDiagram: React.FC<Props> = ({
                     flex: "1",
                 }}
             >
-                <ChainIcon chainName={to} />
+                <Icon chainName={to} />
                 <span className="hidden xs:inline ml-2">{to}</span>
             </div>
         </div>

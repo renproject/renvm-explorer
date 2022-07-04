@@ -1,17 +1,17 @@
 import React from "react";
 
-import { Icons as AssetIcons } from "../../lib/chains/icons/assets";
-import { Icons as ChainIcons } from "../../lib/chains/icons/chains";
-import { Icons as WhiteChainIcons } from "../../lib/chains/icons/chains-white";
-import { Icons as WalletIcons } from "../../lib/chains/icons/wallets";
-import { classNames } from "../../lib/utils";
+import { classNames } from "../../../lib/utils";
+import { Icons as AssetIcons } from "./assets";
+import { Icons as ChainIcons } from "./chains";
+import { Icons as WhiteChainIcons } from "./chains-white";
+import { Icons as WalletIcons } from "./wallets";
 
 interface Props {
     chainName: string;
     white?: boolean;
 }
 
-export const ChainIcon: React.FC<
+export const Icon: React.FC<
     Props &
         (React.SVGProps<SVGSVGElement> &
             React.DetailedHTMLProps<

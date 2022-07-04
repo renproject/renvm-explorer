@@ -2,7 +2,6 @@ import { RenNetwork } from "@renproject/utils";
 import { headerCase } from "change-case";
 import { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import ReactTooltip from "react-tooltip";
 
 import { NETWORK } from "../../environmentVariables";
 import { ErrorBoundary } from "../common/ErrorBoundary";
@@ -30,7 +29,6 @@ export const App = () => {
     return (
         // The outer div has `h-screen` so that the footer is always at the bottom.
         <div className="h-screen flex flex-col">
-            <ReactTooltip className="max-w-xs sm:max-w-sm" effect="solid" />
             <NewHeader />
             <ErrorBoundary>
                 <div className="mt-4 flex-grow mb-10">

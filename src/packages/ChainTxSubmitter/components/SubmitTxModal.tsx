@@ -9,7 +9,7 @@ import {
 import { sentenceCase } from "change-case";
 import React from "react";
 
-import { ChainIcon } from "../../../components/common/ChainIcon";
+import { Icon } from "../../../components/common/icons/Icon";
 import { Wallet } from "../../../containers/WalletContainer";
 import { AsyncButton } from "./AsyncButton";
 import { ChainTxButton } from "./ChainTxButton";
@@ -49,10 +49,7 @@ export const SubmitTxModal: React.FC<Props> = ({
                     as="h3"
                     className="text-lg leading-6 font-medium flex items-center"
                 >
-                    <ChainIcon
-                        chainName={chainTx?.chain || ""}
-                        className="mr-1"
-                    />{" "}
+                    <Icon chainName={chainTx?.chain || ""} className="mr-1" />{" "}
                     Submit {chainTx?.chain} transaction
                 </Dialog.Title>
             </div>

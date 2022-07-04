@@ -7,14 +7,12 @@ import {
     EVMNetworkConfig,
     Fantom,
     Goerli,
+    Optimism,
     Polygon,
 } from "@renproject/chains";
-import { EthArgs } from "@renproject/chains-ethereum/build/main/utils/abi";
-import { resolveRpcEndpoints } from "@renproject/chains-ethereum/build/main/utils/generic";
-import {
-    EVMPayload,
-    EVMPayloadInterface,
-} from "@renproject/chains-ethereum/build/main/utils/payloads/evmPayloadHandlers";
+import { EthArgs } from "@renproject/chains-ethereum//utils/abi";
+import { resolveRpcEndpoints } from "@renproject/chains-ethereum//utils/generic";
+import { EVMPayloadInterface } from "@renproject/chains-ethereum//utils/payloads/evmParams";
 // import { EthereumInjectedConnector } from "@renproject/multiwallet-ethereum-injected-connector";
 // import { EthereumWalletConnectConnector } from "@renproject/multiwallet-ethereum-walletconnect-connector";
 import { Chain, RenNetwork, utils } from "@renproject/utils";
@@ -32,7 +30,8 @@ type EthereumClass =
     | Ethereum
     | Fantom
     | Goerli
-    | Polygon;
+    | Polygon
+    | Optimism;
 
 export const EthereumDetails: ChainDetails<Ethereum> = {
     chain: Ethereum.chain,
@@ -66,7 +65,7 @@ export const EthereumDetails: ChainDetails<Ethereum> = {
         to: string,
         payload: string,
         asset: string,
-    ): Promise<EVMPayload> =>
+    ): Promise<EVMPayloadInterface> =>
         getEthereumMintParams(mintChain as EthereumClass, to, payload, asset),
 };
 
@@ -92,7 +91,7 @@ export const BinanceSmartChainDetails: ChainDetails<BinanceSmartChain> = {
         to: string,
         payload: string,
         asset: string,
-    ): Promise<EVMPayload> =>
+    ): Promise<EVMPayloadInterface> =>
         getEthereumMintParams(
             mintChain as BinanceSmartChain,
             to,
@@ -120,7 +119,7 @@ export const FantomDetails: ChainDetails<Fantom> = {
         to: string,
         payload: string,
         asset: string,
-    ): Promise<EVMPayload> =>
+    ): Promise<EVMPayloadInterface> =>
         getEthereumMintParams(mintChain as Fantom, to, payload, asset),
 };
 
@@ -143,7 +142,7 @@ export const PolygonDetails: ChainDetails<Polygon> = {
         to: string,
         payload: string,
         asset: string,
-    ): Promise<EVMPayload> =>
+    ): Promise<EVMPayloadInterface> =>
         getEthereumMintParams(mintChain as Polygon, to, payload, asset),
 };
 
@@ -166,7 +165,7 @@ export const AvalancheDetails: ChainDetails<Avalanche> = {
         to: string,
         payload: string,
         asset: string,
-    ): Promise<EVMPayload> =>
+    ): Promise<EVMPayloadInterface> =>
         getEthereumMintParams(mintChain as Avalanche, to, payload, asset),
 };
 
@@ -194,7 +193,7 @@ export const GoerliDetails: ChainDetails<Goerli> = {
         to: string,
         payload: string,
         asset: string,
-    ): Promise<EVMPayload> =>
+    ): Promise<EVMPayloadInterface> =>
         getEthereumMintParams(mintChain as Goerli, to, payload, asset),
 };
 
@@ -217,7 +216,7 @@ export const ArbitrumDetails: ChainDetails<Arbitrum> = {
         to: string,
         payload: string,
         asset: string,
-    ): Promise<EVMPayload> =>
+    ): Promise<EVMPayloadInterface> =>
         getEthereumMintParams(mintChain as Arbitrum, to, payload, asset),
 };
 
@@ -240,8 +239,31 @@ export const CatalogDetails: ChainDetails<Catalog> = {
         to: string,
         payload: string,
         asset: string,
-    ): Promise<EVMPayload> =>
+    ): Promise<EVMPayloadInterface> =>
         getEthereumMintParams(mintChain as Catalog, to, payload, asset),
+};
+
+///////////////////////////////////////////////////////////////////////////////
+
+export const OptimismDetails: ChainDetails<Optimism> = {
+    chain: Optimism.chain,
+    chainPattern: /^(optimism|arb|arbeth)$/i,
+    assets: Optimism.assets,
+    type: ChainType.EVMChain,
+    usePublicProvider: (network: RenNetwork) =>
+        getPublicEthereumProvider<Optimism>(Optimism, network),
+
+    // multiwalletConfig: (network: RenNetwork) => [
+    //   injectedConnectorFactory(Optimism.configMap),
+    // ],
+
+    getOutputParams: async (
+        mintChain: Chain,
+        to: string,
+        payload: string,
+        asset: string,
+    ): Promise<EVMPayloadInterface> =>
+        getEthereumMintParams(mintChain as Optimism, to, payload, asset),
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -255,17 +277,7 @@ class StaticJsonRpcProvider extends ethers.providers.JsonRpcProvider {
     }
 }
 
-const getPublicEthereumProvider = <
-    T extends
-        | Arbitrum
-        | Avalanche
-        | Catalog
-        | BinanceSmartChain
-        | Ethereum
-        | Fantom
-        | Goerli
-        | Polygon,
->(
+const getPublicEthereumProvider = <T extends EthereumClass>(
     Class: {
         chain: string;
         new (...p: any[]): T;
@@ -296,7 +308,7 @@ const getEthereumMintParams = async (
     to: string,
     payload: string,
     asset: string,
-): Promise<EVMPayload> => {
+): Promise<EVMPayloadInterface> => {
     const payloadConfig: EVMPayloadInterface["payloadConfig"] = {
         preserveAddressFormat: true,
     };

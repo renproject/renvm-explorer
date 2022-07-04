@@ -9,6 +9,7 @@ import {
     Ethereum,
     Fantom,
     Filecoin,
+    Optimism,
     Polygon,
     Solana,
     Terra,
@@ -26,6 +27,7 @@ import { ReactComponent as DogecoinIcon } from "./dogecoin.svg";
 import { ReactComponent as EthereumIcon } from "./ethereum.svg";
 import { ReactComponent as FantomIcon } from "./fantom.svg";
 import { ReactComponent as FilecoinIcon } from "./filecoin.svg";
+import { ReactComponent as OptimismIcon } from "./optimism.svg";
 import { ReactComponent as PolygonIcon } from "./polygon.svg";
 import { ReactComponent as SolanaIcon } from "./solana.svg";
 import { ReactComponent as TerraIcon } from "./terra.svg";
@@ -38,19 +40,20 @@ export const Icons: {
         }
     >;
 } = {
-    [Avalanche.chain]: AvalancheIcon,
     [Arbitrum.chain]: ArbitrumIcon,
+    [Avalanche.chain]: AvalancheIcon,
     [BinanceSmartChain.chain]: BinanceSmartChainIcon,
     [Bitcoin.chain]: BitcoinIcon,
     [BitcoinCash.chain]: BitcoinCashIcon,
-    Catalog: CatalogIcon,
     [DigiByte.chain]: DigiByteIcon,
     [Dogecoin.chain]: DogecoinIcon,
     [Ethereum.chain]: EthereumIcon,
     [Fantom.chain]: FantomIcon,
     [Filecoin.chain]: FilecoinIcon,
+    [Optimism.chain]: OptimismIcon,
     [Polygon.chain]: PolygonIcon,
     [Solana.chain]: SolanaIcon,
     [Terra.chain]: TerraIcon,
     [Zcash.chain]: ZcashIcon,
+    Catalog: CatalogIcon,
 };

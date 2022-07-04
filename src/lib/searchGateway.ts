@@ -1,6 +1,6 @@
 import { RenVMCrossChainTransaction } from "@renproject/provider";
 import RenJS from "@renproject/ren";
-import { GatewayParams } from "@renproject/ren/build/main/params";
+import { GatewayParams } from "@renproject/ren//params";
 import { Chain, ContractChain, utils } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 

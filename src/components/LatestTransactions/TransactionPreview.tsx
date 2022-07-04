@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 import { SummarizedTransaction } from "../../lib/searchResult";
 import { classNames } from "../../lib/utils";
-import { ChainIcon } from "../common/ChainIcon";
+import { Icon } from "../common/icons/Icon";
 
 interface Props {
     queryTx: SummarizedTransaction;
@@ -57,7 +57,7 @@ export const TransactionPreview: React.FC<Props> = ({ queryTx, refreshed }) => {
             </td> */}
             <td className="py-4 hidden sm:table-cell">
                 <div className="whitespace-nowrap flex items-center justify-center">
-                    <ChainIcon
+                    <Icon
                         style={{ marginRight: 5, fill: "#001732" }}
                         chainName={from}
                     />
@@ -66,10 +66,7 @@ export const TransactionPreview: React.FC<Props> = ({ queryTx, refreshed }) => {
             </td>
             <td className="py-4">
                 <div className="whitespace-nowrap flex items-center justify-center">
-                    <ChainIcon
-                        className="mr-1"
-                        chainName={queryTx.summary.asset}
-                    />
+                    <Icon className="mr-1" chainName={queryTx.summary.asset} />
                     {queryTx.summary.amountIn &&
                     !queryTx.summary.amountIn.isNaN() &&
                     !queryTx.summary.amountIn.isZero()
@@ -86,7 +83,7 @@ export const TransactionPreview: React.FC<Props> = ({ queryTx, refreshed }) => {
             </td>
             <td className="py-4 hidden sm:table-cell">
                 <div className="whitespace-nowrap flex items-center justify-center">
-                    <ChainIcon
+                    <Icon
                         style={{ marginRight: 5, fill: "#001732" }}
                         chainName={to}
                     />

@@ -5,7 +5,7 @@ import { Map } from "immutable";
 import React, { useCallback, useEffect, useState } from "react";
 import { createContainer } from "unstated-next";
 
-import { ChainIcon } from "../components/common/ChainIcon";
+import { Icon } from "../components/common/icons/Icon";
 import { Modal } from "../packages/ChainTxSubmitter/components/Modal";
 
 interface WalletOption {
@@ -29,6 +29,7 @@ const evmChains = [
     "Goerli",
     "Arbitrum",
     "Catalog",
+    "Optimism",
 ];
 
 const metamaskOption: WalletOption = {
@@ -168,7 +169,7 @@ const WalletContainerModal: React.FC<{}> = () => {
             {connecting ? (
                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
-                        <ChainIcon
+                        <Icon
                             chainName={connecting.chain}
                             className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 sm:mx-0 sm:h-10 sm:w-10"
                             aria-hidden="true"
@@ -197,7 +198,7 @@ const WalletContainerModal: React.FC<{}> = () => {
                                                 );
                                             }}
                                         >
-                                            <ChainIcon
+                                            <Icon
                                                 chainName={wallet.name}
                                                 className="w-10 h-10"
                                             />

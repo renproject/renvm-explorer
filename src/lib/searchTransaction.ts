@@ -1,7 +1,7 @@
 import { Ethereum } from "@renproject/chains-ethereum";
 import { RenVMCrossChainTransaction } from "@renproject/provider";
 import RenJS, { Gateway } from "@renproject/ren";
-import { TransactionParams } from "@renproject/ren/build/main/params";
+import { TransactionParams } from "@renproject/ren//params";
 import { Chain, ContractChain, utils } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 
@@ -67,9 +67,6 @@ export const getTransactionDepositInstance = async (
                     summary.fromChain.transactionExplorerLink({ txid })) ||
                 "",
             txHash: summary.fromChain.txHashFromBytes(searchDetails.in.txid),
-            txidFormatted: summary.fromChain.txHashFromBytes(
-                searchDetails.in.txid,
-            ),
             // FIXME!
             txindex: searchDetails.in.txindex.toFixed(),
             amount: searchDetails.in.amount.toFixed(),
@@ -90,7 +87,13 @@ export const getTransactionDepositInstance = async (
 
     const deposit = await renJS.gatewayTransaction(txParams);
 
-    deposit.renVM.submit().catch(console.error);
+    try {
+        await deposit.renVM.query();
+    } catch (error) {
+        console.error(error);
+    }
+
+    // deposit.renVM.submit().catch(console.error);
 
     let gateway: Gateway | undefined;
 
@@ -106,9 +109,12 @@ export const getTransactionDepositInstance = async (
     }
 
     if (deposit.hash !== searchDetails.hash) {
-        console.error(
+        console.group(
             `Expected ${deposit.hash} to equal ${searchDetails.hash}.`,
         );
+        console.debug("expected", searchDetails);
+        console.debug("actual", await deposit.renVM.export());
+        console.groupEnd();
         // await deposit.renVM.submit();
     }
 

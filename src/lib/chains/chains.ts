@@ -9,6 +9,7 @@ import {
     EthereumDetails,
     FantomDetails,
     GoerliDetails,
+    OptimismDetails,
     PolygonDetails,
 } from "./chains/evmChains";
 import {
@@ -32,6 +33,7 @@ const mintChains = [
     GoerliDetails,
     ArbitrumDetails,
     SolanaDetails,
+    OptimismDetails,
 ];
 
 const lockChains = [

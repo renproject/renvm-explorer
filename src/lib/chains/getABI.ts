@@ -5,8 +5,12 @@ import {
     Goerli,
     Polygon,
 } from "@renproject/chains";
-import { BinanceSmartChain, Ethereum } from "@renproject/chains-ethereum";
-import { AbiItem } from "@renproject/chains-ethereum/build/main/utils/abi";
+import {
+    BinanceSmartChain,
+    Ethereum,
+    Optimism,
+} from "@renproject/chains-ethereum";
+import { AbiItem } from "@renproject/chains-ethereum//utils/abi";
 import { ChainCommon, RenNetwork, utils } from "@renproject/utils";
 import Axios from "axios";
 
@@ -84,36 +88,33 @@ const etherscanAPIMap: {
     [Ethereum.chain]: {
         [RenNetwork.Mainnet]: "https://api.etherscan.io/api",
         [RenNetwork.Testnet]: "https://api-kovan.etherscan.io/api",
-        [RenNetwork.Devnet]: "https://api-kovan.etherscan.io/api",
     },
     [BinanceSmartChain.chain]: {
         [RenNetwork.Mainnet]: "https://api.bscscan.com/api",
         [RenNetwork.Testnet]: "https://api-testnet.bscscan.com/api",
-        [RenNetwork.Devnet]: "https://api-testnet.bscscan.com/api",
     },
     [Fantom.chain]: {
         [RenNetwork.Mainnet]: "https://api.ftmscan.com/api",
         [RenNetwork.Testnet]: "https://api-testnet.ftmscan.com/api",
-        [RenNetwork.Devnet]: "https://api-testnet.ftmscan.com/api",
     },
     [Polygon.chain]: {
         [RenNetwork.Mainnet]: "https://api.polygonscan.com/api",
         [RenNetwork.Testnet]: "https://api-testnet.polygonscan.com/api",
-        [RenNetwork.Devnet]: "https://api-testnet.polygonscan.com/api",
     },
     [Arbitrum.chain]: {
         [RenNetwork.Mainnet]: "https://api.arbiscan.io/api",
         [RenNetwork.Testnet]: "https://api-testnet.arbiscan.io/api",
-        [RenNetwork.Devnet]: "https://api-testnet.arbiscan.io/api",
     },
     [Avalanche.chain]: {
         [RenNetwork.Mainnet]: "https://api.snowtrace.io/api",
         [RenNetwork.Testnet]: "https://api-testnet.snowtrace.io/api",
-        [RenNetwork.Devnet]: "https://api-testnet.snowtrace.io/api",
     },
     [Goerli.chain]: {
         [RenNetwork.Testnet]: "https://api-goerli.etherscan.io/api",
-        [RenNetwork.Devnet]: "https://api-goerli.etherscan.io/api",
+    },
+    [Optimism.chain]: {
+        [RenNetwork.Mainnet]: "https://api-optimistic.etherscan.io/api",
+        [RenNetwork.Testnet]: "https://api-optimistic-kovan.etherscan.io/api",
     },
 };
 

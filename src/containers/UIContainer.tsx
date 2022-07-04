@@ -112,7 +112,7 @@ function useUIContainer() {
                         window.location.replace(result.resultPath);
                     } else {
                         setSearchResult(result);
-                        navigate(result.resultPath, { replace: true });
+                        navigate(result.resultPath, { replace: false });
                     }
                 })
                 .catch((error) => {

@@ -79,7 +79,9 @@ export const searchChainTransaction: SearchTactic<RenVMTransaction> = {
                                 chain.validateTransaction({
                                     txHash: searchString,
                                 })
-                                ? chain.txidFormattedToTxid(searchString)
+                                ? utils.toURLBase64(
+                                      chain.txHashToBytes(searchString),
+                                  )
                                 : null;
                         } catch (error) {
                             if (DEBUG) {

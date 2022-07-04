@@ -1,5 +1,5 @@
 import { Solana } from "@renproject/chains";
-import { resolveNetwork } from "@renproject/chains-solana/build/main/networks";
+import { resolveNetwork } from "@renproject/chains-solana//networks";
 // import { SolanaConnector } from "@renproject/multiwallet-solana-connector";
 import { Chain, ContractChain, RenNetwork } from "@renproject/utils";
 

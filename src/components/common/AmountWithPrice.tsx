@@ -25,6 +25,7 @@ const CoinGeckoId: { [key: string]: string } = {
     LUNA: "terra",
     MATIC: "polygon",
     MIM: "magic-internet-money",
+    oETH: "ethereum",
     REN: "ren",
     ROOK: "rook",
     SOL: "solana",
