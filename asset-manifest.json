@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.67824a99.css",
-    "main.js": "/static/js/main.5997ed77.js",
+    "main.js": "/static/js/main.b910e66e.js",
     "static/js/787.5af24c8b.chunk.js": "/static/js/787.5af24c8b.chunk.js",
     "static/media/renCRV.svg": "/static/media/renCRV.029b2b94d3320df6a89d957482e77231.svg",
     "static/media/renUST.svg": "/static/media/renUST.9fcf7a21cd2336fdab2dbb2fc1c857a1.svg",
@@ -38,6 +38,7 @@
     "static/media/fantom.svg": "/static/media/fantom.cbaed5f23272eb6893bdce4f52695b2f.svg",
     "static/media/renvm.svg": "/static/media/renvm.d9521c98cb1ae15aab5f55cb2c2c725e.svg",
     "static/media/logo.svg": "/static/media/logo.81c2ee10f155665025f18a0210b40509.svg",
+    "static/media/optimism.svg": "/static/media/optimism.ef0d4e8214c0e54e86d8b7d8e2fe2696.svg",
     "static/media/filecoin.svg": "/static/media/filecoin.8cc55ef8e96ee45823cf2335aa53f02e.svg",
     "static/media/bitcoin.svg": "/static/media/bitcoin.ea0b91c21b52329be9a0e05bf7e00203.svg",
     "static/media/bitcoincash.svg": "/static/media/bitcoincash.76ce4e022e814ede7e69120eb6ebcd34.svg",
@@ -55,11 +56,11 @@
     "static/media/zcash.svg": "/static/media/zcash.eb92606c4f79d9bc29a9fd3913be7c39.svg",
     "static/media/catalog.svg": "/static/media/catalog.f814d35a0c1f39b1a21b1d084995ac72.svg",
     "main.67824a99.css.map": "/static/css/main.67824a99.css.map",
-    "main.5997ed77.js.map": "/static/js/main.5997ed77.js.map",
+    "main.b910e66e.js.map": "/static/js/main.b910e66e.js.map",
     "787.5af24c8b.chunk.js.map": "/static/js/787.5af24c8b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.67824a99.css",
-    "static/js/main.5997ed77.js"
+    "static/js/main.b910e66e.js"
   ]
 }
