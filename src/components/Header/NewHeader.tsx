@@ -50,7 +50,7 @@ const links = [
         description:
             "Report an issue you've run into using any of Ren's websites or services.",
         icon: LinkIcon,
-        href: "https://renprotocol.typeform.com/to/YdmFyB",
+        href: "https://ko93wg99ztk.typeform.com/RenIssueTicket",
     },
 ];
 
