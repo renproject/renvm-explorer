@@ -28,7 +28,7 @@ import { ReactComponent as RenUNIIcon } from "./renUNI.svg";
 import { ReactComponent as RenUSDCIcon } from "./renUSDC.svg";
 import { ReactComponent as RenUSDTIcon } from "./renUSDT.svg";
 import { ReactComponent as RenUSTIcon } from "./renUST.svg";
-import { ReactComponent as RenWBTCIcon } from "./renwBTC.svg";
+import { ReactComponent as RenWBTCIcon } from "./renWBTC.svg";
 import { ReactComponent as RenZECIcon } from "./renZEC.svg";
 
 export const Icons: {

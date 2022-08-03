@@ -228,6 +228,18 @@ export const TransactionPage = () => {
                         gatewayInstance.gatewayAddress) ||
                     undefined
                 }
+                toPayload={
+                    transactionInstance &&
+                    !(transactionInstance instanceof Error)
+                        ? transactionInstance.params.to
+                        : undefined
+                }
+                toChain={
+                    transactionInstance &&
+                    !(transactionInstance instanceof Error)
+                        ? transactionInstance.toChain
+                        : undefined
+                }
                 inTx={inTx}
                 outTx={outTx}
                 queryTx={queryTx}

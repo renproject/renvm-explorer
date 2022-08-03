@@ -1,5 +1,5 @@
 import { InformationCircleIcon } from "@heroicons/react/outline";
-import { TxStatus } from "@renproject/utils";
+import { Chain, TxStatus } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import React, { PropsWithChildren } from "react";
 import { Link } from "react-router-dom";
@@ -8,6 +8,7 @@ import {
     SummarizedTransaction,
     TransactionType,
 } from "../../../lib/searchResult";
+import { classNames } from "../../../lib/utils";
 import { AsyncButton } from "../../../packages/ChainTxSubmitter/components/AsyncButton";
 import { AmountWithPrice } from "../../common/AmountWithPrice";
 import { ExternalLink } from "../../common/ExternalLink";
@@ -15,13 +16,27 @@ import { Icon } from "../../common/icons/Icon";
 import { Tooltip } from "../../common/Tooltip";
 import { TransactionDiagram } from "../../common/TransactionDiagram";
 import { Spinner } from "../../Spinner";
+import { RenderPayload } from "./RenderPayload";
 import { RenderRenVMStatus } from "./RenderRenVMStatus";
 
 export const TableRow: React.FC<
-    PropsWithChildren & { title: React.ReactNode }
-> = ({ title, children }) => (
-    <div className="py-4 sm:py-5 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-6">
-        <dt className="text-sm font-medium text-gray-500 flex items-center">
+    PropsWithChildren & {
+        title: React.ReactNode;
+        titleClassName?: string;
+        className?: string;
+    }
+> = ({ title, titleClassName, children, className }) => (
+    <div
+        className={classNames(
+            className,
+            "py-4 sm:py-5 sm:grid sm:grid-cols-4 sm:gap-4 sm:px-6",
+        )}
+    >
+        <dt
+            className={classNames(
+                "text-sm font-medium text-gray-500 flex items-start",
+            )}
+        >
             {title}
         </dt>
         <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-3 truncate">
@@ -53,11 +68,13 @@ interface Props {
     asset: string;
     from: string;
     to: string;
+    toChain?: Chain;
 
     amount?: BigNumber;
     fee?: BigNumber;
 
     gatewayAddress?: string;
+    toPayload?: { chain: string; txConfig?: any };
 
     status: TxStatus | undefined;
     inConfirmations?: number;
@@ -123,6 +140,8 @@ export const CrossChainTransaction = ({
     amount,
     fee,
     gatewayAddress,
+    toPayload,
+    toChain,
     status,
     inConfirmations,
     inTarget,
@@ -256,6 +275,17 @@ export const CrossChainTransaction = ({
                                     >
                                         {gatewayAddress}
                                     </Link>
+                                </TableRow>
+                            ) : null}
+                            {toPayload && toChain ? (
+                                <TableRow
+                                    title="Recipient"
+                                    titleClassName="items-start"
+                                >
+                                    <RenderPayload
+                                        chain={toChain}
+                                        payload={toPayload}
+                                    />
                                 </TableRow>
                             ) : null}
                             {inTx ? (

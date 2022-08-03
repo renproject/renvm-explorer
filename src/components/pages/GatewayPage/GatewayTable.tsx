@@ -149,9 +149,11 @@ export const GatewayTable = ({
                                                                         .amount
                                                                 }
                                                             </span>
-                                                        )}{" "}
-                                                        {details.asset} -{" "}
-                                                        {transaction.hash}
+                                                        )}
+                                                        <span className="ml-1 mr-1">
+                                                            {details.asset}
+                                                        </span>
+                                                        - {transaction.hash}
                                                     </Link>
                                                 ),
                                             )}

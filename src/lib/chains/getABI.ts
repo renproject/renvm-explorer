@@ -114,7 +114,7 @@ const etherscanAPIMap: {
     },
     [Optimism.chain]: {
         [RenNetwork.Mainnet]: "https://api-optimistic.etherscan.io/api",
-        [RenNetwork.Testnet]: "https://api-optimistic-kovan.etherscan.io/api",
+        [RenNetwork.Testnet]: "https://api-kovan-optimistic.etherscan.io/api",
     },
 };
 

@@ -25,7 +25,9 @@ export const ExternalLink: React.FC<Props> = ({
         rel="noopener noreferrer"
     >
         {noArrow || !href ? null : <span className="select-none w-4"></span>}
-        <span className={noUnderline || !href ? "" : "underline"}>
+        <span
+            className={noUnderline || !href ? "hover:underline" : "underline"}
+        >
             {children}
         </span>
         {noArrow || !href ? null : (

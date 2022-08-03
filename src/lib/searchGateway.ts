@@ -60,7 +60,9 @@ export const getGatewayInstance = async (
         to: await getContractChainParams(
             summary.toChain as ContractChain,
             inputs.to,
-            inputs.payload,
+            (inputs.payload as Uint8Array | string) instanceof Uint8Array
+                ? utils.toHex(inputs.payload as unknown as Uint8Array)
+                : inputs.payload,
             summary.asset,
         ),
         nonce: inputs.nonce,
