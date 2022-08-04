@@ -202,12 +202,11 @@ export const LatestTransactions = ({ title }: { title: string }) => {
                                 <tr>
                                     <td colSpan={4} className=" col-span-4">
                                         <div className="w-full p-4 flex items-center justify-center">
-                                            Error fetching transactions: (
+                                            Error fetching transactions:{" "}
                                             {String(
                                                 fetchingError.message ||
                                                     fetchingError,
                                             )}
-                                            )
                                         </div>
                                     </td>
                                 </tr>

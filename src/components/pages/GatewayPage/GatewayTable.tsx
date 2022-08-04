@@ -1,10 +1,11 @@
 import { Gateway, GatewayTransaction } from "@renproject/ren";
-import { utils } from "@renproject/utils";
+import { Chain, utils } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 import { Link } from "react-router-dom";
 
 import { SummarizedTransaction } from "../../../lib/searchResult";
 import { AsyncButton } from "../../../packages/ChainTxSubmitter/components/AsyncButton";
+import { ExternalLink } from "../../common/ExternalLink";
 import { Icon } from "../../common/icons/Icon";
 import { TransactionDiagram } from "../../common/TransactionDiagram";
 import { Spinner } from "../../Spinner";
@@ -27,6 +28,7 @@ interface Props {
         queryGateway: SummarizedTransaction;
         gatewayInstance: Gateway | undefined;
         deposits: GatewayTransaction[];
+        fromChain: Chain | undefined;
     };
 }
 
@@ -112,6 +114,17 @@ export const GatewayTable = ({
                                         {details.to}
                                     </div>
                                 </TableRow>
+                                {details.fromChain ? (
+                                    <TableRow title={<>Address</>}>
+                                        <ExternalLink
+                                            href={details.fromChain.addressExplorerLink(
+                                                address,
+                                            )}
+                                        >
+                                            {address}
+                                        </ExternalLink>
+                                    </TableRow>
+                                ) : null}
                                 {details?.gatewayInstance ? (
                                     <TableRow title={<>Deposits</>}>
                                         <div className="flex flex-col">
@@ -189,7 +202,10 @@ export const GatewayTable = ({
                             <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
                                 <dl className="sm:divide-y sm:divide-gray-200 flex items-center justify-center px-2 py-4">
                                     {error ? (
-                                        <div>{error.message}</div>
+                                        <div>
+                                            Error loading gateway:{" "}
+                                            {error.message}
+                                        </div>
                                     ) : (
                                         <Spinner />
                                     )}

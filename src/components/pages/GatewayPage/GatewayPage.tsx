@@ -57,20 +57,13 @@ export const GatewayPage = () => {
             queryGateway.transactionType === TransactionType.Mint
         ) {
             setGatewayInstance(undefined);
-            try {
-                const deposit = await getGatewayInstance(
-                    renJS,
-                    queryGateway.result,
-                    queryGateway.summary,
-                );
-                setGatewayInstance(deposit);
-                deposit.on("transaction", onDeposit);
-            } catch (error: any) {
-                console.error(error);
-                setGatewayInstance(
-                    error instanceof Error ? error : new Error(error),
-                );
-            }
+            const deposit = await getGatewayInstance(
+                renJS,
+                queryGateway.result,
+                queryGateway.summary,
+            );
+            setGatewayInstance(deposit);
+            deposit.on("transaction", onDeposit);
         }
     }, [renJS, queryGateway, setGatewayInstance, onDeposit]);
 
@@ -110,6 +103,11 @@ export const GatewayPage = () => {
                                       ? gatewayInstance
                                       : undefined,
                               deposits: deposits.valueSeq().toArray(),
+                              fromChain:
+                                  gatewayInstance &&
+                                  !(gatewayInstance instanceof Error)
+                                      ? gatewayInstance.fromChain
+                                      : undefined,
                           }
                         : undefined
                 }

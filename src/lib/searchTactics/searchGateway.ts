@@ -35,6 +35,7 @@ export const queryGateway = async (
             1,
         );
     } catch (error: any) {
+        console.error(error);
         if (errorMatches(error, "not found")) {
             throw new TaggedError(
                 error,
