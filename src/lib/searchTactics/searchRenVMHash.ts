@@ -1,3 +1,4 @@
+import { Ethereum } from "@renproject/chains-ethereum";
 import {
     RenVMCrossChainTransaction,
     RenVMProvider,
@@ -6,9 +7,10 @@ import {
     unmarshalRenVMTransaction,
 } from "@renproject/provider";
 import RenJS from "@renproject/ren";
-import { Chain, isEmptySignature } from "@renproject/utils";
+import { Chain, isEmptySignature, RenNetwork } from "@renproject/utils";
 import BigNumber from "bignumber.js";
 
+import { NETWORK } from "../../environmentVariables";
 import {
     RenVMTransaction,
     RenVMTransactionError,
@@ -38,17 +40,33 @@ const parseV2Selector = (selector: string) => {
         // Regular Expression to match selectors in the form of
         // ASSET/fromCHAINtoCHAIN, ASSET/fromCHAIN or ASSET/toCHAIN.
         // ^(  ASSET )/[      [from(        CHAIN      ) _   to(   CHAIN  )] OR [from( CHAIN )] OR ( to(  CHAIN  ))]$
-        /^([a-zA-Z]+)\/(?:(?:(?:from([a-zA-Z]+?(?=_to)))_(?:to([a-zA-Z]+))?)|(?:from([a-zA-Z]+))|(?:to([a-zA-Z]+)))$/;
+        /^([a-zA-Z_]+)\/(?:(?:(?:from([a-zA-Z]+?(?=_to)))_(?:to([a-zA-Z]+))?)|(?:from([a-zA-Z]+))|(?:to([a-zA-Z]+)))$/;
     const match = regex.exec(selector);
     if (!match) {
         throw new Error(`Invalid selector format '${selector}'.`);
     }
     const [, asset, burnAndMintFrom, burnAndMintTo, burnFrom, mintTo] = match;
+
     return {
         asset,
         from: burnAndMintFrom || burnFrom || asset,
         to: burnAndMintTo || mintTo || asset,
     };
+};
+
+const getChainLabel = (
+    chain: string,
+    network: RenNetwork,
+): { short: string; full: string } => {
+    if (chain === "BinanceSmartChain") {
+        return { short: "BSC", full: "Binance Smart Chain" };
+    } else if (chain === "Ethereum" && network === RenNetwork.Testnet) {
+        return { full: "Kovan", short: "Kovan" };
+    } else if (chain === "Goerli") {
+        return { full: "Görli", short: "Görli" };
+    } else {
+        return { full: chain, short: chain };
+    }
 };
 
 export const summarizeTransaction = async (
@@ -147,12 +165,38 @@ export const summarizeTransaction = async (
         };
     }
 
+    let [_, assetShort, assetOriginChain] =
+        asset.match(/([^_]*)(?:_(.*))?/) ||
+        ([undefined, asset, undefined] as [undefined, string, undefined]);
+    if (
+        NETWORK === RenNetwork.Testnet &&
+        !assetOriginChain &&
+        (Object.values(Ethereum.assets) as string[]).includes(asset)
+    ) {
+        assetOriginChain = "Kovan";
+    }
+    const assetLabel = assetOriginChain
+        ? `${getChainLabel(assetOriginChain, NETWORK).short} ${assetShort}`
+        : asset;
+
+    const { full: toLabel, short: toLabelShort } = getChainLabel(to, NETWORK);
+    const { full: fromLabel, short: fromLabelShort } = getChainLabel(
+        from,
+        NETWORK,
+    );
+
     return {
         asset,
+        assetLabel,
+        assetShort,
         to,
+        toLabel,
+        toLabelShort,
         toChain: toChain || undefined,
 
         from,
+        fromLabel,
+        fromLabelShort,
         fromChain: fromChain || undefined,
 
         decimals,

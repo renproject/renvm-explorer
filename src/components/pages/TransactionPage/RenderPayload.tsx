@@ -1,10 +1,4 @@
-import {
-    Bitcoin,
-    BitcoinInputPayload,
-    Ethereum,
-    MintToAddress,
-    MintToTokenAddress,
-} from "@renproject/chains";
+import { MintToTokenAddress } from "@renproject/chains";
 import { EVMAddressPayload } from "@renproject/chains-ethereum/utils/payloads/evmAddressPayload";
 import { EVMContractPayload } from "@renproject/chains-ethereum/utils/payloads/evmContractPayload";
 import { Chain } from "@renproject/utils";
@@ -108,35 +102,37 @@ export const RenderPayload: React.FC<{
                             </div>
                         </div>
                         <div className="p-2">
-                            {params.map((param, index) => (
-                                <TableRow
-                                    className={
-                                        index % 2 === 0
-                                            ? "bg-white"
-                                            : "bg-gray-50"
-                                    }
-                                    title={
-                                        <span className="italic">
-                                            {param.name}
+                            {params.map((param, index) => {
+                                const href =
+                                    param.type === "address" &&
+                                    param.value.slice(0, 6) !== "__EVM_"
+                                        ? chain.addressExplorerLink(param.value)
+                                        : undefined;
+                                return (
+                                    <TableRow
+                                        className={
+                                            index % 2 === 0
+                                                ? "bg-white"
+                                                : "bg-gray-50"
+                                        }
+                                        title={
+                                            <span className="italic">
+                                                {param.name}
+                                            </span>
+                                        }
+                                    >
+                                        <span className="font-mono">
+                                            {href ? (
+                                                <ExternalLink href={href}>
+                                                    {param.value}
+                                                </ExternalLink>
+                                            ) : (
+                                                param.value
+                                            )}
                                         </span>
-                                    }
-                                >
-                                    <span className="font-mono">
-                                        {param.type === "address" &&
-                                        param.value.slice(0, 6) !== "__EVM_" ? (
-                                            <ExternalLink
-                                                href={chain.addressExplorerLink(
-                                                    param.value,
-                                                )}
-                                            >
-                                                {param.value}
-                                            </ExternalLink>
-                                        ) : (
-                                            param.value
-                                        )}
-                                    </span>
-                                </TableRow>
-                            ))}
+                                    </TableRow>
+                                );
+                            })}
                         </div>
                     </div>
                 </>

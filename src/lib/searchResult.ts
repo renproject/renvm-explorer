@@ -71,11 +71,17 @@ export enum RenVMTransactionError {
 
 export interface TransactionSummary {
     asset: string;
+    assetShort: string;
+    assetLabel: string;
 
     from: string;
+    fromLabel: string;
+    fromLabelShort: string;
     fromChain?: ChainCommon;
 
     to: string;
+    toLabel: string;
+    toLabelShort: string;
     toChain?: ChainCommon;
 
     decimals?: number;

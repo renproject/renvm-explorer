@@ -32,7 +32,10 @@ const hardcodedABIs = (chain: ChainCommon, to: string): AbiItem[] | null => {
     }
 
     // Catalog Adapter
-    if (to === "0xa3deb3f1a03a505502c1b7d679521f93f1105542") {
+    if (
+        to === "0xa3deb3f1a03a505502c1b7d679521f93f1105542" ||
+        to === "0x96081a4e7c3617a4d7dac9ac84d97255d63773d2"
+    ) {
         return [
             {
                 constant: false,

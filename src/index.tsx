@@ -6,6 +6,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 
 import { App } from "./components/App/App";
 import { LatestTransactionsContainer } from "./containers/LatestTransactionsContainer";
+// import { RenVMTrackerContainer } from "./containers/RenVMTrackerContainer";
 import { UIContainer } from "./containers/UIContainer";
 import { WalletContainer } from "./containers/WalletContainer";
 import { ChainTxSubmitter } from "./packages/ChainTxSubmitter";
@@ -21,7 +22,9 @@ const render = () => {
                     <UIContainer.Provider>
                         <ChainTxSubmitter.Provider>
                             <LatestTransactionsContainer.Provider>
+                                {/* <RenVMTrackerContainer.Provider> */}
                                 <App />
+                                {/* </RenVMTrackerContainer.Provider> */}
                             </LatestTransactionsContainer.Provider>
                         </ChainTxSubmitter.Provider>
                     </UIContainer.Provider>

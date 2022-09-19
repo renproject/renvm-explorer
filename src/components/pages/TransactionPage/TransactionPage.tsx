@@ -1,6 +1,6 @@
 import { Gateway, GatewayTransaction } from "@renproject/ren";
 import { RenVMCrossChainTxSubmitter } from "@renproject/ren//renVMTxSubmitter";
-import { ChainTransactionStatus, TxStatus, utils } from "@renproject/utils";
+import { ChainTransactionStatus, utils } from "@renproject/utils";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -180,10 +180,7 @@ export const TransactionPage = () => {
                         ? transaction.queryTx
                         : undefined
                 }
-                asset={queryTx.summary.asset}
-                from={queryTx.summary.from}
-                to={queryTx.summary.to}
-                amount={queryTx.summary.amountIn}
+                summary={queryTx.summary}
                 status={
                     queryTx.result.status ||
                     (

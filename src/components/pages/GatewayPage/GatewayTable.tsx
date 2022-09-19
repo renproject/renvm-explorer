@@ -21,8 +21,12 @@ interface Props {
 
     details?: {
         asset: string;
+        assetShort: string;
+        assetLabel: string;
         from: string;
+        fromLabel: string;
         to: string;
+        toLabel: string;
         decimals?: number;
 
         queryGateway: SummarizedTransaction;
@@ -55,9 +59,12 @@ export const GatewayTable = ({
                     {details ? (
                         <div className="flex flex-row items-center mt-4 lg:mt-0">
                             <TransactionDiagram
-                                asset={details.asset}
+                                assetShort={details.assetShort}
+                                assetLabel={details.assetLabel}
                                 to={details.to}
+                                toLabel={details.toLabel}
                                 from={details.from}
+                                fromLabel={details.fromLabel}
                             />
                         </div>
                     ) : null}
@@ -95,7 +102,7 @@ export const GatewayTable = ({
                                             style={{ marginRight: 5 }}
                                             chainName={details.from}
                                         />
-                                        {details.from}
+                                        {details.fromLabel}
                                     </div>
                                 </TableRow>
                                 <TableRow title={<>To</>}>
@@ -111,7 +118,7 @@ export const GatewayTable = ({
                                             style={{ marginRight: 5 }}
                                             chainName={details.to}
                                         />
-                                        {details.to}
+                                        {details.toLabel}
                                     </div>
                                 </TableRow>
                                 {details.fromChain ? (

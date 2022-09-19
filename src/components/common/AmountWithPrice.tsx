@@ -38,13 +38,17 @@ const CoinGeckoId: { [key: string]: string } = {
 
 export const AmountWithPrice = ({
     asset,
+    assetShort,
+    assetLabel,
     amount,
 }: {
     asset: string;
+    assetShort: string;
+    assetLabel: string;
     amount: BigNumber | undefined;
 }) => {
     const tokenPrice = useCoingeckoPrice(
-        CoinGeckoId[asset] || asset.toLowerCase(),
+        CoinGeckoId[assetShort] || assetShort.toLowerCase(),
     );
     const amountInUsd = useMemo(() => {
         return amount && tokenPrice
@@ -68,7 +72,7 @@ export const AmountWithPrice = ({
                         {amountFixedInsignificant}
                     </span>{" "}
                 </span>
-                {asset}
+                {assetLabel}
                 <span className="text-gray-500">
                     {amountInUsd ? <> (US${amountInUsd})</> : null}
                 </span>

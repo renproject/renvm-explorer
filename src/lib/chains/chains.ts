@@ -24,13 +24,13 @@ import {
 import { SolanaDetails } from "./chains/solana";
 
 const mintChains = [
+    GoerliDetails,
     EthereumDetails,
     BinanceSmartChainDetails,
     CatalogDetails,
     FantomDetails,
     PolygonDetails,
     AvalancheDetails,
-    GoerliDetails,
     ArbitrumDetails,
     SolanaDetails,
     OptimismDetails,

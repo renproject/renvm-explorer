@@ -4,16 +4,22 @@ import React from "react";
 import { Icon } from "./icons/Icon";
 
 interface Props {
-    asset: string;
+    assetShort: string;
+    assetLabel: string;
     from: string;
+    fromLabel: string;
     to: string;
+    toLabel: string;
     amount?: BigNumber;
 }
 
 export const TransactionDiagram: React.FC<Props> = ({
-    asset,
+    assetShort,
+    assetLabel,
     from,
+    fromLabel,
     to,
+    toLabel,
     amount,
 }) => {
     return (
@@ -29,7 +35,7 @@ export const TransactionDiagram: React.FC<Props> = ({
                 }}
             >
                 <Icon chainName={from} />
-                <span className="hidden xs:inline ml-2">{from}</span>
+                <span className="hidden xs:inline ml-2">{fromLabel}</span>
             </div>
             <span style={{ margin: "0px 10px" }}>{" → "}</span>
             <div
@@ -42,10 +48,10 @@ export const TransactionDiagram: React.FC<Props> = ({
                     alignItems: "center",
                 }}
             >
-                <Icon chainName={asset} />
+                <Icon chainName={assetShort} />
                 <span className="hidden 2xs:inline ml-2">
                     {amount ? <>{amount.decimalPlaces(4).toFixed()} </> : null}
-                    {asset}
+                    {assetLabel}
                 </span>
             </div>
             <span style={{ margin: "0px 10px" }}>{" → "}</span>
@@ -60,7 +66,7 @@ export const TransactionDiagram: React.FC<Props> = ({
                 }}
             >
                 <Icon chainName={to} />
-                <span className="hidden xs:inline ml-2">{to}</span>
+                <span className="hidden xs:inline ml-2">{toLabel}</span>
             </div>
         </div>
     );

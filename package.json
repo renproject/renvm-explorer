@@ -4,6 +4,7 @@
     "private": true,
     "homepage": "https://explorer-testnet.renproject.io",
     "dependencies": {
+        "@apollo/react-hooks": "^4.0.0",
         "@headlessui/react": "^1.6.4",
         "@project-serum/sol-wallet-adapter": "^0.2.6",
         "@renproject/chains": "3.3.0",
@@ -15,6 +16,8 @@
         "@solana/web3.js": "1.44.0",
         "@tippyjs/react": "^4.2.6",
         "@usedapp/coingecko": "^1.0.6",
+        "apollo-boost": "^0.4.9",
+        "apollo-cache-inmemory": "^1.6.6",
         "axios": "^0.27.2",
         "bignumber.js": "^9.0.2",
         "change-case": "^4.1.2",

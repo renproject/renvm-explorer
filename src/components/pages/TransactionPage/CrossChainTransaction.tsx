@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 import {
     SummarizedTransaction,
+    TransactionSummary,
     TransactionType,
 } from "../../../lib/searchResult";
 import { classNames } from "../../../lib/utils";
@@ -62,15 +63,11 @@ export const TableHeader: React.FC<
 
 interface Props {
     hash: string;
+    summary: TransactionSummary;
     error?: Error;
     loadAdditionalDetails?: () => Promise<void>;
 
-    asset: string;
-    from: string;
-    to: string;
     toChain?: Chain;
-
-    amount?: BigNumber;
     fee?: BigNumber;
 
     gatewayAddress?: string;
@@ -134,10 +131,7 @@ export const LoadingTransaction = ({
 
 export const CrossChainTransaction = ({
     hash,
-    asset,
-    from,
-    to,
-    amount,
+    summary,
     fee,
     gatewayAddress,
     toPayload,
@@ -172,10 +166,13 @@ export const CrossChainTransaction = ({
                 >
                     <div className="flex flex-row items-center mt-4 lg:mt-0">
                         <TransactionDiagram
-                            asset={asset}
-                            to={to}
-                            from={from}
-                            amount={amount}
+                            assetShort={summary.assetShort}
+                            assetLabel={summary.assetLabel}
+                            to={summary.to}
+                            toLabel={summary.toLabelShort}
+                            from={summary.from}
+                            fromLabel={summary.fromLabelShort}
+                            amount={summary.amountIn}
                         />
                     </div>
                 </TableHeader>
@@ -193,9 +190,9 @@ export const CrossChainTransaction = ({
                                 >
                                     <Icon
                                         style={{ marginRight: 5 }}
-                                        chainName={asset}
+                                        chainName={summary.assetShort}
                                     />
-                                    {asset}
+                                    {summary.assetLabel}
                                 </div>
                             </TableRow>
                             <TableRow title={<>From</>}>
@@ -209,9 +206,9 @@ export const CrossChainTransaction = ({
                                 >
                                     <Icon
                                         style={{ marginRight: 5 }}
-                                        chainName={from}
+                                        chainName={summary.from}
                                     />
-                                    {from}
+                                    {summary.fromLabel}
                                 </div>
                             </TableRow>
                             <TableRow title={<>To</>}>
@@ -225,17 +222,19 @@ export const CrossChainTransaction = ({
                                 >
                                     <Icon
                                         style={{ marginRight: 5 }}
-                                        chainName={to}
+                                        chainName={summary.to}
                                     />
-                                    {to}
+                                    {summary.toLabel}
                                 </div>
                             </TableRow>
-                            {amount || queryTx.result?.in?.amount ? (
+                            {summary.amountIn || queryTx.result?.in?.amount ? (
                                 <TableRow title={<>Amount</>}>
-                                    {amount ? (
+                                    {summary.amountIn ? (
                                         <AmountWithPrice
-                                            amount={amount}
-                                            asset={asset}
+                                            amount={summary.amountIn}
+                                            asset={summary.asset}
+                                            assetShort={summary.assetShort}
+                                            assetLabel={summary.assetLabel}
                                         />
                                     ) : (
                                         <>
@@ -246,10 +245,14 @@ export const CrossChainTransaction = ({
                                 </TableRow>
                             ) : null}
                             {fee ? (
-                                <TableRow title={<>{asset} Fee </>}>
+                                <TableRow
+                                    title={<>{summary.assetShort} Fee </>}
+                                >
                                     <AmountWithPrice
                                         amount={fee}
-                                        asset={asset}
+                                        asset={summary.asset}
+                                        assetShort={summary.assetShort}
+                                        assetLabel={summary.assetLabel}
                                     />
                                 </TableRow>
                             ) : null}
@@ -289,7 +292,9 @@ export const CrossChainTransaction = ({
                                 </TableRow>
                             ) : null}
                             {inTx ? (
-                                <TableRow title={<>{from} Transaction</>}>
+                                <TableRow
+                                    title={<>{summary.fromLabel} Transaction</>}
+                                >
                                     {inTx.txHash ? (
                                         <ExternalLink href={inTx.explorerLink}>
                                             {inTx.txHash}
@@ -300,7 +305,9 @@ export const CrossChainTransaction = ({
                                 </TableRow>
                             ) : null}
                             {outTx || handleOutTx ? (
-                                <TableRow title={<>{to} Transaction</>}>
+                                <TableRow
+                                    title={<>{summary.toLabel} Transaction</>}
+                                >
                                     {outTx?.txHash ? (
                                         <ExternalLink href={outTx.explorerLink}>
                                             {outTx.txHash}

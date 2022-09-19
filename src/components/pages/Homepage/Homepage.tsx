@@ -1,8 +1,3 @@
-// import {
-//     CursorClickIcon,
-//     LinkIcon,
-//     MailOpenIcon,
-// } from "@heroicons/react/outline";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 

@@ -61,12 +61,15 @@ export const TransactionPreview: React.FC<Props> = ({ queryTx, refreshed }) => {
                         style={{ marginRight: 5, fill: "#001732" }}
                         chainName={from}
                     />
-                    {from === "BinanceSmartChain" ? "BSC" : from}
+                    {queryTx.summary.fromLabelShort}
                 </div>
             </td>
             <td className="py-4">
                 <div className="whitespace-nowrap flex items-center justify-center">
-                    <Icon className="mr-1" chainName={queryTx.summary.asset} />
+                    <Icon
+                        className="mr-1"
+                        chainName={queryTx.summary.assetShort}
+                    />
                     {queryTx.summary.amountIn &&
                     !queryTx.summary.amountIn.isNaN() &&
                     !queryTx.summary.amountIn.isZero()
@@ -78,7 +81,7 @@ export const TransactionPreview: React.FC<Props> = ({ queryTx, refreshed }) => {
                                   .decimalPlaces(4, BigNumber.ROUND_DOWN)
                                   .toFixed()
                         : ""}{" "}
-                    {queryTx.summary.asset}
+                    {queryTx.summary.assetLabel}
                 </div>
             </td>
             <td className="py-4 hidden sm:table-cell">
@@ -87,7 +90,7 @@ export const TransactionPreview: React.FC<Props> = ({ queryTx, refreshed }) => {
                         style={{ marginRight: 5, fill: "#001732" }}
                         chainName={to}
                     />
-                    {to === "BinanceSmartChain" ? "BSC" : to}
+                    {queryTx.summary.toLabelShort}
                 </div>
             </td>
         </tr>

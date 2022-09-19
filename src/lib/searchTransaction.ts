@@ -45,13 +45,13 @@ export const getTransactionDepositInstance = async (
 
     if (!summary.fromChain) {
         throw new Error(
-            `Fetching transaction details not supported yet for ${summary.from}.`,
+            `Fetching transaction details not supported yet for ${summary.fromLabel}.`,
         );
     }
 
     if (!summary.toChain) {
         throw new Error(
-            `Fetching transaction details not supported yet for ${summary.to}.`,
+            `Fetching transaction details not supported yet for ${summary.toLabel}.`,
         );
     }
 

@@ -93,8 +93,12 @@ export const GatewayPage = () => {
                     queryGateway && queryGateway.summary
                         ? {
                               asset: queryGateway.summary.asset,
+                              assetShort: queryGateway.summary.assetShort,
+                              assetLabel: queryGateway.summary.assetLabel,
                               from: queryGateway.summary.from,
+                              fromLabel: queryGateway.summary.fromLabel,
                               to: queryGateway.summary.to,
+                              toLabel: queryGateway.summary.toLabel,
                               decimals: queryGateway.summary.decimals,
                               queryGateway,
                               gatewayInstance:

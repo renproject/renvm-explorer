@@ -28,7 +28,9 @@ function useUIContainer() {
     const [gateway, setGateway] = useState<RenVMGateway | null | Error>(null);
     const [updatedCount, setUpdatedCount] = useState(0);
 
-    const renJS = useMemo(() => new RenJS(LIGHTNODE), []);
+    const renJS = useMemo(() => {
+        return new RenJS(LIGHTNODE);
+    }, []);
 
     const getChainDetails = useCallback((chainName: string) => {
         for (const chain of allChains) {
