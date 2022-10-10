@@ -1,12 +1,13 @@
 {
   "files": {
     "main.css": "/static/css/main.1f42382d.css",
-    "main.js": "/static/js/main.bfaf4224.js",
+    "main.js": "/static/js/main.67e5c192.js",
     "static/js/787.5af24c8b.chunk.js": "/static/js/787.5af24c8b.chunk.js",
     "static/media/renCRV.svg": "/static/media/renCRV.029b2b94d3320df6a89d957482e77231.svg",
     "static/media/renUST.svg": "/static/media/renUST.9fcf7a21cd2336fdab2dbb2fc1c857a1.svg",
     "static/media/renUNI.svg": "/static/media/renUNI.89d4896162eced09186d8589b838f858.svg",
     "static/media/renBADGER.svg": "/static/media/renBADGER.ef06148f30f63b0d907eab3c3fe77a80.svg",
+    "static/media/moonbeam.svg": "/static/media/moonbeam.54de5e7e4d4627b3e04bd8c52519dd95.svg",
     "static/media/renMIM.svg": "/static/media/renMIM.c116885e45321b43bcd2267cf185ae12.svg",
     "static/media/renSUSHI.svg": "/static/media/renSUSHI.bc60864bca531dbf82a1e37b4643a8bf.svg",
     "static/media/renWBTC.svg": "/static/media/renWBTC.790c7b17c6a110cf9ac4c04d69cd39ae.svg",
@@ -53,14 +54,15 @@
     "static/media/avalanche.svg": "/static/media/avalanche.794f0bfed7e5e48957f9c1b72efd1e7f.svg",
     "static/media/ethereum.svg": "/static/media/ethereum.c876b092714eb8ae8d3d1cfab1c4deb3.svg",
     "static/media/dogecoin.svg": "/static/media/dogecoin.92f9f1e5b96d0c23f74640ca22e21faf.svg",
+    "static/media/kava.svg": "/static/media/kava.a00a1b14ed9205850169571ae572af0d.svg",
     "static/media/zcash.svg": "/static/media/zcash.eb92606c4f79d9bc29a9fd3913be7c39.svg",
     "static/media/catalog.svg": "/static/media/catalog.f814d35a0c1f39b1a21b1d084995ac72.svg",
     "main.1f42382d.css.map": "/static/css/main.1f42382d.css.map",
-    "main.bfaf4224.js.map": "/static/js/main.bfaf4224.js.map",
+    "main.67e5c192.js.map": "/static/js/main.67e5c192.js.map",
     "787.5af24c8b.chunk.js.map": "/static/js/787.5af24c8b.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1f42382d.css",
-    "static/js/main.bfaf4224.js"
+    "static/js/main.67e5c192.js"
   ]
 }
