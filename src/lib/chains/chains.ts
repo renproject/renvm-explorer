@@ -1,17 +1,7 @@
 // import { WalletPickerConfig } from "@renproject/multiwallet-ui";
 import { Chain, ContractChain, RenNetwork } from "@renproject/utils";
 
-import {
-    ArbitrumDetails,
-    AvalancheDetails,
-    BinanceSmartChainDetails,
-    CatalogDetails,
-    EthereumDetails,
-    FantomDetails,
-    GoerliDetails,
-    OptimismDetails,
-    PolygonDetails,
-} from "./chains/evmChains";
+import { evmChains } from "./chains/evmChains";
 import {
     BitcoinCashDetails,
     BitcoinDetails,
@@ -23,18 +13,7 @@ import {
 } from "./chains/lockChains";
 import { SolanaDetails } from "./chains/solana";
 
-const mintChains = [
-    GoerliDetails,
-    EthereumDetails,
-    BinanceSmartChainDetails,
-    CatalogDetails,
-    FantomDetails,
-    PolygonDetails,
-    AvalancheDetails,
-    ArbitrumDetails,
-    SolanaDetails,
-    OptimismDetails,
-];
+export const mintChains = [...Object.values(evmChains), SolanaDetails];
 
 const lockChains = [
     BitcoinDetails,

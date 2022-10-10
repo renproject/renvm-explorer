@@ -87,6 +87,16 @@ export const getTransactionDepositInstance = async (
 
     const deposit = await renJS.gatewayTransaction(txParams);
 
+    if (deposit.hash !== searchDetails.hash) {
+        console.group(
+            `Expected ${deposit.hash} to equal ${searchDetails.hash}.`,
+        );
+        console.debug("expected", searchDetails);
+        console.debug("actual", await deposit.renVM.export());
+        console.groupEnd();
+        await deposit.renVM.submit();
+    }
+
     try {
         await deposit.renVM.query();
     } catch (error) {
@@ -106,16 +116,6 @@ export const getTransactionDepositInstance = async (
             }),
             to: txParams.to,
         });
-    }
-
-    if (deposit.hash !== searchDetails.hash) {
-        console.group(
-            `Expected ${deposit.hash} to equal ${searchDetails.hash}.`,
-        );
-        console.debug("expected", searchDetails);
-        console.debug("actual", await deposit.renVM.export());
-        console.groupEnd();
-        // await deposit.renVM.submit();
     }
 
     return {

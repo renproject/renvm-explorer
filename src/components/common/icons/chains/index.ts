@@ -11,6 +11,8 @@ import {
     Fantom,
     Filecoin,
     Goerli,
+    Kava,
+    Moonbeam,
     Optimism,
     Polygon,
     Solana,
@@ -29,6 +31,8 @@ import { ReactComponent as DogecoinIcon } from "./dogecoin.svg";
 import { ReactComponent as EthereumIcon } from "./ethereum.svg";
 import { ReactComponent as FantomIcon } from "./fantom.svg";
 import { ReactComponent as FilecoinIcon } from "./filecoin.svg";
+import { ReactComponent as KavaIcon } from "./kava.svg";
+import { ReactComponent as MoonbeamIcon } from "./moonbeam.svg";
 import { ReactComponent as OptimismIcon } from "./optimism.svg";
 import { ReactComponent as PolygonIcon } from "./polygon.svg";
 import { ReactComponent as RenVMIcon } from "./renvm.svg";
@@ -55,6 +59,8 @@ export const Icons: {
     [Fantom.chain]: FantomIcon,
     [Filecoin.chain]: FilecoinIcon,
     [Goerli.chain]: EthereumIcon,
+    [Kava.chain]: KavaIcon,
+    [Moonbeam.chain]: MoonbeamIcon,
     [Optimism.chain]: OptimismIcon,
     [Polygon.chain]: PolygonIcon,
     [Solana.chain]: SolanaIcon,

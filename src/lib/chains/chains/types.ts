@@ -15,6 +15,11 @@ export interface ChainDetails<ChainClass extends Chain = Chain> {
     // primaryColor: "#627eea";
     // textColor: "white";
 
+    // EVM chains only
+    etherscanApi?: {
+        [network in RenNetwork]?: string;
+    };
+
     usePublicProvider: (network: RenNetwork) => ChainClass | null;
 
     // multiwalletConfig?: (network: RenNetwork) => Array<ConnectorConfig<any, any>>;

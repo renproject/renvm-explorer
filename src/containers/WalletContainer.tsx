@@ -6,6 +6,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { createContainer } from "unstated-next";
 
 import { Icon } from "../components/common/icons/Icon";
+import { mintChains } from "../lib/chains/chains";
+import { ChainType } from "../lib/chains/chains/types";
 import { Modal } from "../packages/ChainTxSubmitter/components/Modal";
 
 interface WalletOption {
@@ -20,17 +22,9 @@ export interface Wallet {
     wallet: WalletOption;
 }
 
-const evmChains = [
-    "Ethereum",
-    "BinanceSmartChain",
-    "Fantom",
-    "Polygon",
-    "Avalanche",
-    "Goerli",
-    "Arbitrum",
-    "Catalog",
-    "Optimism",
-];
+const evmChains = mintChains
+    .filter((chain) => chain.type === ChainType.EVMChain)
+    .map((chain) => chain.chain);
 
 const metamaskOption: WalletOption = {
     name: "MetaMask",

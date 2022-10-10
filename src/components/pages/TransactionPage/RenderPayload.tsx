@@ -2,6 +2,7 @@ import { MintToTokenAddress } from "@renproject/chains";
 import { EVMAddressPayload } from "@renproject/chains-ethereum/utils/payloads/evmAddressPayload";
 import { EVMContractPayload } from "@renproject/chains-ethereum/utils/payloads/evmContractPayload";
 import { Chain } from "@renproject/utils";
+import { ethers } from "ethers";
 import React, { PropsWithChildren } from "react";
 
 import { classNames } from "../../../lib/utils";
@@ -110,13 +111,14 @@ export const RenderPayload: React.FC<{
                                         : undefined;
                                 return (
                                     <TableRow
+                                        key={param.name}
                                         className={
                                             index % 2 === 0
                                                 ? "bg-white"
                                                 : "bg-gray-50"
                                         }
                                         title={
-                                            <span className="italic">
+                                            <span className="italic truncate">
                                                 {param.name}
                                             </span>
                                         }
@@ -126,8 +128,12 @@ export const RenderPayload: React.FC<{
                                                 <ExternalLink href={href}>
                                                     {param.value}
                                                 </ExternalLink>
+                                            ) : ethers.BigNumber.isBigNumber(
+                                                  param.value,
+                                              ) ? (
+                                                param.value.toString()
                                             ) : (
-                                                param.value
+                                                JSON.stringify(param.value)
                                             )}
                                         </span>
                                     </TableRow>
