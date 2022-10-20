@@ -168,7 +168,10 @@ export const summarizeTransaction = async (
     let [_, assetShort, assetOriginChain] =
         asset.match(/([^_]*)(?:_(.*))?/) ||
         ([undefined, asset, undefined] as [undefined, string, undefined]);
-    if (
+    if (asset === "gETH") {
+        assetOriginChain = "Goerli";
+        assetShort = "ETH";
+    } else if (
         NETWORK === RenNetwork.Testnet &&
         !assetOriginChain &&
         (Object.values(Ethereum.assets) as string[]).includes(asset)

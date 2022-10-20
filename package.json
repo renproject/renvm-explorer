@@ -6,6 +6,7 @@
     "dependencies": {
         "@apollo/react-hooks": "^4.0.0",
         "@headlessui/react": "^1.6.4",
+        "@heroicons/react": "v1",
         "@project-serum/sol-wallet-adapter": "^0.2.6",
         "@renproject/chains": "3.5.0",
         "@renproject/chains-ethereum": "3.5.0",
