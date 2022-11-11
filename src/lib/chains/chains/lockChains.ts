@@ -13,7 +13,7 @@ import { ChainDetails, ChainType } from "./types";
 
 export const BitcoinDetails: ChainDetails<Bitcoin> = {
     chain: Bitcoin.chain,
-    assets: Bitcoin.assets,
+    assets: Bitcoin.assets[RenNetwork.Mainnet],
     chainPattern: /^(bitcoin|btc)$/i,
     type: ChainType.LockChain,
     usePublicProvider: (network: RenNetwork) => new Bitcoin({ network }),
@@ -29,7 +29,7 @@ export const BitcoinDetails: ChainDetails<Bitcoin> = {
 
 export const ZcashDetails: ChainDetails<Zcash> = {
     chain: Zcash.chain,
-    assets: Zcash.assets,
+    assets: Zcash.assets[RenNetwork.Mainnet],
     chainPattern: /^(zcash|zec)$/i,
     type: ChainType.LockChain,
     usePublicProvider: (network: RenNetwork) => new Zcash({ network }),
@@ -45,7 +45,7 @@ export const ZcashDetails: ChainDetails<Zcash> = {
 
 export const BitcoinCashDetails: ChainDetails<BitcoinCash> = {
     chain: BitcoinCash.chain,
-    assets: BitcoinCash.assets,
+    assets: BitcoinCash.assets[RenNetwork.Mainnet],
     chainPattern: /^(bitcoincash|bch)$/i,
     type: ChainType.LockChain,
     usePublicProvider: (network: RenNetwork) => new BitcoinCash({ network }),
@@ -61,7 +61,7 @@ export const BitcoinCashDetails: ChainDetails<BitcoinCash> = {
 
 export const DigiByteDetails: ChainDetails<DigiByte> = {
     chain: DigiByte.chain,
-    assets: DigiByte.assets,
+    assets: DigiByte.assets[RenNetwork.Mainnet],
     chainPattern: /^(digibyte|dgb)$/i,
     type: ChainType.LockChain,
     usePublicProvider: (network: RenNetwork) => new DigiByte({ network }),
@@ -77,7 +77,7 @@ export const DigiByteDetails: ChainDetails<DigiByte> = {
 
 export const FilecoinDetails: ChainDetails<Filecoin> = {
     chain: Filecoin.chain,
-    assets: Filecoin.assets,
+    assets: Filecoin.assets[RenNetwork.Mainnet],
     chainPattern: /^(filecoin|fil)$/i,
     type: ChainType.LockChain,
     usePublicProvider: (network: RenNetwork) => new Filecoin({ network }),
@@ -93,7 +93,7 @@ export const FilecoinDetails: ChainDetails<Filecoin> = {
 
 export const LunaDetails: ChainDetails<Terra> = {
     chain: Terra.chain,
-    assets: Terra.assets,
+    assets: Terra.assets[RenNetwork.Mainnet],
     chainPattern: /^(luna|terra)$/i,
     type: ChainType.LockChain,
     usePublicProvider: (network: RenNetwork) => new Terra({ network }),
@@ -109,7 +109,7 @@ export const LunaDetails: ChainDetails<Terra> = {
 
 export const DogecoinDetails: ChainDetails<Dogecoin> = {
     chain: Dogecoin.chain,
-    assets: Dogecoin.assets,
+    assets: Dogecoin.assets[RenNetwork.Mainnet],
     chainPattern: /^(dogecoin|doge)$/i,
     type: ChainType.LockChain,
     usePublicProvider: (network: RenNetwork) => new Dogecoin({ network }),

@@ -36,7 +36,7 @@ import { ChainDetails, ChainType } from "./types";
 export const EthereumDetails: ChainDetails<Ethereum> = {
     chain: Ethereum.chain,
     chainPattern: /^(ethereum|eth|ren)$/i,
-    assets: Ethereum.assets,
+    assets: Ethereum.assets[RenNetwork.Mainnet],
     type: ChainType.EVMChain,
 
     etherscanApi: {
@@ -85,7 +85,7 @@ export const EthereumDetails: ChainDetails<Ethereum> = {
 export const BinanceSmartChainDetails: ChainDetails<BinanceSmartChain> = {
     chain: BinanceSmartChain.chain,
     chainPattern: /^(binancesmartchain|bsc)$/i,
-    assets: BinanceSmartChain.assets,
+    assets: BinanceSmartChain.assets[RenNetwork.Mainnet],
     type: ChainType.EVMChain,
     etherscanApi: {
         [RenNetwork.Mainnet]: "https://api.bscscan.com/api",
@@ -120,7 +120,7 @@ export const BinanceSmartChainDetails: ChainDetails<BinanceSmartChain> = {
 export const FantomDetails: ChainDetails<Fantom> = {
     chain: Fantom.chain,
     chainPattern: /^(fantom|ftm)$/i,
-    assets: Fantom.assets,
+    assets: Fantom.assets[RenNetwork.Mainnet],
     type: ChainType.EVMChain,
     etherscanApi: {
         [RenNetwork.Mainnet]: "https://api.ftmscan.com/api",
@@ -147,7 +147,7 @@ export const FantomDetails: ChainDetails<Fantom> = {
 export const PolygonDetails: ChainDetails<Polygon> = {
     chain: Polygon.chain,
     chainPattern: /^(polygon|matic)$/i,
-    assets: Polygon.assets,
+    assets: Polygon.assets[RenNetwork.Mainnet],
     type: ChainType.EVMChain,
     etherscanApi: {
         [RenNetwork.Mainnet]: "https://api.polygonscan.com/api",
@@ -174,7 +174,7 @@ export const PolygonDetails: ChainDetails<Polygon> = {
 export const AvalancheDetails: ChainDetails<Avalanche> = {
     chain: Avalanche.chain,
     chainPattern: /^(avalanche|ava|avax)$/i,
-    assets: Avalanche.assets,
+    assets: Avalanche.assets[RenNetwork.Mainnet],
     type: ChainType.EVMChain,
     etherscanApi: {
         [RenNetwork.Mainnet]: "https://api.snowtrace.io/api",
@@ -201,7 +201,7 @@ export const AvalancheDetails: ChainDetails<Avalanche> = {
 export const GoerliDetails: ChainDetails<Goerli> = {
     chain: Goerli.chain,
     chainPattern: /^(goerli|goerlieth|geth)$/i,
-    assets: Goerli.assets,
+    assets: Goerli.assets[RenNetwork.Testnet],
     type: ChainType.EVMChain,
     etherscanApi: {
         [RenNetwork.Testnet]: "https://api-goerli.etherscan.io/api",
@@ -232,7 +232,7 @@ export const GoerliDetails: ChainDetails<Goerli> = {
 export const ArbitrumDetails: ChainDetails<Arbitrum> = {
     chain: Arbitrum.chain,
     chainPattern: /^(arbitrum|arb|arbeth)$/i,
-    assets: Arbitrum.assets,
+    assets: Arbitrum.assets[RenNetwork.Mainnet],
     type: ChainType.EVMChain,
     etherscanApi: {
         [RenNetwork.Mainnet]: "https://api.arbiscan.io/api",
@@ -259,7 +259,7 @@ export const ArbitrumDetails: ChainDetails<Arbitrum> = {
 export const CatalogDetails: ChainDetails<Catalog> = {
     chain: Catalog.chain,
     chainPattern: /^(catalog|cat|renchain)$/i,
-    assets: Catalog.assets,
+    assets: Catalog.assets[RenNetwork.Mainnet],
     type: ChainType.EVMChain,
     etherscanApi: {},
     usePublicProvider: (network: RenNetwork) =>
@@ -283,7 +283,7 @@ export const CatalogDetails: ChainDetails<Catalog> = {
 export const OptimismDetails: ChainDetails<Optimism> = {
     chain: Optimism.chain,
     chainPattern: /^(optimism|arb|arbeth)$/i,
-    assets: Optimism.assets,
+    assets: Optimism.assets[RenNetwork.Mainnet],
     type: ChainType.EVMChain,
     etherscanApi: {
         [RenNetwork.Mainnet]: "https://api-optimistic.etherscan.io/api",
@@ -310,7 +310,7 @@ export const OptimismDetails: ChainDetails<Optimism> = {
 export const MoonbeamDetails: ChainDetails<Moonbeam> = {
     chain: Moonbeam.chain,
     chainPattern: /^(moonbeam|glmr)$/i,
-    assets: Moonbeam.assets,
+    assets: Moonbeam.assets[RenNetwork.Mainnet],
     type: ChainType.EVMChain,
     etherscanApi: {
         [RenNetwork.Mainnet]: "https://api-moonbeam.moonscan.io/api",
@@ -337,7 +337,7 @@ export const MoonbeamDetails: ChainDetails<Moonbeam> = {
 export const KavaDetails: ChainDetails<Kava> = {
     chain: Kava.chain,
     chainPattern: /^(kava)$/i,
-    assets: Kava.assets,
+    assets: Kava.assets[RenNetwork.Mainnet],
     type: ChainType.EVMChain,
     etherscanApi: {
         // TODO
@@ -419,6 +419,7 @@ const getEthereumMintParams = async (
     asset: string,
 ): Promise<EVMPayloadInterface> => {
     const payloadConfig: EVMPayloadInterface["payloadConfig"] = {
+        detectPreviousDeposits: true,
         preserveAddressFormat: true,
     };
 

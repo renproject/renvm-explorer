@@ -8,7 +8,7 @@ import { ChainDetails, ChainType } from "./types";
 export const SolanaDetails: ChainDetails<Solana> = {
     chain: Solana.chain,
     chainPattern: /^(Solana|eth)$/i,
-    assets: Solana.assets,
+    assets: Solana.assets[RenNetwork.Mainnet],
     type: ChainType.SolanaChain,
     usePublicProvider: (network: RenNetwork) =>
         getPublicSolanaProvider<Solana>(Solana, network),

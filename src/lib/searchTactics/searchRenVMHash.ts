@@ -174,7 +174,9 @@ export const summarizeTransaction = async (
     } else if (
         NETWORK === RenNetwork.Testnet &&
         !assetOriginChain &&
-        (Object.values(Ethereum.assets) as string[]).includes(asset)
+        (
+            Object.values(Ethereum.assets[RenNetwork.Mainnet]) as string[]
+        ).includes(asset)
     ) {
         assetOriginChain = "Kovan";
     }
