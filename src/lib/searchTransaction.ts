@@ -56,6 +56,7 @@ export const getTransactionDepositInstance = async (
     }
 
     const txid = utils.toURLBase64(searchDetails.in.txid);
+    console.log("nonce1", utils.toHex(searchDetails.in.nonce));
     const txParams: TransactionParams = {
         asset: summary.asset,
         fromTx: {
